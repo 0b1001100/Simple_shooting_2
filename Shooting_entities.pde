@@ -441,11 +441,39 @@ class Enemy extends Entity{
   }
   
   void updateVertex(){
-    LeftUP=new PVector(pos.x-size/2,pos.y-size/2);
-    LeftDown=new PVector(pos.x-size/2,pos.y+size/2);
-    RightUP=new PVector(pos.x+size/2,pos.y-size/2);
-    RightDown=new PVector(pos.x+size/2,pos.y+size/2);
-    
+    float s=size/2*1.41421356237;
+    float r=-rotate+PI/4;
+    LeftUP=new PVector(pos.x-cos(r)*s,pos.y+sin(r)*s);
+    LeftDown=new PVector(pos.x-cos(r)*s,pos.y-sin(r)*s);
+    RightUP=new PVector(pos.x+cos(r)*s,pos.y+sin(r)*s);
+    RightDown=new PVector(pos.x+cos(r)*s,pos.y-sin(r)*s);
+  }
+  
+  void Collision(){
+    ArrayList<Bullet>nextBullets=new ArrayList<Bullet>();
+    COLLISION:for(Bullet b:Bullets){
+      int sign=0;;
+      for(int i=0;i<4;i++){
+        PVector v=new PVector();
+        switch(i){
+          case 0:v=new PVector(LeftUP.x-b.pos.x,LeftUP.y-b.pos.y);
+          case 1:v=new PVector(LeftDown.x-b.pos.x,LeftDown.y-b.pos.y);
+          case 2:v=new PVector(RightUP.x-b.pos.x,RightUP.y-b.pos.y);
+          case 3:v=new PVector(RightDown.x-b.pos.x,RightDown.y-b.pos.y);
+        }
+        float cross=cross(b.vel,v);println(LeftUP,LeftDown,RightUP,RightDown,cross);
+        if(i==0){
+          sign=sign(cross);
+        }else{
+          if(sign!=sign(cross)){
+            b.isDead=true;
+            continue COLLISION;
+          }
+        }
+      }
+      if(!b.isDead)nextBullets.add(b);
+    }
+    Bullets=nextBullets;
   }
 }
 
@@ -454,7 +482,7 @@ class Bullet extends Entity{
   PVector bVel;
   boolean isMine=false;
   boolean isDead=false;
-  boolean bounse=true;
+  boolean bounse=false;
   Color bulletColor;
   float rotate=0;
   float speed=7;

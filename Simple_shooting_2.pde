@@ -244,6 +244,10 @@ boolean qDist(PVector s,PVector e,float d){
   return ((s.x-e.x)*(s.x-e.x)+(s.y-e.y)*(s.y-e.y))<d*d;
 }
 
+float cross(PVector v1,PVector v2){
+  return v1.x*v2.y-v2.x*v1.y;
+}
+
 void keyPressed(processing.event.KeyEvent e){
   ModifierKey=e.getKeyCode();
   PressedKey.add(str(key));

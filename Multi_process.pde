@@ -15,6 +15,7 @@ class ParticleProcess implements Callable<String>{
       b.update();
       if(!b.isDead)nextBullets.add(b);
     }
+    Bullets=nextBullets;
     ArrayList<Bullet>nextEneBullets=new ArrayList<Bullet>();
     for(Bullet b:eneBullets){
       b.update();
