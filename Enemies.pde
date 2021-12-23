@@ -4,6 +4,10 @@ class Turret extends Enemy{
     
   }
   
+  Turret(PVector pos){
+    this.pos=pos;
+  }
+  
   void display(){
     pushMatrix();
     translate(pos.x,pos.y);
@@ -14,6 +18,7 @@ class Turret extends Enemy{
     stroke(0,0,255);
     rect(0,0,size,size);
     popMatrix();
+    printHP();
   }
   
   void update(){

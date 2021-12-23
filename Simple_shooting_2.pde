@@ -1,3 +1,7 @@
+/*
+@author
+*/
+
 import processing.awt.*;
 import processing.awt.PSurfaceAWT.*;
 
@@ -27,6 +31,7 @@ PImage Map;
 PImage Mask;
 ArrayList<Particle>Particles=new ArrayList<Particle>();
 ArrayList<String>PressedKey=new ArrayList<String>();
+ArrayList<Bullet>eneBullets=new ArrayList<Bullet>();
 ArrayList<Bullet>Bullets=new ArrayList<Bullet>();
 ArrayList<Enemy>Enemies=new ArrayList<Enemy>();
 ArrayList<Long>Times=new ArrayList<Long>();
@@ -161,6 +166,7 @@ void Stage(){
   if(changeScene){
     field.loadMap("Field02.lfdf");
     player=new Myself();
+    Enemies.add(new Turret(new PVector(300,300)));
   }
   field.displayMap();
   drawShape();

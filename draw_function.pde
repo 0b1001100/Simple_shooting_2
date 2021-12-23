@@ -56,6 +56,9 @@ void drawShape(){
   translate(scroll.x,scroll.y);
   localMouse=unProject(mouseX,mouseY);
   player.display();
+  for(Enemy e:Enemies){
+    e.display();
+  }
   for(Bullet b:Bullets){
     b.display();
   }

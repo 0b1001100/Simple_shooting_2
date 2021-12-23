@@ -96,9 +96,13 @@ class Entity implements Egent{
     
   }
   
-  void display(){}
+  void display(){
+    
+  }
   
-  void update(){}
+  void update(){
+    
+  }
 }
 
 class Myself extends Entity{
@@ -397,6 +401,8 @@ class Enemy extends Entity{
   Weapon useWeapon=null;
   Color c=new Color(0,0,255);
   float size=20;
+  protected double maxHP=10d;
+  protected double HP=10d;
   
   Enemy(){
     
@@ -412,6 +418,34 @@ class Enemy extends Entity{
   
   void setSize(float s){
     size=s;
+  }
+  
+  void printHP(){
+    blendMode(BLEND);
+    pushMatrix();
+    translate(pos.x,pos.y);
+    rectMode(CENTER);
+    noStroke();
+    fill(255,0,0);
+    rect(0,size*1.25,size*1.4,size*0.2);
+    rectMode(CORNER);
+    noStroke();
+    fill(0,255,0);
+    rect(-size*0.7,size*1.15,size*1.4*(float)(HP/maxHP),size*0.2);
+    popMatrix();
+  }
+  
+  void setHP(double h){
+    maxHP=h;
+    HP=h;
+  }
+  
+  void updateVertex(){
+    LeftUP=new PVector(pos.x-size/2,pos.y-size/2);
+    LeftDown=new PVector(pos.x-size/2,pos.y+size/2);
+    RightUP=new PVector(pos.x+size/2,pos.y-size/2);
+    RightDown=new PVector(pos.x+size/2,pos.y+size/2);
+    
   }
 }
 
