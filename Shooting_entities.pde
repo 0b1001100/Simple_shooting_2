@@ -108,6 +108,7 @@ class Entity implements Egent{
 class Myself extends Entity{
   ArrayList<Weapon>weapons=new ArrayList<Weapon>();
   Weapon selectedWeapon;
+  Weapon ShotWeapon;
   Camera camera;
   Status HP;
   PImage HPgauge=loadImage(UIPath+"HPgauge.png");
@@ -187,6 +188,7 @@ class Myself extends Entity{
       Rotate();
       move();
       shot();
+      BulletCollision();
       keyEvent();
       for(Weapon w:weapons){
         w.coolDown();
@@ -395,6 +397,30 @@ class Myself extends Entity{
       return;
     }
   }
+  
+  void BulletCollision(){
+    COLLISION:for(Bullet b:eneBullets){
+      if(sign(dot(b.vel,new PVector(pos.x-b.pos.x,pos.y-b.pos.y)))>0){
+        if(qDist(pos,b.pos,size)|qDist(pos,new PVector(b.pos.x+b.vel.x,b.pos.y+b.vel.y),size)){
+          b.isDead=true;
+          ShotWeapon=b.usedWeapon;
+          Hit();
+          continue COLLISION;
+        }
+      }else{
+        if(cross(b.vel,new PVector(pos.x-b.pos.x,pos.y-b.pos.y))<size){
+          b.isDead=true;
+          ShotWeapon=b.usedWeapon;
+          Hit();
+          continue COLLISION;
+        }
+      }
+    }
+  }
+  
+  protected void Hit(){
+    HP.sub(ShotWeapon.power);
+  }
 }
 
 class Enemy extends Entity{
@@ -450,7 +476,7 @@ class Enemy extends Entity{
     RightDown=new PVector(pos.x+cos(r)*s,pos.y-sin(r)*s);
   }
   
-  void Collision(){
+  void BulletCollision(){
     COLLISION:for(Bullet b:Bullets){
       int sign=0;;
       for(int i=0;i<4;i++){
@@ -462,7 +488,7 @@ class Enemy extends Entity{
           case 2:s=RightUP;v=new PVector(RightDown.x-RightUP.x,RightDown.y-RightUP.y);break;
           case 3:s=LeftUP;v=new PVector(RightUP.x-LeftUP.x,RightUP.y-LeftUP.y);break;
         }
-        if(SegmentCollision(s,v,b.pos,b.vel)){
+        if(SegmentCollision(s,v,b.pos,new PVector(b.vel.x*vectorMagnification,b.vel.y*vectorMagnification))){
           b.isDead=true;
           ShotWeapon=b.usedWeapon;
           Hit();

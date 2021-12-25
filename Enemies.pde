@@ -11,6 +11,8 @@ class Turret extends Enemy{
   
   private void init(){
     setHP(100);
+    rotate=PI;
+    useWeapon=new EnergyBullet(this);
   }
   
   void display(){
@@ -28,7 +30,10 @@ class Turret extends Enemy{
   
   void update(){
     updateVertex();
-    Collision();
+    BulletCollision();
+    if(random(100)>85){
+      eneBullets.add(new Bullet(this,this.useWeapon));
+    }
   }
   
   void Hit(){

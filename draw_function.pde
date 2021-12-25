@@ -59,6 +59,9 @@ void drawShape(){
   for(Enemy e:Enemies){
     e.display();
   }
+  for(Bullet b:eneBullets){
+    b.display();
+  }
   for(Bullet b:Bullets){
     b.display();
   }

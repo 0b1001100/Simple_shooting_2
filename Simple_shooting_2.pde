@@ -248,6 +248,15 @@ float cross(PVector v1,PVector v2){
   return v1.x*v2.y-v2.x*v1.y;
 }
 
+float dot(PVector v1,PVector v2){
+  return v1.x*v2.x+v1.y*v2.y;
+}
+
+PVector normalize(PVector s,PVector e){
+  float f=s.dist(e);
+  return new PVector((e.x-s.x)/f,(e.y-s.y)/f);
+}
+
 boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
   PVector v=new PVector(s2.x-s1.x,s2.y-s1.y);
   float crs_v1_v2=cross(v1,v2);
