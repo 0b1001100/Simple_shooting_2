@@ -247,7 +247,7 @@ boolean qDist(PVector s,PVector e,float d){
 float cross(PVector v1,PVector v2){
   return v1.x*v2.y-v2.x*v1.y;
 }
-  
+
 boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
   PVector v=new PVector(s2.x-s1.x,s2.y-s1.y);
   float crs_v1_v2=cross(v1,v2);

@@ -399,6 +399,7 @@ class Myself extends Entity{
 
 class Enemy extends Entity{
   Weapon useWeapon=null;
+  Weapon ShotWeapon=null;
   Color c=new Color(0,0,255);
   float size=20;
   protected double maxHP=10d;
@@ -463,6 +464,7 @@ class Enemy extends Entity{
         }
         if(SegmentCollision(s,v,b.pos,b.vel)){
           b.isDead=true;
+          ShotWeapon=b.usedWeapon;
           Hit();
           continue COLLISION;
         }

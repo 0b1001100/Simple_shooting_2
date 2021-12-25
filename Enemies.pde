@@ -1,11 +1,16 @@
 class Turret extends Enemy{
   
   Turret(){
-    
+    init();
   }
   
   Turret(PVector pos){
+    init();
     this.pos=pos;
+  }
+  
+  private void init(){
+    setHP(100);
   }
   
   void display(){
@@ -27,6 +32,6 @@ class Turret extends Enemy{
   }
   
   void Hit(){
-    HP--;
+    HP-=ShotWeapon.power;
   }
 }
