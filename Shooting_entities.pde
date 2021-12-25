@@ -450,30 +450,28 @@ class Enemy extends Entity{
   }
   
   void Collision(){
-    ArrayList<Bullet>nextBullets=new ArrayList<Bullet>();
     COLLISION:for(Bullet b:Bullets){
       int sign=0;;
       for(int i=0;i<4;i++){
+        PVector s=new PVector();
         PVector v=new PVector();
         switch(i){
-          case 0:v=new PVector(LeftUP.x-b.pos.x,LeftUP.y-b.pos.y);
-          case 1:v=new PVector(LeftDown.x-b.pos.x,LeftDown.y-b.pos.y);
-          case 2:v=new PVector(RightUP.x-b.pos.x,RightUP.y-b.pos.y);
-          case 3:v=new PVector(RightDown.x-b.pos.x,RightDown.y-b.pos.y);
+          case 0:s=LeftDown;v=new PVector(LeftUP.x-LeftDown.x,LeftUP.y-LeftDown.y);break;
+          case 1:s=RightDown;v=new PVector(LeftDown.x-RightDown.x,LeftDown.y-RightDown.y);break;
+          case 2:s=RightUP;v=new PVector(RightDown.x-RightUP.x,RightDown.y-RightUP.y);break;
+          case 3:s=LeftUP;v=new PVector(RightUP.x-LeftUP.x,RightUP.y-LeftUP.y);break;
         }
-        float cross=cross(b.vel,v);println(LeftUP,LeftDown,RightUP,RightDown,cross);
-        if(i==0){
-          sign=sign(cross);
-        }else{
-          if(sign!=sign(cross)){
-            b.isDead=true;
-            continue COLLISION;
-          }
+        if(SegmentCollision(s,v,b.pos,b.vel)){
+          b.isDead=true;
+          Hit();
+          continue COLLISION;
         }
       }
-      if(!b.isDead)nextBullets.add(b);
     }
-    Bullets=nextBullets;
+  }
+  
+  protected void Hit(){
+    
   }
 }
 

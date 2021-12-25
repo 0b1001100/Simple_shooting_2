@@ -25,4 +25,8 @@ class Turret extends Enemy{
     updateVertex();
     Collision();
   }
+  
+  void Hit(){
+    HP--;
+  }
 }
