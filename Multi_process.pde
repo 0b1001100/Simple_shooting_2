@@ -7,9 +7,12 @@ class ParticleProcess implements Callable<String>{
   
   String call(){pTime=System.currentTimeMillis();
     player.update();
+    ArrayList<Enemy>nextEnemies=new ArrayList<Enemy>();
     for(Enemy e:Enemies){
       e.update();
+      if(!e.isDead)nextEnemies.add(e);
     }
+    Enemies=nextEnemies;
     ArrayList<Bullet>nextBullets=new ArrayList<Bullet>();
     for(Bullet b:Bullets){
       if(b.isDead)continue;

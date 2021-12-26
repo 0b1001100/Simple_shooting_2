@@ -16,13 +16,23 @@ class Particle{
     }
   }
   
-  Particle(Myself m,int num){
+  Particle(Entity e,int num){
     for(int i=0;i<num;i++){
       float scala=random(0,0.5);
       float rad=random(0,360);
       PVector vec=new PVector(cos(radians(rad))*scala,sin(radians(rad))*scala);
-      Color c=new Color(0,255,0,(int)random(16,255));
-      particles.add(new particleFlagment(m.pos,vec,c,random(min,max)));
+      Color c=new Color(e.c.getRed(),e.c.getGreen(),e.c.getBlue(),(int)random(16,255));
+      particles.add(new particleFlagment(e.pos,vec,c,random(min,max)));
+    }
+  }
+  
+  Particle(Entity e,int num,float speed){
+    for(int i=0;i<num;i++){
+      float scala=random(0,speed);
+      float rad=random(0,360);
+      PVector vec=new PVector(cos(radians(rad))*scala,sin(radians(rad))*scala);
+      Color c=new Color(e.c.getRed(),e.c.getGreen(),e.c.getBlue(),(int)random(16,255));
+      particles.add(new particleFlagment(e.pos,vec,c,random(min,max)));
     }
   }
   

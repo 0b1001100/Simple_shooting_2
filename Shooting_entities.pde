@@ -90,7 +90,9 @@ class Entity implements Egent{
   PVector LeftDown;
   PVector RightUP;
   PVector RightDown;
+  Color c=new Color(0,255,0);
   float rotate=0;
+  boolean isDead=false;
   
   Entity(){
     
@@ -102,6 +104,10 @@ class Entity implements Egent{
   
   void update(){
     
+  }
+  
+  void setColor(Color c){
+    this.c=c;
   }
 }
 
@@ -147,7 +153,7 @@ class Myself extends Entity{
     rotate(-rotate);
     strokeWeight(1);
     noFill();
-    stroke(0,255,0);
+    stroke(c.getRed(),c.getGreen(),c.getBlue());
     ellipse(0,0,size,size);
     strokeWeight(3);
     arc(0,0,size*1.5,size*1.5,radians(-5)-PI/2-diffuse/2,radians(5)-PI/2+diffuse/2);
@@ -401,7 +407,6 @@ class Myself extends Entity{
   void BulletCollision(){
     COLLISION:for(Bullet b:eneBullets){
       PVector vecAP=createVector(b.pos,pos);
-      PVector vecBP=createVector(b.pos.copy().add(b.vel),pos);
       PVector normalAB=normalize(b.vel);//vecAB->b.vel
       float lenAX=dot(normalAB,vecAP);
       float dist;
@@ -429,13 +434,12 @@ class Myself extends Entity{
 class Enemy extends Entity{
   Weapon useWeapon=null;
   Weapon ShotWeapon=null;
-  Color c=new Color(0,0,255);
   float size=20;
   protected double maxHP=10d;
   protected double HP=10d;
   
   Enemy(){
-    
+    setColor(new Color(0,0,255));
   }
   
   void display(){
@@ -499,10 +503,16 @@ class Enemy extends Entity{
         }
       }
     }
+    if(HP<=0)Down();
   }
   
   protected void Hit(){
     
+  }
+  
+  protected void Down(){
+    isDead=true;
+    Particles.add(new Particle(this,(int)size*5,1));
   }
 }
 
@@ -543,15 +553,12 @@ class Bullet extends Entity{
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=w.bulletMaxAge;
     isMine=e.getClass().getSimpleName().equals("Myself");
+    if(!isMine)bulletColor=new Color(255,0,0);
   }
   
   void display(){
     strokeWeight(1);
-    if(isMine){
-      stroke(bulletColor.getRed(),bulletColor.getGreen(),bulletColor.getBlue());
-    }else{
-      stroke(255,0,0);
-    }
+    stroke(bulletColor.getRed(),bulletColor.getGreen(),bulletColor.getBlue());
     line(pos.x,pos.y,pos.x+vel.x,pos.y+vel.y);
   }
   

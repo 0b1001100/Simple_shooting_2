@@ -102,7 +102,7 @@ void setup(){
 }
 
 void draw(){
-  background(0);
+  background(0);println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB");
   switch(scene){
     case 0:Menu();break;
     case 1:Field();break;

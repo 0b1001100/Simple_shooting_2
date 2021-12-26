@@ -35,32 +35,32 @@ class Status{
   }
   
   void addReset(float s){
-    resetStatus.add(new BigDecimal(s));
+    resetStatus=resetStatus.add(new BigDecimal(s));
     resetStatus=isMin(isMax(resetStatus));
   }
   
   void addMin(float s){
-    minStatus.add(new BigDecimal(s));
+    minStatus=minStatus.add(new BigDecimal(s));
     minStatus=isMax(minStatus);
   }
   
   void sub(float s){
-    status.subtract(new BigDecimal(s));
+    status=status.subtract(new BigDecimal(s));
     status=isMin(isMax(status));
   }
   
   void subMax(float s){
-    status.subtract(new BigDecimal(s));
+    maxStatus=maxStatus.subtract(new BigDecimal(s));
     maxStatus=isMin(maxStatus);
   }
   
   void subReset(float s){
-    resetStatus.subtract(new BigDecimal(s));
+    resetStatus=resetStatus.subtract(new BigDecimal(s));
     resetStatus=isMin(isMax(resetStatus));
   }
   
   void subMin(float s){
-    status.subtract(new BigDecimal(s));
+    minStatus=minStatus.subtract(new BigDecimal(s));
     minStatus=isMax(minStatus);
   }
   
