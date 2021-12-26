@@ -18,3 +18,6 @@ CPU:intel core i5 8世代以降<br>
 GPU:OpenGL3.0以降対応<br>
 メモリ:512MB<br>
 ストレージ:10MB<br>
+### 動作確認環境
+CPU:intel core i7 11700<br>
+GPU:intel UHD graphics<br>
