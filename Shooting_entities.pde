@@ -400,20 +400,23 @@ class Myself extends Entity{
   
   void BulletCollision(){
     COLLISION:for(Bullet b:eneBullets){
-      if(sign(dot(b.vel,new PVector(pos.x-b.pos.x,pos.y-b.pos.y)))>0){
-        if(qDist(pos,b.pos,size)|qDist(pos,new PVector(b.pos.x+b.vel.x,b.pos.y+b.vel.y),size)){
-          b.isDead=true;
-          ShotWeapon=b.usedWeapon;
-          Hit();
-          continue COLLISION;
-        }
+      PVector vecAP=createVector(b.pos,pos);
+      PVector vecBP=createVector(b.pos.copy().add(b.vel),pos);
+      PVector normalAB=normalize(b.vel);//vecAB->b.vel
+      float lenAX=dot(normalAB,vecAP);
+      float dist;
+      if(lenAX<0){
+        dist=dist(b.pos.x,b.pos.y,pos.x,pos.y);
+      }else if(lenAX>dist(0,0,b.vel.x,b.vel.y)){
+        dist=dist(b.pos.x+b.vel.x,b.pos.y+b.vel.y,pos.x,pos.y);
       }else{
-        if(cross(b.vel,new PVector(pos.x-b.pos.x,pos.y-b.pos.y))<size){
-          b.isDead=true;
-          ShotWeapon=b.usedWeapon;
-          Hit();
-          continue COLLISION;
-        }
+        dist=abs(cross(normalAB,vecAP));
+      }
+      if(dist<size/2){
+        b.isDead=true;
+        ShotWeapon=b.usedWeapon;
+        Hit();
+        continue COLLISION;
       }
     }
   }

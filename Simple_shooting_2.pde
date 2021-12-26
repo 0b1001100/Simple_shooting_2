@@ -1,5 +1,5 @@
 /*
-@author
+  author:0x4C
 */
 
 import processing.awt.*;
@@ -255,6 +255,15 @@ float dot(PVector v1,PVector v2){
 PVector normalize(PVector s,PVector e){
   float f=s.dist(e);
   return new PVector((e.x-s.x)/f,(e.y-s.y)/f);
+}
+
+PVector normalize(PVector v){
+  float f=sqrt(sq(v.x)+sq(v.y));
+  return new PVector(v.x/f,v.y/f);
+}
+
+PVector createVector(PVector s,PVector e){
+  return new PVector(e.x-s.x,e.y-s.y);
 }
 
 boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
