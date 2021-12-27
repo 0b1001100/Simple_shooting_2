@@ -34,6 +34,7 @@ class Turret extends Enemy{
     if(random(100)>85){
       eneBullets.add(new Bullet(this,this.useWeapon));
     }
+    Collision();
   }
   
   void Hit(){
@@ -81,6 +82,7 @@ class Normal extends Enemy{
   }
   
   void move(){
-    
+    //壁を避けて移動
+    Collision();
   }
 }
