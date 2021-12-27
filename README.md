@@ -20,4 +20,4 @@ GPU:OpenGL3.0以降対応<br>
 ストレージ:10MB<br>
 ### 動作確認環境
 CPU:intel core i7 11700<br>
-GPU:intel UHD graphics<br>
+GPU:intel UHD graphics 750<br>
