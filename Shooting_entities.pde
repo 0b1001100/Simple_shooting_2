@@ -347,6 +347,8 @@ class Myself extends Entity{
   }
   
   void Collision(PVector rect,PVector pos){
+    //通過したタイルを取得→衝突判定&押し出し
+    //以下のコードは壁抜け、引っ掛かりが発生する
     if(rect.x<pos.x&&rect.x+TileSize>pos.x
        &&rect.y-size/2<pos.y&&rect.y+TileSize+size/2>pos.y){
       if(rect.y+TileSize/2<pos.y){
@@ -514,6 +516,10 @@ class Enemy extends Entity{
     isDead=true;
     Particles.add(new Particle(this,(int)size*5,1));
   }
+  
+  void Collision(){
+    //通過したタイルを取得→衝突判定&押し出し
+  }
 }
 
 class Bullet extends Entity{
@@ -591,6 +597,7 @@ class Bullet extends Entity{
   }
   
   void Collision(PVector rect,PVector pos){
+    //通過したタイルを取得→衝突判定
     //COLLISION:{
     //  int loop=0;
     //  boolean ray=false;
