@@ -3,7 +3,12 @@
 シンプルなシューティングゲームのアルファ版です。
 まだ大半が書きかけなので、まともに動きません。<br>
 また、今のところデバッグするためのコードをそのまま上げているので、改造したくなった場合は
-Simple_shooting_2.pdeの中のStage()辺りを書き換えてください。
+Simple_shooting_2.pdeの中のStage()辺りを書き換えてください。<br>
+もし良ければ、衝突判定などで苦戦しているので、
+そのコードを書いてPull requestまたはアドバイスしてくれると助かります。<br>
+補足:タイルなどは
+[Shooting_Maps.pde](https://github.com/0b1001100/Simple_shooting_2/blob/master/Shooting_Maps.pde)
+で管理しています。
 ## 利用する際の注意点
 ソースコードは現状[Processing4.0b2](https://processing.org/)において動作を確認しているので、
 実行にはprocessing4.0以上のバージョンを推奨します。
