@@ -1,5 +1,5 @@
 class Particle{
-  ArrayList<particleFlagment>particles=new ArrayList<particleFlagment>();
+  ArrayList<particleFragment>particles=new ArrayList<particleFragment>();
   boolean isDead=false;
   Color pColor;
   float min=1;
@@ -12,7 +12,7 @@ class Particle{
       float rad=random(0,360);
       PVector vec=new PVector(cos(radians(rad))*scala,sin(radians(rad))*scala);
       Color c=new Color(b.bulletColor.getRed(),b.bulletColor.getGreen(),b.bulletColor.getBlue(),(int)random(16,255));
-      particles.add(new particleFlagment(b.pos,vec,c,random(min,max)));
+      particles.add(new particleFragment(b.pos,vec,c,random(min,max)));
     }
   }
   
@@ -22,7 +22,7 @@ class Particle{
       float rad=random(0,360);
       PVector vec=new PVector(cos(radians(rad))*scala,sin(radians(rad))*scala);
       Color c=new Color(e.c.getRed(),e.c.getGreen(),e.c.getBlue(),(int)random(16,255));
-      particles.add(new particleFlagment(e.pos,vec,c,random(min,max)));
+      particles.add(new particleFragment(e.pos,vec,c,random(min,max)));
     }
   }
   
@@ -32,28 +32,28 @@ class Particle{
       float rad=random(0,360);
       PVector vec=new PVector(cos(radians(rad))*scala,sin(radians(rad))*scala);
       Color c=new Color(e.c.getRed(),e.c.getGreen(),e.c.getBlue(),(int)random(16,255));
-      particles.add(new particleFlagment(e.pos,vec,c,random(min,max)));
+      particles.add(new particleFragment(e.pos,vec,c,random(min,max)));
     }
   }
   
   Particle setSize(float min,float max){
     this.min=min;
     this.max=max;
-    for(particleFlagment p:particles){
+    for(particleFragment p:particles){
       p.setSize(random(min,max));
     }
     return this;
   }
   
   void display(){
-    for(particleFlagment p:particles){
+    for(particleFragment p:particles){
       p.display();
     }
   }
   
   void update(){
-    ArrayList<particleFlagment>nextParticles=new ArrayList<particleFlagment>();
-    for(particleFlagment p:particles){
+    ArrayList<particleFragment>nextParticles=new ArrayList<particleFragment>();
+    for(particleFragment p:particles){
       p.setAlpha(p.pColor.getAlpha()-2);
       p.update();
       if(!p.isDead)nextParticles.add(p);
@@ -66,31 +66,31 @@ class Particle{
   }
 }
 
-class particleFlagment{
+class particleFragment{
   PVector pos;
   PVector vel;
   boolean isDead=false;
   Color pColor;
   float size;
   
-  particleFlagment(PVector pos,PVector vel,Color c,float size){
+  particleFragment(PVector pos,PVector vel,Color c,float size){
     this.pos=new PVector(pos.x,pos.y);
     this.vel=new PVector(vel.x,vel.y);
     this.pColor=new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
     this.size=size;
   }
   
-  particleFlagment setSize(float f){
+  particleFragment setSize(float f){
     size=f;
     return this;
   }
   
-  particleFlagment setColor(Color c){
+  particleFragment setColor(Color c){
     this.pColor=new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
     return this;
   }
   
-  particleFlagment setAlpha(int a){
+  particleFragment setAlpha(int a){
     pColor=new Color(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),max(0,a));
     return this;
   }

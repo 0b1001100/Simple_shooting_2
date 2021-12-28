@@ -212,14 +212,14 @@ class SliderItem extends GameComponent{
 }
 
 class MultiButton extends GameComponent{
-  protected ArrayList<NomalButton>Buttons=new ArrayList<NomalButton>();
+  protected ArrayList<NormalButton>Buttons=new ArrayList<NormalButton>();
   protected boolean resize=true;
   protected int focusIndex=0;
   protected int pFocusIndex=0;
   
-  MultiButton(NomalButton... b){
-    Buttons=new ArrayList<NomalButton>(java.util.Arrays.asList(b));
-    for(NomalButton B:Buttons){
+  MultiButton(NormalButton... b){
+    Buttons=new ArrayList<NormalButton>(java.util.Arrays.asList(b));
+    for(NormalButton B:Buttons){
       B.setNonSelectBorderColor(new Color(0,0,0));
       B.removeFocus();
     }
@@ -230,7 +230,7 @@ class MultiButton extends GameComponent{
     setBorderColor(new Color(255,128,0));
   }
   
-  void add(NomalButton b){
+  void add(NormalButton b){
     
   }
   
@@ -242,7 +242,7 @@ class MultiButton extends GameComponent{
       resize=false;
     }
     reloadIndex();
-    for(NomalButton b:Buttons){
+    for(NormalButton b:Buttons){
       b.display();
     }
     blendMode(BLEND);
@@ -255,7 +255,7 @@ class MultiButton extends GameComponent{
   
   void update(){
     mouseProcess();
-    for(NomalButton b:Buttons){
+    for(NormalButton b:Buttons){
       b.update();
     }
     pFocusIndex=focusIndex;
@@ -280,7 +280,7 @@ class MultiButton extends GameComponent{
   }
   
   void reloadIndex(){
-    for(NomalButton b:Buttons){
+    for(NormalButton b:Buttons){
       b.removeFocus();
     }
     if(focus){
@@ -290,7 +290,7 @@ class MultiButton extends GameComponent{
   
   void requestFocus(){
     super.requestFocus();
-    for(NomalButton b:Buttons){
+    for(NormalButton b:Buttons){
       b.removeFocus();
     }
     Buttons.get(focusIndex).requestFocus();
@@ -298,7 +298,7 @@ class MultiButton extends GameComponent{
   
   void removeFocus(){
     super.removeFocus();
-    for(NomalButton b:Buttons){
+    for(NormalButton b:Buttons){
       b.removeFocus();
     }
   }
@@ -341,9 +341,9 @@ class TextButton extends ButtonItem{
   }
 }
 
-class NomalButton extends TextButton{
+class NormalButton extends TextButton{
   
-  NomalButton(){
+  NormalButton(){
     setBackground(new Color(0,0,0));
     setForeground(new Color(255,255,255));
     setSelectBackground(new Color(0,40,100));
@@ -351,7 +351,7 @@ class NomalButton extends TextButton{
     setBorderColor(new Color(255,128,0));
   }
   
-  NomalButton(String s){
+  NormalButton(String s){
     super(s);
     setBackground(new Color(0,0,0));
     setForeground(new Color(255,255,255));

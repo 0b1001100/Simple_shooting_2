@@ -8,12 +8,12 @@ void Menu(){
   }
   if(changeScene){
     starts.removeAll();
-    NomalButton New=new NomalButton("New Game");
+    NormalButton New=new NormalButton("New Game");
     New.setBounds(100,100,120,30);
     New.addListener(()->{scene=2;});
-    NomalButton Load=new NomalButton("Load Game");
+    NormalButton Load=new NormalButton("Load Game");
     Load.setBounds(100,140,120,30);
-    NomalButton Config=new NomalButton("Confuguration");
+    NormalButton Config=new NormalButton("Confuguration");
     Config.setBounds(100,180,120,30);
     Config.addListener(()->{nowMenu="Config";});
     starts.add(New);
@@ -28,17 +28,17 @@ void configration(){
   background(50);
   if(changeScene){
     configs.removeAll();
-    NomalButton halfFPS=new NomalButton("30FPS");
+    NormalButton halfFPS=new NormalButton("30FPS");
     halfFPS.addListener(()->{frameRate(30);});
-    NomalButton fullFPS=new NomalButton("60FPS");
+    NormalButton fullFPS=new NormalButton("60FPS");
     fullFPS.addListener(()->{frameRate(60);});
-    NomalButton qFPS=new NomalButton("144FPS");
+    NormalButton qFPS=new NormalButton("144FPS");
     qFPS.addListener(()->{frameRate(144);});
-    NomalButton ulFPS=new NomalButton("無制限");
+    NormalButton ulFPS=new NormalButton("無制限");
     ulFPS.addListener(()->{frameRate(1024);});
     MultiButton fps=new MultiButton(halfFPS,fullFPS,qFPS,ulFPS);
     fps.setBounds(100,30,300,25);
-    NomalButton Inv=new NomalButton("色反転");
+    NormalButton Inv=new NormalButton("色反転");
     Inv.setBounds(100,60,80,25);
     Inv.addListener(()->{ColorInv=!ColorInv;});
     configs.add(fps);
