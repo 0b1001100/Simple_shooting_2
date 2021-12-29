@@ -358,7 +358,8 @@ class Myself extends Entity{
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       return;
-    }else if(rect.x-size/2<pos.x&&rect.x+TileSize+size/2>pos.x
+    }
+    if(rect.x-size/2<pos.x&&rect.x+TileSize+size/2>pos.x
        &&rect.y<pos.y&&rect.y+TileSize>pos.y){
       if(rect.x+TileSize/2<pos.x){
         pos.x=rect.x+TileSize+size/2;
@@ -367,7 +368,8 @@ class Myself extends Entity{
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       return;
-    }else if(qDist(rect,pos,size/2)){
+    }
+    if(qDist(rect,pos,size/2)){
       float r=atan2(pos.x-rect.x,pos.y-rect.y);
       int x=field.getTile(new PVector(pos.x-TileSize,pos.y));
       int y=field.getTile(new PVector(pos.x,pos.y-TileSize));
@@ -655,7 +657,8 @@ class Bullet extends Entity{
         Particles.add(new Particle(this,3));
       }
       return;
-    }else if(rect.x-vel.x<=pos.x&&rect.x+field.tileSize-vel.x>=pos.x
+    }
+    if(rect.x-vel.x<=pos.x&&rect.x+field.tileSize-vel.x>=pos.x
        &&rect.y<=pos.y&&rect.y+field.tileSize>=pos.y){
       if(bounse){
         if(rect.x+field.tileSize/2<pos.x){
