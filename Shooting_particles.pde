@@ -107,3 +107,58 @@ class particleFragment{
     pos.add(vel);
   }
 }
+
+class physicsParticleFragment extends particleFragment{
+  PVector prePos;
+  
+  physicsParticleFragment(PVector pos,PVector vel,Color c,float size){
+    super(pos,vel,c,size);
+    prePos=pos.copy();
+  }
+  
+  void update(){
+    super.update();
+    PVector tilePos=new PVector(floor(pos.x/TileSize),floor(pos.y/TileSize));
+    PVector offset=new PVector(TileSize*(tilePos.x-1),TileSize*(tilePos.y-1));
+    int[][] tiles=field.getAround(pos);
+    for(int i=0;i<tiles.length;i++){
+      for(int j=0;j<tiles[i].length;j++){
+        PVector rectPos=new PVector(offset.x+TileSize*j,offset.y+TileSize*i);
+        if(field.getAttributes().get(tiles[i][j]).equals("Wall")){
+          Collision(rectPos,pos);
+        }
+      }
+    }
+    prePos=pos.copy();
+  }
+  
+  void Collision(PVector rect,PVector pos){
+    if(rect.x<=pos.x&&rect.x+TileSize>=pos.x
+       &&rect.y-size/2<=pos.y&&rect.y+TileSize+size/2>=pos.y){
+      if(rect.y+TileSize/2<pos.y){
+        pos.y=rect.y+TileSize+size/2;
+      }else{
+        pos.y=rect.y-size/2;
+      }
+      vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+    }
+    if(rect.x-size/2<=pos.x&&rect.x+TileSize+size/2>=pos.x
+       &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
+      if(rect.x+TileSize/2<pos.x){
+        pos.x=rect.x+TileSize+size/2;
+      }else{
+        pos.x=rect.x-size/2;
+      }
+      vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      return;
+    }
+  }
+  
+  private void invX(){
+    vel=new PVector(-vel.x,vel.y);
+  }
+  
+  private void invY(){
+    vel=new PVector(vel.x,-vel.y);
+  }
+}

@@ -348,20 +348,32 @@ class Myself extends Entity{
   
   void Collision(PVector rect,PVector pos){
     //通過したタイルを取得→衝突判定&押し出し
-    if(rect.x<=pos.x&&rect.x+TileSize>=pos.x
+    Y:if(rect.x<=pos.x&&rect.x+TileSize>=pos.x
        &&rect.y-size/2<=pos.y&&rect.y+TileSize+size/2>=pos.y){
       if(rect.y+TileSize/2<pos.y){
+        if(field.toAttribute(field.getTile(rect.copy().add(0,TileSize))).equals("Wall")){
+          break Y;
+        }
         pos.y=rect.y+TileSize+size/2;
       }else{
+        if(field.toAttribute(field.getTile(rect.copy().add(0,-TileSize))).equals("Wall")){
+          break Y;
+        }
         pos.y=rect.y-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
     }
-    if(rect.x-size/2<=pos.x&&rect.x+TileSize+size/2>=pos.x
+    X:if(rect.x-size/2<=pos.x&&rect.x+TileSize+size/2>=pos.x
        &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
       if(rect.x+TileSize/2<pos.x){
+        if(field.toAttribute(field.getTile(rect.copy().add(TileSize,0))).equals("Wall")){
+          break X;
+        }
         pos.x=rect.x+TileSize+size/2;
       }else{
+        if(field.toAttribute(field.getTile(rect.copy().add(-TileSize,0))).equals("Wall")){
+          break X;
+        }
         pos.x=rect.x-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
@@ -409,7 +421,7 @@ class Myself extends Entity{
       pos.x=rect.x+TileSize+cos(r)*size/2;
       pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      println("RightDown");
+      println("RightDown");exit();
       return;
     }
   }
@@ -663,13 +675,19 @@ class Bullet extends Entity{
         }
         if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),s,v)){
           pos=SegmentCrossPoint(pos,vel,s,v);
-          if((pos.x-rect.x)%TileSize<0.001&(pos.x-rect.x)%TileSize>-0.001){
-            invX();
+          if(bounse){
+            if((pos.x-rect.x)%TileSize<0.001&(pos.x-rect.x)%TileSize>-0.001){
+              invX();
+              break;
+            }
+            if((pos.y-rect.y)%TileSize<0.001&(pos.y-rect.y)%TileSize>-0.001){
+              invY();
+              break;
+            }
+          }else{
+            isDead=true;
+            Particles.add(new Particle(this,5));
           }
-          if((pos.y-rect.y)%TileSize<0.001&(pos.y-rect.y)%TileSize>-0.001){
-            invY();
-          }
-          break;
         }
       }
   }
