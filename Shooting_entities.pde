@@ -348,19 +348,17 @@ class Myself extends Entity{
   
   void Collision(PVector rect,PVector pos){
     //通過したタイルを取得→衝突判定&押し出し
-    //以下のコードは壁抜け、引っ掛かりが発生する
-    if(rect.x<pos.x&&rect.x+TileSize>pos.x
-       &&rect.y-size/2<pos.y&&rect.y+TileSize+size/2>pos.y){
+    if(rect.x<=pos.x&&rect.x+TileSize>=pos.x
+       &&rect.y-size/2<=pos.y&&rect.y+TileSize+size/2>=pos.y){
       if(rect.y+TileSize/2<pos.y){
         pos.y=rect.y+TileSize+size/2;
       }else{
         pos.y=rect.y-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      return;
     }
-    if(rect.x-size/2<pos.x&&rect.x+TileSize+size/2>pos.x
-       &&rect.y<pos.y&&rect.y+TileSize>pos.y){
+    if(rect.x-size/2<=pos.x&&rect.x+TileSize+size/2>=pos.x
+       &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
       if(rect.x+TileSize/2<pos.x){
         pos.x=rect.x+TileSize+size/2;
       }else{
@@ -369,21 +367,21 @@ class Myself extends Entity{
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       return;
     }
-    if(qDist(rect,pos,size/2)){
+    /*if(qDist(rect,pos,size/2)){
       float r=atan2(pos.x-rect.x,pos.y-rect.y);
       int x=field.getTile(new PVector(pos.x-TileSize,pos.y));
       int y=field.getTile(new PVector(pos.x,pos.y-TileSize));
       pos.x=field.getAttributes().get(x).equals("Wall")?
-            rect.x-size/2:rect.x+cos(r)*size/2;
+            rect.x-size/2:rect.x+cos(-r)*size/2;
       pos.y=field.getAttributes().get(y).equals("Wall")?
-            rect.y+size/2:rect.y+sin(r)*size/2;
+            rect.y+size/2:rect.y+sin(-r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("LeftUp");
       return;
     }else if(qDist(new PVector(rect.x,rect.y+TileSize),pos,size/2)){
       float r=atan2(pos.x-rect.x,pos.y-rect.y-TileSize);
-      pos.x=rect.x+cos(r)*size/2;
-      pos.y=rect.y+TileSize+sin(r)*size/2;
+      pos.x=rect.x+cos(-r)*size/2;
+      pos.y=rect.y+TileSize+sin(-r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("LeftDown");
       return;
@@ -392,20 +390,20 @@ class Myself extends Entity{
       int x=field.getTile(new PVector(pos.x+TileSize,pos.y));
       int y=field.getTile(new PVector(pos.x,pos.y-TileSize));
       pos.x=field.getAttributes().get(x).equals("Wall")?
-            rect.x+TileSize+size/2:rect.x+TileSize+cos(r)*size/2;
+            rect.x+TileSize+size/2:rect.x+TileSize+cos(-r)*size/2;
       pos.y=field.getAttributes().get(y).equals("Wall")?
-            rect.y+size/2:rect.y+sin(r)*size/2;
+            rect.y+size/2:rect.y+sin(-r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("RightUp");
       return;
     }else if(qDist(new PVector(rect.x+TileSize,rect.y+TileSize),pos,size/2)){
       float r=atan2(pos.x-rect.x-TileSize,pos.y-rect.y-TileSize);
-      pos.x=rect.x+TileSize+cos(r)*size/2;
-      pos.y=rect.y+TileSize+sin(r)*size/2;
+      pos.x=rect.x+TileSize+cos(-r)*size/2;
+      pos.y=rect.y+TileSize+sin(-r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("RightDown");
       return;
-    }
+    }*/
   }
   
   void BulletCollision(){
@@ -643,11 +641,11 @@ class Bullet extends Entity{
     //    loop++;
     //  }
     //}
-    if(rect.x<=pos.x&&rect.x+field.tileSize>=pos.x
-       &&rect.y-vel.y<=pos.y&&rect.y+field.tileSize-vel.y>=pos.y){
+    if(rect.x<=pos.x&&rect.x+TileSize>=pos.x
+       &&rect.y-vel.y<=pos.y&&rect.y+TileSize-vel.y>=pos.y){
       if(bounse){
-        if(rect.y+field.tileSize/2<pos.y){
-          pos.y=rect.y+field.tileSize-vel.y;
+        if(rect.y+TileSize/2<pos.y){
+          pos.y=rect.y+TileSize-vel.y;
         }else{
           pos.y=rect.y-vel.y;
         }
@@ -656,13 +654,12 @@ class Bullet extends Entity{
         isDead=true;
         Particles.add(new Particle(this,3));
       }
-      return;
     }
-    if(rect.x-vel.x<=pos.x&&rect.x+field.tileSize-vel.x>=pos.x
-       &&rect.y<=pos.y&&rect.y+field.tileSize>=pos.y){
+    if(rect.x-vel.x<=pos.x&&rect.x+TileSize-vel.x>=pos.x
+       &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
       if(bounse){
-        if(rect.x+field.tileSize/2<pos.x){
-          pos.x=rect.x+field.tileSize-vel.x;
+        if(rect.x+TileSize/2<pos.x){
+          pos.x=rect.x+TileSize-vel.x;
         }else{
           pos.x=rect.x-vel.x;
         }
@@ -671,7 +668,6 @@ class Bullet extends Entity{
         isDead=true;
         Particles.add(new Particle(this,3));
       }
-      return;
     }
   }
   
