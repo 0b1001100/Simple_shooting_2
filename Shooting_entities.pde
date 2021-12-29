@@ -495,7 +495,6 @@ class Enemy extends Entity{
   
   void BulletCollision(){
     COLLISION:for(Bullet b:Bullets){
-      int sign=0;;
       for(int i=0;i<4;i++){
         PVector s=new PVector();
         PVector v=new PVector();
@@ -579,7 +578,7 @@ class Bullet extends Entity{
   void update(){
     Wall();
     bVel=new PVector(vel.x,vel.y);
-    pos.add(vel.mult(vectorMagnification));
+    pos.add(vel.copy().mult(vectorMagnification));
     vel=new PVector(bVel.x,bVel.y);
     prePos=new PVector(pos.x,pos.y);
     if(age>maxAge)isDead=true;
@@ -649,34 +648,30 @@ class Bullet extends Entity{
     //    loop++;
     //  }
     //}
-    if(rect.x<=pos.x&&rect.x+TileSize>=pos.x
-       &&rect.y-vel.y<=pos.y&&rect.y+TileSize-vel.y>=pos.y){
-      if(bounse){
-        if(rect.y+TileSize/2<pos.y){
-          pos.y=rect.y+TileSize-vel.y;
-        }else{
-          pos.y=rect.y-vel.y;
+      for(int i=0;i<4;i++){
+        PVector s=new PVector();
+        PVector v=new PVector();
+        LeftDown=new PVector(rect.x,rect.y+TileSize);
+        LeftUP=new PVector(rect.x,rect.y);
+        RightDown=new PVector(rect.x+TileSize,rect.y+TileSize);
+        RightUP=new PVector(rect.x+TileSize,rect.y);
+        switch(i){
+          case 0:s=LeftDown;v=new PVector(LeftUP.x-LeftDown.x,LeftUP.y-LeftDown.y);break;
+          case 1:s=RightDown;v=new PVector(LeftDown.x-RightDown.x,LeftDown.y-RightDown.y);break;
+          case 2:s=RightUP;v=new PVector(RightDown.x-RightUP.x,RightDown.y-RightUP.y);break;
+          case 3:s=LeftUP;v=new PVector(RightUP.x-LeftUP.x,RightUP.y-LeftUP.y);break;
         }
-        invY();
-      }else{
-        isDead=true;
-        Particles.add(new Particle(this,3));
-      }
-    }
-    if(rect.x-vel.x<=pos.x&&rect.x+TileSize-vel.x>=pos.x
-       &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
-      if(bounse){
-        if(rect.x+TileSize/2<pos.x){
-          pos.x=rect.x+TileSize-vel.x;
-        }else{
-          pos.x=rect.x-vel.x;
+        if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),s,v)){
+          pos=SegmentCrossPoint(pos,vel,s,v);
+          if((pos.x-rect.x)%TileSize<0.001&(pos.x-rect.x)%TileSize>-0.001){
+            invX();
+          }
+          if((pos.y-rect.y)%TileSize<0.001&(pos.y-rect.y)%TileSize>-0.001){
+            invY();
+          }
+          break;
         }
-        invX();
-      }else{
-        isDead=true;
-        Particles.add(new Particle(this,3));
       }
-    }
   }
   
   private void invX(){

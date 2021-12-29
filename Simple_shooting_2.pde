@@ -282,6 +282,22 @@ boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
   return true;
 }
 
+PVector SegmentCrossPoint(PVector s1,PVector v1,PVector s2,PVector v2){
+  PVector v=new PVector(s2.x-s1.x,s2.y-s1.y);
+  float crs_v1_v2=cross(v1,v2);
+  if(crs_v1_v2==0){
+    return null;
+  }
+  float crs_v_v1=cross(v,v1);
+  float crs_v_v2=cross(v,v2);
+  float t1 = crs_v_v2/crs_v1_v2;
+  float t2 = crs_v_v1/crs_v1_v2;
+  if (t1+0.00001<0||t1-0.00001>1||t2+0.00001<0||t2-0.00001>1) {
+    return null;
+  }
+  return s1.add(v1.copy().mult(t1));
+}
+
 void keyPressed(processing.event.KeyEvent e){
   ModifierKey=e.getKeyCode();
   PressedKey.add(str(key));
