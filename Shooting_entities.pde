@@ -367,43 +367,51 @@ class Myself extends Entity{
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       return;
     }
-    /*if(qDist(rect,pos,size/2)){
-      float r=atan2(pos.x-rect.x,pos.y-rect.y);
+    if(qDist(rect,pos,size/2)&
+       !(field.toAttribute(field.getTile(rect.copy().add(-TileSize,0))).equals("Wall")
+       |(field.toAttribute(field.getTile(rect.copy().add(0,-TileSize))).equals("Wall")))){
+      float r=-atan2(rect.x-pos.x,rect.y-pos.y)-PI/2;
       int x=field.getTile(new PVector(pos.x-TileSize,pos.y));
       int y=field.getTile(new PVector(pos.x,pos.y-TileSize));
       pos.x=field.getAttributes().get(x).equals("Wall")?
-            rect.x-size/2:rect.x+cos(-r)*size/2;
+            rect.x-size/2:rect.x+cos(r)*size/2;
       pos.y=field.getAttributes().get(y).equals("Wall")?
-            rect.y+size/2:rect.y+sin(-r)*size/2;
+            rect.y+size/2:rect.y+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("LeftUp");
       return;
-    }else if(qDist(new PVector(rect.x,rect.y+TileSize),pos,size/2)){
-      float r=atan2(pos.x-rect.x,pos.y-rect.y-TileSize);
-      pos.x=rect.x+cos(-r)*size/2;
-      pos.y=rect.y+TileSize+sin(-r)*size/2;
+    }else if(qDist(new PVector(rect.x,rect.y+TileSize),pos,size/2)&
+             !(field.toAttribute(field.getTile(rect.copy().add(-TileSize,0))).equals("Wall")
+             |(field.toAttribute(field.getTile(rect.copy().add(0,TileSize))).equals("Wall")))){
+      float r=-atan2(rect.x-pos.x,rect.y+TileSize-pos.y)-PI/2;
+      pos.x=rect.x+cos(r)*size/2;
+      pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("LeftDown");
       return;
-    }else if(qDist(new PVector(rect.x+TileSize,rect.y),pos,size/2)){
-      float r=atan2(pos.x-rect.x-TileSize,pos.y-rect.y);
+    }else if(qDist(new PVector(rect.x+TileSize,rect.y),pos,size/2)&
+             !(field.toAttribute(field.getTile(rect.copy().add(TileSize,0))).equals("Wall")
+             |(field.toAttribute(field.getTile(rect.copy().add(0,-TileSize))).equals("Wall")))){
+      float r=-atan2(rect.x+TileSize-pos.x,rect.y-pos.y)-PI/2;
       int x=field.getTile(new PVector(pos.x+TileSize,pos.y));
       int y=field.getTile(new PVector(pos.x,pos.y-TileSize));
       pos.x=field.getAttributes().get(x).equals("Wall")?
-            rect.x+TileSize+size/2:rect.x+TileSize+cos(-r)*size/2;
+            rect.x+TileSize+size/2:rect.x+TileSize+cos(r)*size/2;
       pos.y=field.getAttributes().get(y).equals("Wall")?
-            rect.y+size/2:rect.y+sin(-r)*size/2;
+            rect.y+size/2:rect.y+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("RightUp");
       return;
-    }else if(qDist(new PVector(rect.x+TileSize,rect.y+TileSize),pos,size/2)){
-      float r=atan2(pos.x-rect.x-TileSize,pos.y-rect.y-TileSize);
-      pos.x=rect.x+TileSize+cos(-r)*size/2;
-      pos.y=rect.y+TileSize+sin(-r)*size/2;
+    }else if(qDist(new PVector(rect.x+TileSize,rect.y+TileSize),pos,size/2)&
+             !(field.toAttribute(field.getTile(rect.copy().add(TileSize,0))).equals("Wall")
+             |(field.toAttribute(field.getTile(rect.copy().add(0,TileSize))).equals("Wall")))){
+      float r=-atan2(rect.x+TileSize-pos.x,rect.y+TileSize-pos.y)-PI/2;
+      pos.x=rect.x+TileSize+cos(r)*size/2;
+      pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
       println("RightDown");
       return;
-    }*/
+    }
   }
   
   void BulletCollision(){
