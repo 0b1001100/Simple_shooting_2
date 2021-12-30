@@ -55,6 +55,9 @@ class GameProcess{
       p.display();
     }
     popMatrix();
+    fill(255);
+    textSize(15);
+    text("x : Open menu",width-20,80);
   }
   
   void switchMenu(){
