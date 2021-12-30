@@ -16,6 +16,8 @@ import java.util.concurrent.*;
 import com.jogamp.newt.opengl.*;
 import com.jogamp.newt.event.*;
 
+GameProcess main;
+
 Myself player;
 
 ExecutorService exec=Executors.newCachedThreadPool();
@@ -101,8 +103,7 @@ void setup(){
   TileSize=field.tileSize;
 }
 
-void draw(){
-  background(0);println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB");
+void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB");
   switch(scene){
     case 0:Menu();break;
     case 1:Field();break;
@@ -164,21 +165,9 @@ void Field(){
 
 void Stage(){
   if(changeScene){
-    field.loadMap("Field02.lfdf");
-    player=new Myself();
-    Enemies.add(new Turret(new PVector(300,300)));
+    main=new GameProcess();
   }
-  field.displayMap();
-  drawShape();
-  updateShape();
-}
-
-void updateShape(){
-  try{
-  execFuture=exec.submit(particleTask);
-  }catch(Exception e){
-    e.printStackTrace();
-  }
+  main.process();
 }
 
 PVector Project(float winX, float winY){

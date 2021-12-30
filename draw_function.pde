@@ -51,26 +51,6 @@ void configration(){
   }
 }
 
-void drawShape(){
-  pushMatrix();
-  translate(scroll.x,scroll.y);
-  localMouse=unProject(mouseX,mouseY);
-  player.display();
-  for(Enemy e:Enemies){
-    e.display();
-  }
-  for(Bullet b:eneBullets){
-    b.display();
-  }
-  for(Bullet b:Bullets){
-    b.display();
-  }
-  for(Particle p:Particles){
-    p.display();
-  }
-  popMatrix();
-}
-
 void Shader(){
   if(ColorInv){
     loadPixels();
