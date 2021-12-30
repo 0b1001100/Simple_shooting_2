@@ -19,7 +19,7 @@ class HomingBullet extends Bullet{
   
   @Override
   void update(){
-    float rad=atan2(localMouse.x-pos.x,localMouse.y-pos.y)-PI*0.5;
+    float rad=atan2(target.pos.x-pos.x,target.pos.y-pos.y)-PI*0.5;
     float nRad=0<rotate?rad+TWO_PI:rad-TWO_PI;
     rad=abs(rotate-rad)<abs(rotate-nRad)?rad:nRad;
     rad=sign(rad-rotate)*constrain(abs(rad-rotate),0,PI*mag*vectorMagnification);
@@ -27,5 +27,57 @@ class HomingBullet extends Bullet{
     rotate%=TWO_PI;
     vel=new PVector(cos(-rotate)*speed,sin(-rotate)*speed);
     super.update();
+  }
+}
+
+class CollisionBullet extends Bullet{
+  Entity parent=null;
+  
+  CollisionBullet(Myself m){
+    super(m);
+    parent=m;
+  }
+  
+  CollisionBullet(Entity e,Weapon w){
+    super(e,w);
+    parent=e;
+  }
+  
+  @Override
+  void display(){
+    super.display();
+  }
+  
+  @Override
+  void update(){
+    for(Bullet b:Bullets){
+      if(b instanceof CollisionBullet){
+        if(((CollisionBullet)b).parent.equals(parent)){
+          continue;
+        }
+      }
+      if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),
+                          b.pos,b.vel.copy().mult(vectorMagnification))){
+        b.isDead=true;
+        isDead=true;
+        Particles.add(new Particle(b,1));
+        Particles.add(new Particle(this,1));
+      }
+    }
+    for(Bullet b:eneBullets){
+      if(b instanceof CollisionBullet){
+        if(((CollisionBullet)b).parent.equals(parent)){
+          continue;
+        }
+      }
+      if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),
+                          b.pos,b.vel.copy().mult(vectorMagnification))){
+        b.isDead=true;
+        isDead=true;
+        Particles.add(new Particle(b,1));
+        Particles.add(new Particle(this,1));
+      }
+    }
+    if(!isDead)super.update();
   }
 }

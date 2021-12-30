@@ -465,7 +465,16 @@ class Enemy extends Entity{
   }
   
   void display(){
-    
+    pushMatrix();
+    translate(pos.x,pos.y);
+    rotate(-rotate);
+    rectMode(CENTER);
+    strokeWeight(1);
+    noFill();
+    stroke(0,0,255);
+    rect(0,0,size,size);
+    popMatrix();
+    printHP();
   }
   
   void update(){
@@ -494,6 +503,10 @@ class Enemy extends Entity{
   void setHP(double h){
     maxHP=h;
     HP=h;
+  }
+  
+  void setWeapon(Weapon w){
+    useWeapon=w;
   }
   
   void updateVertex(){

@@ -15,16 +15,7 @@ class Turret extends Enemy{
   }
   
   void display(){
-    pushMatrix();
-    translate(pos.x,pos.y);
-    rotate(-rotate);
-    rectMode(CENTER);
-    strokeWeight(1);
-    noFill();
-    stroke(0,0,255);
-    rect(0,0,size,size);
-    popMatrix();
-    printHP();
+    super.display();
   }
   
   void update(){
@@ -59,16 +50,7 @@ class Normal extends Enemy{
   }
   
   void display(){
-    pushMatrix();
-    translate(pos.x,pos.y);
-    rotate(-rotate);
-    rectMode(CENTER);
-    strokeWeight(1);
-    noFill();
-    stroke(0,100,255);
-    rect(0,0,size,size);
-    popMatrix();
-    printHP();
+    super.display();
   }
   
   void update(){
