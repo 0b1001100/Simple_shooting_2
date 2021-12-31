@@ -1,4 +1,5 @@
 class GameProcess{
+  menuManage mainMenu;
   Color menuColor=new Color(230,230,230);
   float UItime=0;
   boolean animation=false;
@@ -10,6 +11,7 @@ class GameProcess{
   
   void setup(){
     field.loadMap("Field02.lfdf");
+    mainMenu=new menuManage();
     player=new Myself();
     Enemies.add(new Turret(new PVector(300,300)));
   }
@@ -67,11 +69,13 @@ class GameProcess{
     background(menuColor.getRed()*normUItime,menuColor.getGreen()*normUItime,
                menuColor.getBlue()*normUItime,menuColor.getAlpha());
     if(menu.equals("Main")&!animation){
+      mainMenu.init();
       menu="Menu";
       UItime=0f;
       animation=true;
     }
     if(menu.equals("Menu")&!animation){
+      mainMenu.dispose();
       menu="Main";
       UItime=30f;
       animation=true;
@@ -98,6 +102,51 @@ class GameProcess{
   }
   
   void drawMenu(){
+    mainMenu.display();
+  }
+  
+  class menuManage{
+    String scene="main";
+    ComponentSet main;
+    ComponentSet conf;
     
+    menuManage(){
+      
+    }
+    
+    void init(){
+      main=new ComponentSet();
+      MenuButton equip=new MenuButton("装備");
+      equip.setBounds(100,120,120,25);
+      MenuButton item=new MenuButton("アイテム");
+      item.setBounds(100,160,120,25);
+      MenuButton archive=new MenuButton("アーカイブ");
+      archive.setBounds(100,200,120,25);
+      MenuButton setting=new MenuButton("設定");
+      setting.setBounds(100,240,120,25);
+      main.add(equip);
+      main.add(item);
+      main.add(archive);
+      main.add(setting);
+    }
+    
+    void display(){
+      switch(scene){
+        case "main":main.display();break;
+        case "conf":conf.display();break;
+      }
+    }
+    
+    void update(){
+      switch(scene){
+        case "main":main.update();break;
+        case "conf":conf.update();break;
+      }
+    }
+    
+    void dispose(){
+      main=null;
+      conf=null;
+    }
   }
 }

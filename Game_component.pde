@@ -381,8 +381,52 @@ class NormalButton extends TextButton{
   }
   
   TextButton setText(String s){
-    text=s;
-    return this;
+    return super.setText(s);
+  }
+}
+
+class MenuButton extends TextButton{
+  Color sideLineColor=new Color(0,150,255);
+  
+  MenuButton(){
+    setBackground(new Color(220,220,220));
+    setForeground(new Color(0,0,0));
+    setSelectBackground(new Color(200,200,200));
+    setSelectForeground(new Color(40,40,40));
+    setBorderColor(new Color(0,0,0,0));
+  }
+  
+  MenuButton(String s){
+    super(s);
+    setBackground(new Color(220,220,220));
+    setForeground(new Color(0,0,0));
+    setSelectBackground(new Color(200,200,200));
+    setSelectForeground(new Color(40,40,40));
+    setBorderColor(new Color(0,0,0,0));
+  }
+  
+  void display(){
+    blendMode(BLEND);
+    strokeWeight(1);
+    fill(!focus?toColor(background):toColor(selectbackground));
+    stroke(0,0,0,0);
+    rectMode(CORNER);
+    rect(pos.x,pos.y,dist.x,dist.y);
+    stroke(!focus?color(0,0,0,0):toColor(sideLineColor));
+    line(pos.x,pos.y,pos.x,pos.y+dist.y);
+    fill(!focus?toColor(foreground):toColor(selectforeground));
+    textAlign(CENTER);
+    textSize(dist.y*0.5);
+    text(text,center.x,center.y+dist.y*0.2);
+    blendMode(ADD);
+  }
+  
+  void update(){
+    super.update();
+  }
+  
+  TextButton setText(String s){
+    return super.setText(s);
   }
 }
 

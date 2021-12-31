@@ -287,6 +287,10 @@ PVector SegmentCrossPoint(PVector s1,PVector v1,PVector s2,PVector v2){
   return s1.add(v1.copy().mult(t1));
 }
 
+color toColor(Color c){
+  return color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+}
+
 void keyPressed(processing.event.KeyEvent e){
   ModifierKey=e.getKeyCode();
   PressedKey.add(str(key));
