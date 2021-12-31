@@ -1,4 +1,5 @@
 class GameProcess{
+  Color menuColor=new Color(230,230,230);
   float UItime=0;
   boolean animation=false;
   String menu="Main";
@@ -23,7 +24,8 @@ class GameProcess{
         drawShape();
         updateShape();
       }else if(menu.equals("Menu")){
-        background(255,230,200);
+        background(menuColor.getRed(),menuColor.getGreen(),menuColor.getBlue());
+        drawMenu();
       }
     }
     if(keyPress&key=='x')switchMenu();
@@ -61,7 +63,9 @@ class GameProcess{
   }
   
   void switchMenu(){
-    background(255*UItime/30,230*UItime/30,200*UItime/30);
+    float normUItime=UItime/30;
+    background(menuColor.getRed()*normUItime,menuColor.getGreen()*normUItime,
+               menuColor.getBlue()*normUItime,menuColor.getAlpha());
     if(menu.equals("Main")&!animation){
       menu="Menu";
       UItime=0f;
@@ -72,11 +76,13 @@ class GameProcess{
       UItime=30f;
       animation=true;
     }
+    int x=9;
+    int y=16;
     float Width=width/16f;
     float Height=height/9f;
-    for(int i=0;i<9;i++){//y
-      for(int j=0;j<16;j++){//x
-        fill(255,230,200);
+    for(int i=0;i<x;i++){//y
+      for(int j=0;j<y;j++){//x
+        fill(menuColor.getRed(),menuColor.getGreen(),menuColor.getBlue());
         noStroke();
         rectMode(CENTER);
         pushMatrix();
