@@ -90,8 +90,8 @@ class GameProcess{
         noStroke();
         rectMode(CENTER);
         pushMatrix();
-        scale(min(max(UItime-(j+i),0),1));
-        rect(Width*j+Width/2,Height*i+Height/2,Width,Height);
+        float scale=min(max(UItime-(j+i),0),1);
+        rect(Width*j+Width/2,Height*i+Height/2,Width*scale,Height*scale);
         popMatrix();
       }
     }
