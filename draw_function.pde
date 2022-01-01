@@ -53,9 +53,11 @@ void configration(){
 
 void Shader(){
   if(ColorInv){
+    long l=System.nanoTime();
     loadPixels();
     t.pixels=pixels;
     t.updatePixels();
+    println(System.nanoTime()-l);
     colorInv.set("tex",t);
     colorInv.set("resolution",width,height);
     shader(colorInv);
