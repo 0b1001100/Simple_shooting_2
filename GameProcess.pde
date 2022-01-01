@@ -1,9 +1,12 @@
 class GameProcess{
   menuManage mainMenu;
   Color menuColor=new Color(230,230,230);
+  PShader menuShader;
   float UItime=0;
   boolean animation=false;
   String menu="Main";
+  int x=16;
+  int y=9;
   
   GameProcess(){
     setup();
@@ -11,6 +14,7 @@ class GameProcess{
   
   void setup(){
     field.loadMap("Field02.lfdf");
+    menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
     Enemies.add(new Turret(new PVector(300,300)));
@@ -28,6 +32,7 @@ class GameProcess{
       }else if(menu.equals("Menu")){
         background(menuColor.getRed(),menuColor.getGreen(),menuColor.getBlue());
         drawMenu();
+        updateMenu();
       }
     }
     if(keyPress&(key=='c'|keyCode==CONTROL))switchMenu();
@@ -37,7 +42,6 @@ class GameProcess{
     try{
     execFuture=exec.submit(particleTask);
     }catch(Exception e){
-      e.printStackTrace();
     }
   }
   
@@ -67,7 +71,7 @@ class GameProcess{
   void switchMenu(){
     float normUItime=UItime/30;
     background(menuColor.getRed()*normUItime,menuColor.getGreen()*normUItime,
-               menuColor.getBlue()*normUItime,menuColor.getAlpha());
+               menuColor.getBlue()*normUItime);
     if(menu.equals("Main")&!animation){
       mainMenu.init();
       menu="Menu";
@@ -75,13 +79,11 @@ class GameProcess{
       animation=true;
     }
     if(menu.equals("Menu")&!animation){
-      mainMenu.dispose();
       menu="Main";
       UItime=30f;
       animation=true;
     }
-    int x=16;
-    int y=9;
+    blendMode(BLEND);
     float Width=width/x;
     float Height=height/y;
     for(int i=0;i<y;i++){//y
@@ -89,20 +91,41 @@ class GameProcess{
         fill(menuColor.getRed(),menuColor.getGreen(),menuColor.getBlue());
         noStroke();
         rectMode(CENTER);
-        pushMatrix();
         float scale=min(max(UItime-(j+i),0),1);
         rect(Width*j+Width/2,Height*i+Height/2,Width*scale,Height*scale);
-        popMatrix();
       }
     }
+    drawMenu();
+    updateMenu();
+    menuShading();
     switch(menu){
-      case "Main":UItime-=vectorMagnification;if(UItime<0)animation=false;break;
+      case "Main":UItime-=vectorMagnification;if(UItime<0){animation=false;mainMenu.dispose();}break;
       case "Menu":UItime+=vectorMagnification;if(UItime>30)animation=false;break;
     }
   }
   
   void drawMenu(){
     mainMenu.display();
+  }
+  
+  void updateMenu(){
+    mainMenu.update();
+  }
+  
+  void menuShading(){
+    loadPixels();
+    t.pixels=pixels;
+    t.updatePixels();
+    menuShader.set("time",UItime);
+    menuShader.set("xy",(float)x,(float)y);
+    menuShader.set("resolution",(float)width,(float)height);
+    menuShader.set("menuColor",(float)menuColor.getRed(),(float)menuColor.getGreen(),(float)menuColor.getBlue(),255.0);
+    menuShader.set("tex",t);
+    shader(menuShader);
+    rectMode(CORNER);
+    background(0);
+    rect(0,0,width,height);
+    resetShader();
   }
   
   class menuManage{

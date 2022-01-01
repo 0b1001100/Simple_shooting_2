@@ -421,7 +421,7 @@ class Myself extends Entity{
       pos.x=rect.x+TileSize+cos(r)*size/2;
       pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      println("RightDown");exit();
+      println("RightDown");
       return;
     }
   }

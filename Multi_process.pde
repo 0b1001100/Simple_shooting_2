@@ -37,3 +37,17 @@ class ParticleProcess implements Callable<String>{
     return "";
   }
 }
+
+class pixelProcess implements Callable<String>{
+  
+  pixelProcess(){
+    
+  }
+  
+  String call(){
+    loadPixels();
+    t.pixels=pixels;
+    t.updatePixels();
+    return "";
+  }
+}

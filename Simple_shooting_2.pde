@@ -1,5 +1,6 @@
 /*
-  author:0x4C
+  author : 0x4C
+  LICENSE : GNU General Public License v3.0
 */
 
 import processing.awt.*;
