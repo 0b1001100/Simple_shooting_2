@@ -88,7 +88,7 @@ class GameProcess{
     float Height=height/y;
     for(int i=0;i<y;i++){//y
       for(int j=0;j<x;j++){//x
-        fill(menuColor.getRed(),menuColor.getGreen(),menuColor.getBlue());
+        fill(toRGB(menuColor));
         noStroke();
         rectMode(CENTER);
         float scale=min(max(UItime-(j+i),0),1);
@@ -119,7 +119,7 @@ class GameProcess{
     menuShader.set("time",UItime);
     menuShader.set("xy",(float)x,(float)y);
     menuShader.set("resolution",(float)width,(float)height);
-    menuShader.set("menuColor",(float)menuColor.getRed(),(float)menuColor.getGreen(),(float)menuColor.getBlue(),255.0);
+    menuShader.set("menuColor",(float)menuColor.getRed()/255,(float)menuColor.getGreen()/255,(float)menuColor.getBlue()/255,1.0);
     menuShader.set("tex",t);
     shader(menuShader);
     rectMode(CORNER);
@@ -138,6 +138,8 @@ class GameProcess{
     }
     
     void init(){
+      main=null;
+      conf=null;
       main=new ComponentSet();
       MenuButton equip=new MenuButton("装備");
       equip.setBounds(100,120,120,25);
@@ -147,10 +149,28 @@ class GameProcess{
       archive.setBounds(100,200,120,25);
       MenuButton setting=new MenuButton("設定");
       setting.setBounds(100,240,120,25);
+      setting.addListener(()->{
+        scene="conf";
+        init();
+      });
       main.add(equip);
       main.add(item);
       main.add(archive);
       main.add(setting);
+      conf=new ComponentSet();
+      MenuButton cBack=new MenuButton("戻る");
+      cBack.setBounds(120,110,120,25);
+      cBack.addListener(()->{
+        scene="main";
+        init();
+      });
+      MenuButton quit=new MenuButton("ゲームを終了");
+      quit.setBounds(120,150,120,25);
+      quit.addListener(()->{
+        exit();
+      });
+      conf.add(cBack);
+      conf.add(quit);
     }
     
     void display(){

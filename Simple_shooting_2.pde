@@ -292,6 +292,10 @@ color toColor(Color c){
   return color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
 }
 
+color toRGB(Color c){
+  return color(c.getRed(),c.getGreen(),c.getBlue(),255);
+}
+
 void keyPressed(processing.event.KeyEvent e){
   ModifierKey=e.getKeyCode();
   PressedKey.add(str(key));

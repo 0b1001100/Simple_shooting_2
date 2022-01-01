@@ -5,7 +5,7 @@ uniform vec4 menuColor;
 uniform sampler2D tex;
 
 vec4 toScreen(float standard,vec4 col){
-  return mix(vec4(0.902),col,floor(standard));
+  return mix(menuColor*vec4(time/30),col,floor(standard));
 }
 
 void main(void){
