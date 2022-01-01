@@ -35,7 +35,7 @@ class GameProcess{
         updateMenu();
       }
     }
-    if(keyPress&(key=='c'|keyCode==CONTROL))switchMenu();
+    keyProcess();
   }
 
   void updateShape(){
@@ -69,9 +69,6 @@ class GameProcess{
   }
   
   void switchMenu(){
-    float normUItime=UItime/30;
-    background(menuColor.getRed()*normUItime,menuColor.getGreen()*normUItime,
-               menuColor.getBlue()*normUItime);
     if(menu.equals("Main")&!animation){
       mainMenu.init();
       menu="Menu";
@@ -79,10 +76,14 @@ class GameProcess{
       animation=true;
     }
     if(menu.equals("Menu")&!animation){
+      if(!mainMenu.isMain())return;
       menu="Main";
       UItime=30f;
       animation=true;
     }
+    float normUItime=UItime/30;
+    background(menuColor.getRed()*normUItime,menuColor.getGreen()*normUItime,
+               menuColor.getBlue()*normUItime);
     blendMode(BLEND);
     float Width=width/x;
     float Height=height/y;
@@ -110,6 +111,10 @@ class GameProcess{
   
   void updateMenu(){
     mainMenu.update();
+  }
+  
+  void keyProcess(){
+    if(keyPress&(key=='c'|keyCode==CONTROL))switchMenu();
   }
   
   void menuShading(){
@@ -190,6 +195,10 @@ class GameProcess{
     void dispose(){
       main=null;
       conf=null;
+    }
+    
+    boolean isMain(){
+      return scene.equals("main");
     }
   }
 }

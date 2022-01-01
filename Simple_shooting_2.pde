@@ -124,6 +124,10 @@ void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().fre
   println(System.currentTimeMillis()-pTime);
 }
 
+void stop(){
+  exec.shutdown();
+}
+
 void eventProcess(){
   if(!pmousePress&&mousePressed){
     mousePress=true;
