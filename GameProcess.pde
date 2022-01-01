@@ -80,12 +80,12 @@ class GameProcess{
       UItime=30f;
       animation=true;
     }
-    int x=9;
-    int y=16;
-    float Width=width/16f;
-    float Height=height/9f;
-    for(int i=0;i<x;i++){//y
-      for(int j=0;j<y;j++){//x
+    int x=16;
+    int y=9;
+    float Width=width/x;
+    float Height=height/y;
+    for(int i=0;i<y;i++){//y
+      for(int j=0;j<x;j++){//x
         fill(menuColor.getRed(),menuColor.getGreen(),menuColor.getBlue());
         noStroke();
         rectMode(CENTER);
