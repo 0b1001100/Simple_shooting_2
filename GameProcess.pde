@@ -30,7 +30,7 @@ class GameProcess{
         drawMenu();
       }
     }
-    if(keyPress&key=='x')switchMenu();
+    if(keyPress&(key=='c'|keyCode==CONTROL))switchMenu();
   }
 
   void updateShape(){
@@ -61,7 +61,7 @@ class GameProcess{
     popMatrix();
     fill(255);
     textSize(15);
-    text("x : Open menu",width-20,80);
+    text("c : Open menu",width-20,80);
   }
   
   void switchMenu(){
