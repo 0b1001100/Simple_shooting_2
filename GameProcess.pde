@@ -76,7 +76,10 @@ class GameProcess{
       animation=true;
     }
     if(menu.equals("Menu")&!animation){
-      if(!mainMenu.isMain())return;
+      if(!mainMenu.isMain()){
+        mainMenu.back();
+        return;
+      }
       menu="Main";
       UItime=30f;
       animation=true;
@@ -135,7 +138,12 @@ class GameProcess{
   
   class menuManage{
     String scene="main";
+    String pScene="main";
+    String pChangeScene="main";
     ComponentSet main;
+    ComponentSet equ;
+    ComponentSet Item;
+    ComponentSet arc;
     ComponentSet conf;
     
     menuManage(){
@@ -144,30 +152,95 @@ class GameProcess{
     
     void init(){
       main=null;
+      equ=null;
+      Item=null;
+      arc=null;
       conf=null;
       main=new ComponentSet();
       MenuButton equip=new MenuButton("装備");
       equip.setBounds(100,120,120,25);
+      equip.addListener(()->{
+        pChangeScene=scene;
+        scene="equ";
+      });
       MenuButton item=new MenuButton("アイテム");
       item.setBounds(100,160,120,25);
+      item.addListener(()->{
+        pChangeScene=scene;
+        scene="Item";
+      });
       MenuButton archive=new MenuButton("アーカイブ");
       archive.setBounds(100,200,120,25);
+      archive.addListener(()->{
+        pChangeScene=scene;
+        scene="arc";
+      });
       MenuButton setting=new MenuButton("設定");
       setting.setBounds(100,240,120,25);
       setting.addListener(()->{
+        pChangeScene=scene;
         scene="conf";
-        init();
       });
       main.add(equip);
       main.add(item);
       main.add(archive);
       main.add(setting);
+      equ=new ComponentSet();
+      MenuButton eBack=new MenuButton("戻る");
+      eBack.setBounds(20,100,120,25);
+      eBack.addListener(()->{
+        scene=pChangeScene;
+      });
+      MenuButton weapon=new MenuButton("武器");
+      weapon.setBounds(20,130,120,25);
+      weapon.addListener(()->{
+      });
+      MenuButton ext=new MenuButton("拡張");
+      ext.setBounds(20,160,120,25);
+      ext.addListener(()->{
+      });
+      equ.add(eBack);
+      equ.add(weapon);
+      equ.add(ext);
+      Item=new ComponentSet();
+      MenuButton iBack=new MenuButton("戻る");
+      iBack.setBounds(20,100,120,25);
+      iBack.addListener(()->{
+        scene=pChangeScene;
+      });
+      MenuButton ite=new MenuButton("アイテム");
+      ite.setBounds(20,130,120,25);
+      ite.addListener(()->{
+      });
+      MenuButton mat=new MenuButton("素材");
+      mat.setBounds(20,160,120,25);
+      mat.addListener(()->{
+      });
+      MenuButton wea=new MenuButton("武器");
+      wea.setBounds(20,190,120,25);
+      wea.addListener(()->{
+      });
+      MenuButton chi=new MenuButton("拡張チップ");
+      chi.setBounds(20,220,120,25);
+      chi.addListener(()->{
+      });
+      Item.add(iBack);
+      Item.add(ite);
+      Item.add(mat);
+      Item.add(wea);
+      Item.add(chi);
+      arc=new ComponentSet();
+      MenuButton aBack=new MenuButton("戻る");
+      aBack.setBounds(20,100,120,25);
+      aBack.addListener(()->{
+        scene=pChangeScene;
+      });
+      arc.add(aBack);
       conf=new ComponentSet();
       MenuButton cBack=new MenuButton("戻る");
       cBack.setBounds(120,110,120,25);
       cBack.addListener(()->{
-        scene="main";
-        init();
+        scene=pChangeScene;
       });
       MenuButton quit=new MenuButton("ゲームを終了");
       quit.setBounds(120,150,120,25);
@@ -181,6 +254,9 @@ class GameProcess{
     void display(){
       switch(scene){
         case "main":main.display();break;
+        case "equ":equ.display();break;
+        case "Item":Item.display();break;
+        case "arc":arc.display();break;
         case "conf":conf.display();break;
       }
     }
@@ -188,17 +264,31 @@ class GameProcess{
     void update(){
       switch(scene){
         case "main":main.update();break;
+        case "equ":equ.update();break;
+        case "Item":Item.update();break;
+        case "arc":arc.update();break;
         case "conf":conf.update();break;
       }
+      if(!scene.equals(pScene)){
+        init();
+      }
+      pScene=scene;
     }
     
     void dispose(){
       main=null;
+      equ=null;
+      Item=null;
+      arc=null;
       conf=null;
     }
     
     boolean isMain(){
       return scene.equals("main");
+    }
+    
+    void back(){
+      scene=pChangeScene;
     }
   }
 }
