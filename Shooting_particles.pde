@@ -26,6 +26,11 @@ class Particle{
     }
   }
   
+  Particle(Entity e,String s){
+    particles.add(new StringFragment(e.pos,new PVector(0,1),
+                      new Color(255,255,255),10,s));
+  }
+  
   Particle(Entity e,int num,float speed){
     for(int i=0;i<num;i++){
       float scala=random(0,speed);
@@ -69,8 +74,9 @@ class Particle{
 class StringFragment extends particleFragment{
   String text="0";
   
-  StringFragment(PVector pos,PVector vel,Color c,float size){
+  StringFragment(PVector pos,PVector vel,Color c,float size,String s){
     super(pos,vel,c,size);
+    setText(s);
   }
   
   void setText(String s){
