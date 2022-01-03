@@ -66,6 +66,29 @@ class Particle{
   }
 }
 
+class StringFragment extends particleFragment{
+  String text="0";
+  
+  StringFragment(PVector pos,PVector vel,Color c,float size){
+    super(pos,vel,c,size);
+  }
+  
+  void setText(String s){
+    text=s;
+  }
+  
+  void display(){
+    textAlign(CENTER);
+    textSize(size);
+    fill(toColor(pColor));
+    text(text,pos.x,pos.y);
+  }
+  
+  void update(){
+    super.update();
+  }
+}
+
 class particleFragment{
   PVector pos;
   PVector vel;
