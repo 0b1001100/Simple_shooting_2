@@ -27,8 +27,8 @@ class Particle{
   }
   
   Particle(Entity e,String s){
-    particles.add(new StringFragment(e.pos,new PVector(0,1),
-                      new Color(255,255,255),10,s));
+    particles.add(new StringFragment(e.pos,new PVector(0,-1),
+                      e instanceof Myself?new Color(255,0,0):new Color(255,255,255),15,s));
   }
   
   Particle(Entity e,int num,float speed){
@@ -85,6 +85,9 @@ class StringFragment extends particleFragment{
   
   void display(){
     textAlign(CENTER);
+    textSize(size+1);
+    fill(105,105,105);
+    text(text,pos.x,pos.y);
     textSize(size);
     fill(toColor(pColor));
     text(text,pos.x,pos.y);

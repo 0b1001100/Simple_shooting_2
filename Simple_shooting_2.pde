@@ -22,8 +22,10 @@ GameProcess main;
 Myself player;
 
 ExecutorService exec=Executors.newCachedThreadPool();
-Future<?> execFuture;
+Future<?> particleFuture;
+Future<?> enemyFuture;
 ParticleProcess particleTask=new ParticleProcess();
+EnemyProcess enemyTask=new EnemyProcess();
 
 ComponentSet starts=new ComponentSet();
 ComponentSet configs=new ComponentSet();
@@ -89,7 +91,7 @@ void setup(){
       pscreen.sub(w.getWidth(),w.getHeight()).div(2);
       scroll.sub(pscreen);
       pscreen=new PVector(w.getWidth(),w.getHeight());
-      t=new PImage(width,height,PImage.ARGB,displayDensity());
+      t=new PImage(w.getWidth(),w.getHeight(),PImage.ARGB,displayDensity());
     }
   });
   PFont font=createFont("SansSerif.plain",50);
@@ -112,7 +114,8 @@ void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().fre
   }
   eventProcess();
   try{
-    execFuture.get();
+    enemyFuture.get();
+    particleFuture.get();
   }catch(InterruptedException|ExecutionException e){
   }catch(NullPointerException f){
   }

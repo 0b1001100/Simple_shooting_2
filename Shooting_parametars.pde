@@ -100,6 +100,10 @@ class Status{
     return new BigDecimal(minStatus.toString());
   }
   
+  String toString(){
+    return status.toString();
+  }
+  
   float getPercentage(){
     return !status.equals(new BigDecimal(0)) ? status.divide(maxStatus).floatValue() : 0;
   }

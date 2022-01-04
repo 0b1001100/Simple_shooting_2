@@ -6,6 +6,25 @@ class ParticleProcess implements Callable<String>{
   }
   
   String call(){pTime=System.currentTimeMillis();
+    ArrayList<Particle>nextParticles=new ArrayList<Particle>();
+    for(Particle p:Particles){
+      p.update();
+      if(!p.isDead)nextParticles.add(p);
+    }
+    Particles=nextParticles;
+    println("sub",System.currentTimeMillis()-pTime);
+    return "";
+  }
+}
+
+class EnemyProcess implements Callable<String>{
+  long pTime=0;
+  
+  EnemyProcess(){
+    
+  }
+  
+  String call(){pTime=System.currentTimeMillis();
     player.update();
     ArrayList<Enemy>nextEnemies=new ArrayList<Enemy>();
     for(Enemy e:Enemies){
@@ -27,13 +46,7 @@ class ParticleProcess implements Callable<String>{
       if(!b.isDead)nextEneBullets.add(b);
     }
     eneBullets=nextEneBullets;
-    ArrayList<Particle>nextParticles=new ArrayList<Particle>();
-    for(Particle p:Particles){
-      p.update();
-      if(!p.isDead)nextParticles.add(p);
-    }
-    Particles=nextParticles;
-    println("sub",System.currentTimeMillis()-pTime);
+    println("ene",System.currentTimeMillis()-pTime);
     return "";
   }
 }

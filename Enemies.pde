@@ -28,7 +28,7 @@ class Turret extends Enemy{
   }
   
   void Hit(){
-    HP-=ShotWeapon.power;
+    super.Hit();
   }
 }
 

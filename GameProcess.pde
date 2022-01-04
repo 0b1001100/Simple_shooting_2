@@ -40,7 +40,8 @@ class GameProcess{
 
   void updateShape(){
     try{
-    execFuture=exec.submit(particleTask);
+    particleFuture=exec.submit(particleTask);
+    enemyFuture=exec.submit(enemyTask);
     }catch(Exception e){
     }
   }

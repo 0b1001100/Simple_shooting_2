@@ -450,6 +450,7 @@ class Myself extends Entity{
   
   protected void Hit(){
     HP.sub(ShotWeapon.power);
+    Particles.add(new Particle(this,str((int)ShotWeapon.power)));
   }
 }
 
@@ -457,6 +458,8 @@ class Enemy extends Entity{
   Weapon useWeapon=null;
   Weapon ShotWeapon=null;
   float size=20;
+  double damage=0;
+  boolean hit=false;
   protected double maxHP=10d;
   protected double HP=10d;
   
@@ -474,7 +477,7 @@ class Enemy extends Entity{
     stroke(0,0,255);
     rect(0,0,size,size);
     popMatrix();
-    printHP();
+    if(!(maxHP==HP))printHP();
   }
   
   void update(){
@@ -519,6 +522,8 @@ class Enemy extends Entity{
   }
   
   void BulletCollision(){
+    damage=0;
+    hit=false;
     COLLISION:for(Bullet b:Bullets){
       for(int i=0;i<4;i++){
         PVector s=new PVector();
@@ -537,11 +542,14 @@ class Enemy extends Entity{
         }
       }
     }
+    if(hit)Particles.add(new Particle(this,str((int)damage)));
     if(HP<=0)Down();
   }
   
   protected void Hit(){
-    
+    HP-=ShotWeapon.power;
+    damage+=ShotWeapon.power;
+    hit=true;
   }
   
   protected void Down(){
