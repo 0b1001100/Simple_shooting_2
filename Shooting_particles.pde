@@ -86,7 +86,7 @@ class StringFragment extends particleFragment{
   void display(){
     textAlign(CENTER);
     textSize(size+1);
-    fill(105,105,105);
+    fill(128,128,128,pColor.getAlpha());
     text(text,pos.x,pos.y);
     textSize(size);
     fill(toColor(pColor));

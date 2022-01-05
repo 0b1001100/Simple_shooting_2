@@ -49,6 +49,46 @@ class EnemyProcess implements Callable<String>{
     println("ene",System.currentTimeMillis()-pTime);
     return "";
   }
+  
+  String call(int start,int end){
+    if(start==0)player.update();
+    int E=start;
+    for(int i=start;E<end+1;i++){
+      Enemies.get(i).update();
+      if(Enemies.get(i).isDead){
+        Enemies.remove(i);
+        i--;
+      }
+      E++;
+    }
+    int B=start;
+    for(int i=start;B<end+1;i++){
+      if(Bullets.get(i).isDead){
+        B++;
+        continue;
+      }
+      Bullets.get(i).update();
+      if(Bullets.get(i).isDead){
+        Bullets.remove(i);
+        i--;
+      }
+      B++;
+    }
+    int EB=start;
+    for(int i=start;EB<end+1;i++){
+      if(eneBullets.get(i).isDead){
+        EB++;
+        continue;
+      }
+      eneBullets.get(i).update();
+      if(eneBullets.get(i).isDead){
+        eneBullets.remove(i);
+        i--;
+      }
+      EB++;
+    }
+    return "";
+  }
 }
 
 class pixelProcess implements Callable<String>{

@@ -106,7 +106,7 @@ void setup(){
   TileSize=field.tileSize;
 }
 
-void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB");
+void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB",eneBullets.size());
   switch(scene){
     case 0:Menu();break;
     case 1:Field();break;

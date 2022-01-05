@@ -17,6 +17,7 @@ class GameProcess{
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
+    //for(int i=0;i<30;i++)
     Enemies.add(new Turret(new PVector(300,300)));
   }
   
@@ -40,8 +41,14 @@ class GameProcess{
 
   void updateShape(){
     try{
-    particleFuture=exec.submit(particleTask);
-    enemyFuture=exec.submit(enemyTask);
+      particleFuture=exec.submit(particleTask);
+      if(Bullets.size()+eneBullets.size()<10000){
+        enemyFuture=exec.submit(enemyTask);
+      }else{
+        for(int i=0;i<Bullets.size()+eneBullets.size();i+=10000){
+          enemyFuture=exec.submit(enemyTask);
+        }
+      }
     }catch(Exception e){
     }
   }

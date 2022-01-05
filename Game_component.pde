@@ -304,6 +304,32 @@ class MultiButton extends GameComponent{
   }
 }
 
+class ItemList extends GameComponent{
+  ItemTable table;
+  
+  ItemList(){
+    
+  }
+  
+  ItemList(ItemTable t){
+    table=t;
+  }
+  
+  void LinkTable(ItemTable t){
+    table=t;
+  }
+  
+  void display(){
+    fill(toColor(background));
+    stroke(toColor(border));
+    rect(pos.x,pos.y,pos.x+dist.x,pos.y+dist.y);
+  }
+  
+  void update(){
+    
+  }
+}
+
 class TextButton extends ButtonItem{
   
   TextButton(){
@@ -317,14 +343,11 @@ class TextButton extends ButtonItem{
   void display(){
     blendMode(BLEND);
     strokeWeight(1);
-    fill(!focus?color(background.getRed(),background.getGreen(),background.getBlue(),background.getAlpha()):
-         color(selectbackground.getRed(),selectbackground.getGreen(),selectbackground.getBlue(),selectbackground.getAlpha()));
-    stroke(focus?color(border.getRed(),border.getGreen(),border.getBlue(),border.getAlpha()):
-           color(nonSelectBorder.getRed(),nonSelectBorder.getGreen(),nonSelectBorder.getBlue(),nonSelectBorder.getAlpha()));
+    fill(!focus?toColor(background):toColor(selectbackground));
+    stroke(focus?toColor(border):toColor(nonSelectBorder));
     rectMode(CORNER);
     rect(pos.x,pos.y,dist.x,dist.y);
-    fill(!focus?color(foreground.getRed(),foreground.getGreen(),foreground.getBlue(),foreground.getAlpha()):
-         color(selectforeground.getRed(),selectforeground.getGreen(),selectforeground.getBlue(),selectforeground.getAlpha()));
+    fill(!focus?toColor(foreground):toColor(selectforeground));
     textAlign(CENTER);
     textSize(dist.y*0.5);
     text(text,center.x,center.y+dist.y*0.2);

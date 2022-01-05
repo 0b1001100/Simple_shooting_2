@@ -113,6 +113,7 @@ class Entity implements Egent{
 
 class Myself extends Entity{
   ArrayList<Weapon>weapons=new ArrayList<Weapon>();
+  ItemTable Items;
   Weapon selectedWeapon;
   Weapon ShotWeapon;
   Camera camera;
@@ -315,7 +316,7 @@ class Myself extends Entity{
     }else if(selectedWeapon.empty){
       selectedWeapon.reload();
     }
-    coolingTime+=floor(vectorMagnification);
+    coolingTime+=vectorMagnification;
   }
   
   void keyEvent(){
@@ -457,6 +458,7 @@ class Myself extends Entity{
 class Enemy extends Entity{
   Weapon useWeapon=null;
   Weapon ShotWeapon=null;
+  ItemTable dropTable;
   float size=20;
   double damage=0;
   boolean hit=false;
@@ -465,6 +467,10 @@ class Enemy extends Entity{
   
   Enemy(){
     setColor(new Color(0,0,255));
+  }
+  
+  protected void setTable(){
+    
   }
   
   void display(){
@@ -555,6 +561,7 @@ class Enemy extends Entity{
   protected void Down(){
     isDead=true;
     Particles.add(new Particle(this,(int)size*5,1));
+    //Item drop
   }
   
   void Collision(){
