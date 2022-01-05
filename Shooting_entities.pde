@@ -363,6 +363,7 @@ class Myself extends Entity{
         pos.y=rect.y-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
     }
     X:if(rect.x-size/2<=pos.x&&rect.x+TileSize+size/2>=pos.x
        &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
@@ -378,6 +379,7 @@ class Myself extends Entity{
         pos.x=rect.x-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
       return;
     }
     if(qDist(rect,pos,size/2)&
@@ -391,6 +393,7 @@ class Myself extends Entity{
       pos.y=field.getAttributes().get(y).equals("Wall")?
             rect.y+size/2:rect.y+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
       println("LeftUp");
       return;
     }else if(qDist(new PVector(rect.x,rect.y+TileSize),pos,size/2)&
@@ -400,6 +403,7 @@ class Myself extends Entity{
       pos.x=rect.x+cos(r)*size/2;
       pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
       println("LeftDown");
       return;
     }else if(qDist(new PVector(rect.x+TileSize,rect.y),pos,size/2)&
@@ -413,6 +417,7 @@ class Myself extends Entity{
       pos.y=field.getAttributes().get(y).equals("Wall")?
             rect.y+size/2:rect.y+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
       println("RightUp");
       return;
     }else if(qDist(new PVector(rect.x+TileSize,rect.y+TileSize),pos,size/2)&
@@ -422,6 +427,7 @@ class Myself extends Entity{
       pos.x=rect.x+TileSize+cos(r)*size/2;
       pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
+      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
       println("RightDown");
       return;
     }
