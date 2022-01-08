@@ -12,6 +12,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import java.util.*;
 import java.util.concurrent.*;
 
 import com.jogamp.newt.opengl.*;
@@ -24,6 +25,7 @@ Myself player;
 ExecutorService exec=Executors.newCachedThreadPool();
 Future<?> particleFuture;
 Future<?> enemyFuture;
+
 ParticleProcess particleTask=new ParticleProcess();
 EnemyProcess enemyTask=new EnemyProcess();
 
@@ -34,7 +36,7 @@ Fields field=new Fields();
 
 PImage Map;
 PImage Mask;
-ArrayList<Particle>Particles=new ArrayList<Particle>();
+java.util.List<Particle>Particles=Collections.synchronizedList(new ArrayList<Particle>());
 ArrayList<String>PressedKey=new ArrayList<String>();
 ArrayList<Bullet>eneBullets=new ArrayList<Bullet>();
 ArrayList<Bullet>Bullets=new ArrayList<Bullet>();
@@ -106,7 +108,7 @@ void setup(){
   TileSize=field.tileSize;
 }
 
-void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB",eneBullets.size());
+void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB",player!=null?player.Speed:0);
   switch(scene){
     case 0:Menu();break;
     case 1:Field();break;
@@ -117,7 +119,9 @@ void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().fre
     enemyFuture.get();
     particleFuture.get();
   }catch(InterruptedException|ExecutionException e){
+    printStackTrace(e);
   }catch(NullPointerException f){
+    printStackTrace(f);
   }
   printFPS();
   Shader();

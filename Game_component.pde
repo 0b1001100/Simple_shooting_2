@@ -306,6 +306,10 @@ class MultiButton extends GameComponent{
 
 class ItemList extends GameComponent{
   ItemTable table;
+  PShader ListShader=loadShader(ShaderPath+"List.glsl");
+  float Height=25;
+  float scroll=0;
+  int selectedNumber=0;
   
   ItemList(){
     
@@ -320,9 +324,16 @@ class ItemList extends GameComponent{
   }
   
   void display(){
+    int num=0;
     fill(toColor(background));
     stroke(toColor(border));
     rect(pos.x,pos.y,pos.x+dist.x,pos.y+dist.y);
+    for(Item i:table.table.values()){
+      if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
+        
+      }
+      num++;
+    }
   }
   
   void update(){

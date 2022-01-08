@@ -162,8 +162,8 @@ class Fields{
     displayObject();
     Maskg.endDraw();
     PVector zero=unProject(0,0);
-    Mask=Maskg.get((int)zero.x,(int)zero.y,width,height);
-    Map=g.get((int)zero.x,(int)zero.y,width,height);
+    //Mask=Maskg.get((int)zero.x,(int)zero.y,width,height);
+    //Map=g.get((int)zero.x,(int)zero.y,width,height);
     blendMode(ADD);
   }
   

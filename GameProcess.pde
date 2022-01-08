@@ -4,6 +4,7 @@ class GameProcess{
   PShader menuShader;
   float UItime=0;
   boolean animation=false;
+  boolean done=false;
   String menu="Main";
   int x=16;
   int y=9;
@@ -22,6 +23,7 @@ class GameProcess{
   }
   
   void process(){
+    done=false;
     if(animation){
       switchMenu();
     }else{
@@ -37,18 +39,13 @@ class GameProcess{
       }
     }
     keyProcess();
+    done=true;
   }
 
   void updateShape(){
     try{
       particleFuture=exec.submit(particleTask);
-      if(Bullets.size()+eneBullets.size()<10000){
-        enemyFuture=exec.submit(enemyTask);
-      }else{
-        for(int i=0;i<Bullets.size()+eneBullets.size();i+=10000){
-          enemyFuture=exec.submit(enemyTask);
-        }
-      }
+      enemyFuture=exec.submit(enemyTask);
     }catch(Exception e){
     }
   }
@@ -68,7 +65,7 @@ class GameProcess{
       b.display();
     }
     for(Particle p:Particles){
-      p.display();
+        p.display();
     }
     popMatrix();
     fill(255);

@@ -19,18 +19,18 @@ class Item{
 }
 
 class ItemTable{
-  HashMap<String,Item>table;
+  LinkedHashMap<String,Item>table;
   HashMap<String,Float>prob;
   HashMap<String,Integer>num;
   
   ItemTable(){
-    table=new HashMap<String,Item>();
+    table=new LinkedHashMap<String,Item>();
     prob=new HashMap<String,Float>();
     num=new HashMap<String,Integer>();
   }
   
   ItemTable(String[]names){
-    table=new HashMap<String,Item>();
+    table=new LinkedHashMap<String,Item>();
     num=new HashMap<String,Integer>();
     for(String s:names){
       table.put(s,new Item(s));
@@ -40,7 +40,7 @@ class ItemTable{
   }
   
   ItemTable(ArrayList<String>names){
-    table=new HashMap<String,Item>();
+    table=new LinkedHashMap<String,Item>();
     num=new HashMap<String,Integer>();
     for(String s:names){
       table.put(s,new Item(s));
@@ -50,7 +50,7 @@ class ItemTable{
   }
   
   ItemTable(Item[]items){
-    table=new HashMap<String,Item>();
+    table=new LinkedHashMap<String,Item>();
     num=new HashMap<String,Integer>();
     for(Item i:items){
       table.put(i.getName(),i);

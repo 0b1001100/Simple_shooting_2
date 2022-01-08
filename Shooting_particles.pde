@@ -4,7 +4,7 @@ class Particle{
   Color pColor;
   float min=1;
   float max=5;
-  int time=0;
+  float time=0;
   
   Particle(Bullet b,int num){
     for(int i=0;i<num;i++){
@@ -59,12 +59,12 @@ class Particle{
   void update(){
     ArrayList<particleFragment>nextParticles=new ArrayList<particleFragment>();
     for(particleFragment p:particles){
-      p.setAlpha(p.pColor.getAlpha()-2);
+      p.setAlpha(p.alpha-2*vectorMagnification);
       p.update();
       if(!p.isDead)nextParticles.add(p);
     }
     particles=nextParticles;
-    time+=2;
+    time+=2*vectorMagnification;
     if(time>255){
       isDead=true;
     }
@@ -84,9 +84,10 @@ class StringFragment extends particleFragment{
   }
   
   void display(){
+    blendMode(BLEND);
     textAlign(CENTER);
     textSize(size+1);
-    fill(128,128,128,pColor.getAlpha());
+    fill(128,128,128,pColor.getAlpha());println(alpha);
     text(text,pos.x,pos.y);
     textSize(size);
     fill(toColor(pColor));
@@ -101,14 +102,17 @@ class StringFragment extends particleFragment{
 class particleFragment{
   PVector pos;
   PVector vel;
+  boolean inScreen=true;
   boolean isDead=false;
   Color pColor;
+  float alpha;
   float size;
   
   particleFragment(PVector pos,PVector vel,Color c,float size){
     this.pos=new PVector(pos.x,pos.y);
     this.vel=new PVector(vel.x,vel.y);
     this.pColor=new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha());
+    alpha=c.getAlpha();
     this.size=size;
   }
   
@@ -122,13 +126,18 @@ class particleFragment{
     return this;
   }
   
-  particleFragment setAlpha(int a){
-    pColor=new Color(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),max(0,a));
+  particleFragment setAlpha(float a){
+    alpha=a;
+    pColor=new Color(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),round(max(0,alpha)));
     return this;
   }
   
   void display(){
-    if(pColor.getAlpha()<=0){isDead=true;return;}
+    if(!inScreen)return;
+    if(alpha<=0){
+      isDead=true;
+      return;
+    }
     noStroke();
     fill(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),pColor.getAlpha());
     rectMode(CENTER);
@@ -136,7 +145,13 @@ class particleFragment{
   }
   
   void update(){
-    pos.add(vel);
+    pos.add(vel.copy().mult(vectorMagnification));
+    if(-scroll.x<pos.x-size/2&pos.x+size/2<-scroll.x+width&
+       -scroll.y<pos.y-size/2&pos.y+size/2<-scroll.y+height){
+      inScreen=true;
+    }else{
+      inScreen=false;
+    }
   }
 }
 

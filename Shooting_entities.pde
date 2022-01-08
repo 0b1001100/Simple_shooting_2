@@ -121,6 +121,8 @@ class Myself extends Entity{
   PImage HPgauge=loadImage(UIPath+"HPgauge.png");
   PImage heatgauge=loadImage(UIPath+"heatgauge.png");
   boolean autoShot=true;
+  boolean hit=false;
+  double damage=0;
   float protate=0;
   float diffuse=0;
   float rotateSpeed=10;
@@ -363,7 +365,7 @@ class Myself extends Entity{
         pos.y=rect.y-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+      resetSpeed();
     }
     X:if(rect.x-size/2<=pos.x&&rect.x+TileSize+size/2>=pos.x
        &&rect.y<=pos.y&&rect.y+TileSize>=pos.y){
@@ -379,7 +381,7 @@ class Myself extends Entity{
         pos.x=rect.x-size/2;
       }
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+      resetSpeed();
       return;
     }
     if(qDist(rect,pos,size/2)&
@@ -393,7 +395,7 @@ class Myself extends Entity{
       pos.y=field.getAttributes().get(y).equals("Wall")?
             rect.y+size/2:rect.y+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+      resetSpeed();
       println("LeftUp");
       return;
     }else if(qDist(new PVector(rect.x,rect.y+TileSize),pos,size/2)&
@@ -403,7 +405,7 @@ class Myself extends Entity{
       pos.x=rect.x+cos(r)*size/2;
       pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+      resetSpeed();
       println("LeftDown");
       return;
     }else if(qDist(new PVector(rect.x+TileSize,rect.y),pos,size/2)&
@@ -417,7 +419,7 @@ class Myself extends Entity{
       pos.y=field.getAttributes().get(y).equals("Wall")?
             rect.y+size/2:rect.y+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+      resetSpeed();
       println("RightUp");
       return;
     }else if(qDist(new PVector(rect.x+TileSize,rect.y+TileSize),pos,size/2)&
@@ -427,22 +429,30 @@ class Myself extends Entity{
       pos.x=rect.x+TileSize+cos(r)*size/2;
       pos.y=rect.y+TileSize+sin(r)*size/2;
       vel=new PVector(pos.x-prePos.x,pos.y-prePos.y);
-      Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+      resetSpeed();
       println("RightDown");
       return;
     }
   }
   
+  void resetSpeed(){
+    Speed=dist(0,0,vel.x,vel.y)*sign(Speed);
+    Speed=min(abs(Speed),maxSpeed)/vectorMagnification*sign(Speed);
+  }
+  
   void BulletCollision(){
+    hit=false;
+    damage=0;
     COLLISION:for(Bullet b:eneBullets){
+      PVector bulletVel=b.vel.copy().mult(vectorMagnification);
       PVector vecAP=createVector(b.pos,pos);
-      PVector normalAB=normalize(b.vel);//vecAB->b.vel
+      PVector normalAB=normalize(bulletVel);//vecAB->b.vel
       float lenAX=dot(normalAB,vecAP);
       float dist;
       if(lenAX<0){
         dist=dist(b.pos.x,b.pos.y,pos.x,pos.y);
       }else if(lenAX>dist(0,0,b.vel.x,b.vel.y)){
-        dist=dist(b.pos.x+b.vel.x,b.pos.y+b.vel.y,pos.x,pos.y);
+        dist=dist(b.pos.x+bulletVel.x,b.pos.y+bulletVel.y,pos.x,pos.y);
       }else{
         dist=abs(cross(normalAB,vecAP));
       }
@@ -453,11 +463,13 @@ class Myself extends Entity{
         continue COLLISION;
       }
     }
+    if(hit)Particles.add(new Particle(this,str((int)damage)));
   }
   
   protected void Hit(){
     HP.sub(ShotWeapon.power);
-    Particles.add(new Particle(this,str((int)ShotWeapon.power)));
+    damage+=ShotWeapon.power;
+    hit=true;
   }
 }
 
@@ -584,7 +596,7 @@ class Bullet extends Entity{
   Color bulletColor;
   float rotate=0;
   float speed=7;
-  int age=0;
+  float age=0;
   int maxAge=0;
   
   Bullet(Myself m){
@@ -628,7 +640,7 @@ class Bullet extends Entity{
     vel=new PVector(bVel.x,bVel.y);
     prePos=new PVector(pos.x,pos.y);
     if(age>maxAge)isDead=true;
-    age++;
+    age+=vectorMagnification;
   }
   
   void setBounse(boolean b){
@@ -708,7 +720,7 @@ class Bullet extends Entity{
           case 3:s=LeftUP;v=new PVector(RightUP.x-LeftUP.x,RightUP.y-LeftUP.y);break;
         }
         if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),s,v)){
-          pos=SegmentCrossPoint(pos,vel,s,v);
+          pos=SegmentCrossPoint(pos,vel.copy().mult(vectorMagnification),s,v);
           if(bounse){
             if((pos.x-rect.x)%TileSize<0.001&(pos.x-rect.x)%TileSize>-0.001){
               invX();
