@@ -31,3 +31,13 @@ OS:windows10以降64bit
 CPU:intel core i7 11700<br>
 GPU:intel UHD graphics 750<br>
 OS:windows10 64bit
+
+## Todo
+### 短期間
+- メニューのシステムの追加
+- 描画を画面の領域内に限定
+### 長期間
+- 敵を動かす
+- マップの作成
+- セーブ機能
+- UI·処理の改善
