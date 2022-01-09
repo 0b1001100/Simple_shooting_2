@@ -38,9 +38,9 @@ PImage Map;
 PImage Mask;
 java.util.List<Particle>Particles=Collections.synchronizedList(new ArrayList<Particle>());
 ArrayList<String>PressedKey=new ArrayList<String>();
-ArrayList<Bullet>eneBullets=new ArrayList<Bullet>();
-ArrayList<Bullet>Bullets=new ArrayList<Bullet>();
-ArrayList<Enemy>Enemies=new ArrayList<Enemy>();
+java.util.List<Bullet>eneBullets=Collections.synchronizedList(new ArrayList<Bullet>());
+java.util.List<Bullet>Bullets=Collections.synchronizedList(new ArrayList<Bullet>());
+java.util.List<Enemy>Enemies=Collections.synchronizedList(new ArrayList<Enemy>());
 ArrayList<Long>Times=new ArrayList<Long>();
 PVector scroll;
 PVector localMouse;
@@ -118,10 +118,10 @@ void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().fre
   try{
     enemyFuture.get();
     particleFuture.get();
-  }catch(InterruptedException|ExecutionException e){
-    printStackTrace(e);
-  }catch(NullPointerException f){
-    printStackTrace(f);
+  }catch(ConcurrentModificationException e){
+    e.printStackTrace();
+  }catch(InterruptedException|ExecutionException f){
+  }catch(NullPointerException g){
   }
   printFPS();
   Shader();

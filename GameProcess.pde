@@ -18,7 +18,7 @@ class GameProcess{
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
-    //for(int i=0;i<30;i++)
+    for(int i=0;i<30;i++)
     Enemies.add(new Turret(new PVector(300,300)));
   }
   
@@ -55,17 +55,25 @@ class GameProcess{
     translate(scroll.x,scroll.y);
     localMouse=unProject(mouseX,mouseY);
     player.display();
-    for(Enemy e:Enemies){
-      e.display();
+    synchronized(Enemies){
+      for(Enemy e:Enemies){
+        e.display();
+      }
     }
-    for(Bullet b:eneBullets){
-      b.display();
+    synchronized(eneBullets){
+      for(Bullet b:eneBullets){
+        b.display();
+      }
     }
-    for(Bullet b:Bullets){
-      b.display();
+    synchronized(Bullets){
+      for(Bullet b:Bullets){
+        b.display();
+      }
     }
-    for(Particle p:Particles){
-        p.display();
+    synchronized(Particles){
+      for(Particle p:Particles){
+          p.display();
+      }
     }
     popMatrix();
     fill(255);
@@ -161,6 +169,14 @@ class GameProcess{
       Item=null;
       arc=null;
       conf=null;
+      initMain();
+      initEqu();
+      initItem();
+      initArc();
+      initConf();
+    }
+    
+    void initMain(){
       main=new ComponentSet();
       MenuButton equip=new MenuButton("装備");
       equip.setBounds(100,120,120,25);
@@ -190,6 +206,9 @@ class GameProcess{
       main.add(item);
       main.add(archive);
       main.add(setting);
+    }
+    
+    void initEqu(){
       equ=new ComponentSet();
       MenuButton eBack=new MenuButton("戻る");
       eBack.setBounds(20,100,120,25);
@@ -207,15 +226,25 @@ class GameProcess{
       equ.add(eBack);
       equ.add(weapon);
       equ.add(ext);
+    }
+    
+    void initItem(){
       Item=new ComponentSet();
       MenuButton iBack=new MenuButton("戻る");
       iBack.setBounds(20,100,120,25);
       iBack.addListener(()->{
         scene=pChangeScene;
       });
+      MenuItemList iList=new MenuItemList();
+      iList.setBounds(170,50,350,height-200);
+      iList.addListener((int i)->{
+        if(i==CONTROL)Item.backStack();
+      });
       MenuButton ite=new MenuButton("アイテム");
       ite.setBounds(20,130,120,25);
       ite.addListener(()->{
+        Item.toStack();
+        iList.LinkTable(player.Items);
       });
       MenuButton mat=new MenuButton("素材");
       mat.setBounds(20,160,120,25);
@@ -229,14 +258,15 @@ class GameProcess{
       chi.setBounds(20,220,120,25);
       chi.addListener(()->{
       });
-      MenuItemList iList=new MenuItemList(player.Items);
-      iList.setBounds(170,50,350,height-200);
       Item.add(iBack);
       Item.add(ite);
       Item.add(mat);
       Item.add(wea);
       Item.add(chi);
-      Item.add(iList);
+      Item.addStack(iList);
+    }
+    
+    void initArc(){
       arc=new ComponentSet();
       MenuButton aBack=new MenuButton("戻る");
       aBack.setBounds(20,100,120,25);
@@ -244,6 +274,9 @@ class GameProcess{
         scene=pChangeScene;
       });
       arc.add(aBack);
+    }
+    
+    void initConf(){
       conf=new ComponentSet();
       MenuButton cBack=new MenuButton("戻る");
       cBack.setBounds(120,110,120,25);
@@ -296,6 +329,12 @@ class GameProcess{
     }
     
     void back(){
+      switch(scene){
+        case "equ":if(equ.isStack){equ.backStack();return;}
+        case "Item":if(Item.isStack){Item.backStack();return;}
+        case "arc":if(arc.isStack){arc.backStack();return;}
+        case "conf":if(conf.isStack){conf.backStack();return;}
+      }
       scene=pChangeScene;
     }
   }

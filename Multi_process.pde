@@ -5,13 +5,15 @@ class ParticleProcess implements Callable<String>{
     
   }
   
-  String call(){pTime=System.currentTimeMillis();
+  synchronized String call(){pTime=System.currentTimeMillis();
     ArrayList<Particle>nextParticles=new ArrayList<Particle>();
-    for(Particle p:Particles){
-      p.update();
-      if(!p.isDead)nextParticles.add(p);
+    synchronized(Particles){
+      for(Particle p:Particles){
+        p.update();
+        if(!p.isDead)nextParticles.add(p);
+      }
+      Particles=nextParticles;
     }
-    Particles=nextParticles;
     println("sub",System.currentTimeMillis()-pTime);
     return "";
   }
@@ -24,28 +26,34 @@ class EnemyProcess implements Callable<String>{
     
   }
   
-  String call(){pTime=System.currentTimeMillis();
+  synchronized String call(){pTime=System.currentTimeMillis();
     player.update();
     ArrayList<Enemy>nextEnemies=new ArrayList<Enemy>();
-    for(Enemy e:Enemies){
-      e.update();
-      if(!e.isDead)nextEnemies.add(e);
+    synchronized(Enemies){
+      for(Enemy e:Enemies){
+        e.update();
+        if(!e.isDead)nextEnemies.add(e);
+      }
+      Enemies=nextEnemies;
     }
-    Enemies=nextEnemies;
     ArrayList<Bullet>nextBullets=new ArrayList<Bullet>();
-    for(Bullet b:Bullets){
-      if(b.isDead)continue;
-      b.update();
-      if(!b.isDead)nextBullets.add(b);
+    synchronized(Bullets){
+      for(Bullet b:Bullets){
+        if(b.isDead)continue;
+        b.update();
+        if(!b.isDead)nextBullets.add(b);
+      }
+      Bullets=nextBullets;
     }
-    Bullets=nextBullets;
     ArrayList<Bullet>nextEneBullets=new ArrayList<Bullet>();
-    for(Bullet b:eneBullets){
-      if(b.isDead)continue;
-      b.update();
-      if(!b.isDead)nextEneBullets.add(b);
+    synchronized(eneBullets){
+      for(Bullet b:eneBullets){
+        if(b.isDead)continue;
+        b.update();
+        if(!b.isDead)nextEneBullets.add(b);
+      }
+      eneBullets=nextEneBullets;
     }
-    eneBullets=nextEneBullets;
     println("ene",System.currentTimeMillis()-pTime);
     return "";
   }

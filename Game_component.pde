@@ -5,6 +5,7 @@ class GameComponent{
   protected boolean focus=false;
   protected boolean pFocus=false;
   protected boolean FocusEvent=false;
+  protected boolean keyMove=false;
   protected Color background=new Color(200,200,200);
   protected Color selectbackground=new Color(255,255,255);
   protected Color foreground=new Color(0,0,0);
@@ -307,6 +308,8 @@ class MultiButton extends GameComponent{
 class ItemList extends GameComponent{
   PGraphics pg;
   ItemTable table;
+  KeyEvent e=(int k)->{};
+  boolean keyMove=true;
   float Height=25;
   float scroll=0;
   int selectedNumber=0;
@@ -350,7 +353,42 @@ class ItemList extends GameComponent{
   }
   
   void update(){
+    if(focus){
+      mouseProcess();
+      keyProcess();
+    }
+  }
+  
+  boolean onMouse(){
+    return pos.x<=mouseX&mouseX<=pos.x+dist.x&pos.y<=mouseY&mouseY<=pos.y+min(Height*table.table.size(),dist.y);
+  }
+  
+  void mouseProcess(){
     
+  }
+  
+  void keyProcess(){
+    if(keyPress){
+      e.keyEvent(key);
+      if(!onMouse()){
+        switch(nowPressedKeyCode){
+          case UP:addSelect();break;
+          case DOWN:subSelect();break;
+        }
+      }
+    }
+  }
+  
+  void addSelect(){
+    selectedNumber=selectedNumber<table.table.size()-1?selectedNumber+1:0;
+  }
+  
+  void subSelect(){
+    selectedNumber=selectedNumber>0?selectedNumber-1:table.table.size()-1;
+  }
+  
+  void addListener(KeyEvent e){
+    this.e=e;
   }
 }
 
@@ -529,7 +567,11 @@ class Menu extends ButtonItem{
 
 class ComponentSet{
   ArrayList<GameComponent>conponents=new ArrayList<GameComponent>();
+  ArrayList<GameComponent>conponentStack=new ArrayList<GameComponent>();
+  boolean isStack=false;
+  boolean keyMove=true;
   int selectedIndex=0;
+  int stackIndex=0;
   int type=0;
   
   static final int Down=0;
@@ -543,6 +585,7 @@ class ComponentSet{
   
   void add(GameComponent val){
     conponents.add(val);
+    if(conponents.size()==1)val.requestFocus();
   }
   
   void remove(GameComponent val){
@@ -553,37 +596,88 @@ class ComponentSet{
     conponents.clear();
   }
   
+  void addStack(GameComponent val){
+    conponentStack.add(val);
+    if(conponentStack.size()==1)val.requestFocus();
+  }
+  
+  void removeStack(GameComponent val){
+    conponentStack.remove(val);
+  }
+  
+  void removeStackAll(){
+    conponentStack.clear();
+  }
+  
+  GameComponent getStack(int i){
+    return conponentStack.get(i);
+  }
+  
+  void toStack(){
+    isStack=true;
+  }
+  
+  void backStack(){
+    isStack=false;
+  }
+  
   void display(){
     for(GameComponent c:conponents){
       c.display();
     }
+    if(isStack){
+      for(GameComponent c:conponentStack){
+        c.display();
+      }
+    }
   }
   
   void update(){
-    for(GameComponent c:conponents){
-      c.update();
-      if(c.FocusEvent){
-        for(GameComponent C:conponents){
-          C.removeFocus();
+    if(!isStack){
+      for(GameComponent c:conponents){
+        c.update();
+        if(c.FocusEvent){
+          for(GameComponent C:conponents){
+            C.removeFocus();
+          }
+          c.requestFocus();
         }
-        c.requestFocus();
+        if(c.focus)selectedIndex=conponents.indexOf(c);
       }
-      if(c.focus)selectedIndex=conponents.indexOf(c);
+    }else{
+      for(GameComponent c:conponentStack){
+        c.update();
+        if(c.FocusEvent){
+          for(GameComponent C:conponentStack){
+            C.removeFocus();
+          }
+          c.requestFocus();
+        }
+        if(c.focus)stackIndex=conponentStack.indexOf(c);
+      }
     }
     if(!onMouse())keyEvent();
   }
   
   boolean onMouse(){
     boolean b=false;
-    for(GameComponent c:conponents){
-      b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
-      if(b)return b;
+    if(!isStack){
+      for(GameComponent c:conponents){
+        b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
+        if(b)return b;
+      }
+    }else{
+      for(GameComponent c:conponentStack){
+        b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
+        if(b)return b;
+      }
     }
     return b;
   }
   
   void keyEvent(){
-    if(keyPress){
+    if(keyPress&
+       !(isStack?conponentStack.get(stackIndex).keyMove:conponents.get(selectedIndex).keyMove)){
       if(type==0|type==1){
         switch(nowPressedKeyCode){
           case DOWN:if(type==0)addSelect();else subSelect();break;
@@ -596,17 +690,29 @@ class ComponentSet{
         }
       }
       if(nowPressedKeyCode==ENTER){
-        conponents.get(selectedIndex).executeEvent();
+        if(!isStack){
+          conponents.get(selectedIndex).executeEvent();
+        }else{
+          conponentStack.get(stackIndex).executeEvent();
+        }
       }
     }
   }
   
   void addSelect(){
-    for(GameComponent c:conponents){
-      c.removeFocus();
+    if(!isStack){
+      for(GameComponent c:conponents){
+        c.removeFocus();
+      }
+      selectedIndex=selectedIndex>=conponents.size()-1?0:selectedIndex+1;
+      conponents.get(selectedIndex).requestFocus();
+    }else{
+      for(GameComponent c:conponentStack){
+        c.removeFocus();
+      }
+      stackIndex=stackIndex>=conponentStack.size()-1?0:stackIndex+1;
+      conponentStack.get(stackIndex).requestFocus();
     }
-    selectedIndex=selectedIndex>=conponents.size()-1?0:selectedIndex+1;
-    conponents.get(selectedIndex).requestFocus();
   }
   
   void subSelect(){
@@ -624,4 +730,8 @@ interface SelectEvent{
 
 interface ChangeEvent{
   void changeEvent();
+}
+
+interface KeyEvent{
+  void keyEvent(int Key);
 }
