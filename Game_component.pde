@@ -305,8 +305,8 @@ class MultiButton extends GameComponent{
 }
 
 class ItemList extends GameComponent{
+  PGraphics pg;
   ItemTable table;
-  PShader ListShader=loadShader(ShaderPath+"List.glsl");
   float Height=25;
   float scroll=0;
   int selectedNumber=0;
@@ -323,17 +323,30 @@ class ItemList extends GameComponent{
     table=t;
   }
   
+  GameComponent setBounds(float x,float y,float dx,float dy){
+    pg=createGraphics(round(dx),round(dy),P2D);
+    return super.setBounds(x,y,dx,dy);
+  }
+  
   void display(){
+    blendMode(BLEND);
     int num=0;
-    fill(toColor(background));
-    stroke(toColor(border));
-    rect(pos.x,pos.y,pos.x+dist.x,pos.y+dist.y);
+    pg.beginDraw();
+    pg.background(toColor(background));
+    pg.background(0,0);
+    pg.fill(0,255);
     for(Item i:table.table.values()){
       if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
-        
+        pg.text(i.getName(),0,num*Height-scroll);
+        if(selectedNumber==num){
+          pg.fill(0,30);
+          pg.rect(0,num*Height-scroll,dist.x,Height);
+        }
       }
       num++;
     }
+    pg.endDraw();
+    image(pg,pos.x,pos.y);
   }
   
   void update(){
@@ -397,13 +410,11 @@ class NormalButton extends TextButton{
   void display(){
     blendMode(BLEND);
     strokeWeight(2);
-    fill(!focus?color(background.getRed(),background.getGreen(),background.getBlue(),background.getAlpha()):
-         color(selectbackground.getRed(),selectbackground.getGreen(),selectbackground.getBlue(),selectbackground.getAlpha()));
-    stroke(border.getRed(),border.getGreen(),border.getBlue(),border.getAlpha());
+    fill(!focus?toColor(background):toColor(selectbackground));
+    stroke(toColor(border));
     rectMode(CORNER);
     rect(pos.x,pos.y,dist.x,dist.y,dist.y/4);
-    fill(!focus?color(foreground.getRed(),foreground.getGreen(),foreground.getBlue(),foreground.getAlpha()):
-         color(selectforeground.getRed(),selectforeground.getGreen(),selectforeground.getBlue(),selectforeground.getAlpha()));
+    fill(!focus?toColor(foreground):toColor(selectforeground));
     textAlign(CENTER);
     textSize(dist.y*0.5);
     text(text,center.x,center.y+dist.y*0.2);
@@ -464,6 +475,49 @@ class MenuButton extends TextButton{
   }
 }
 
+class MenuItemList extends ItemList{
+  
+  MenuItemList(){
+    super();
+  }
+  
+  MenuItemList(ItemTable t){
+    super(t);
+  }
+  
+  void init(){
+    setBackground(new Color(210,210,210));
+    setBorderColor(new Color(100,100,100));
+    setForeground(new Color(30,30,30,255));
+  }
+  
+  void display(){
+    int num=0;
+    blendMode(BLEND);
+    pg.beginDraw();
+    pg.background(toColor(background));
+    pg.textSize(15);
+    for(Item i:table.table.values()){
+      if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
+        pg.fill(toColor(foreground));
+        pg.textAlign(CENTER);
+        pg.text(i.getName(),10+textWidth(i.getName())/2,num*Height-scroll+Height*0.7);
+        pg.text(player.Items.getNumber(i),pg.width-10-textWidth(str(player.Items.getNumber(i)))/2,num*Height-scroll+Height*0.7);
+        if(selectedNumber==num){
+          pg.fill(0,30);
+          pg.noStroke();
+          pg.rect(0,num*Height-scroll,dist.x,Height);
+          pg.fill(0,30);
+          pg.line(1,num*Height-scroll,1,num*Height-scroll+Height);
+        }
+      }
+      num++;
+    }
+    pg.endDraw();
+    image(pg,pos.x,pos.y);
+  }
+}
+
 class Menu extends ButtonItem{
   
   Menu(){
@@ -516,7 +570,16 @@ class ComponentSet{
       }
       if(c.focus)selectedIndex=conponents.indexOf(c);
     }
-    keyEvent();
+    if(!onMouse())keyEvent();
+  }
+  
+  boolean onMouse(){
+    boolean b=false;
+    for(GameComponent c:conponents){
+      b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
+      if(b)return b;
+    }
+    return b;
   }
   
   void keyEvent(){

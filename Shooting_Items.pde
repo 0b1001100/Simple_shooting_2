@@ -108,6 +108,14 @@ class ItemTable{
     }
   }
   
+  int getNumber(Item i){
+    if(table.containsKey(i.getName())){
+      return num.get(i.getName());
+    }else{
+      return -1;
+    }
+  }
+  
   Item getRandom(){
     HashMap<Item,doubleValue>vals=new HashMap<Item,doubleValue>();
     float offset=0;

@@ -137,6 +137,7 @@ class Myself extends Entity{
   int weaponChangeTime=0;
   
   Myself(){
+    Items=new ItemTable();
     pos=new PVector(field.spownPoint.x,field.spownPoint.y);
     vel=new PVector(0,0);
     HP=new Status(100);

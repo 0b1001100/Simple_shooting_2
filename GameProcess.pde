@@ -229,11 +229,14 @@ class GameProcess{
       chi.setBounds(20,220,120,25);
       chi.addListener(()->{
       });
+      MenuItemList iList=new MenuItemList(player.Items);
+      iList.setBounds(170,50,350,height-200);
       Item.add(iBack);
       Item.add(ite);
       Item.add(mat);
       Item.add(wea);
       Item.add(chi);
+      Item.add(iList);
       arc=new ComponentSet();
       MenuButton aBack=new MenuButton("戻る");
       aBack.setBounds(20,100,120,25);
