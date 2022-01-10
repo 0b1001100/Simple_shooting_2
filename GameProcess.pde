@@ -18,7 +18,7 @@ class GameProcess{
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
-    for(int i=0;i<30;i++)
+    for(int i=0;i<300;i++)
     Enemies.add(new Turret(new PVector(300,300)));
   }
   
@@ -158,6 +158,7 @@ class GameProcess{
     ComponentSet Item;
     ComponentSet arc;
     ComponentSet conf;
+    boolean pStack=false;
     
     menuManage(){
       
@@ -237,14 +238,13 @@ class GameProcess{
       });
       MenuItemList iList=new MenuItemList();
       iList.setBounds(170,50,350,height-200);
-      iList.addListener((int i)->{
-        if(i==CONTROL)Item.backStack();
-      });
       MenuButton ite=new MenuButton("アイテム");
       ite.setBounds(20,130,120,25);
       ite.addListener(()->{
-        Item.toStack();
-        iList.LinkTable(player.Items);
+        if(!pStack){
+          Item.toStack();
+          iList.LinkTable(player.Items);
+        }
       });
       MenuButton mat=new MenuButton("素材");
       mat.setBounds(20,160,120,25);
@@ -303,17 +303,19 @@ class GameProcess{
     }
     
     void update(){
+      boolean Stack=false;
       switch(scene){
-        case "main":main.update();break;
-        case "equ":equ.update();break;
-        case "Item":Item.update();break;
-        case "arc":arc.update();break;
-        case "conf":conf.update();break;
+        case "main":main.update();Stack=main.isStack();break;
+        case "equ":equ.update();Stack=equ.isStack();break;
+        case "Item":Item.update();Stack=Item.isStack();break;
+        case "arc":arc.update();Stack=arc.isStack();break;
+        case "conf":conf.update();Stack=conf.isStack();break;
       }
       if(!scene.equals(pScene)){
         init();
       }
       pScene=scene;
+      pStack=Stack;
     }
     
     void dispose(){
@@ -330,10 +332,10 @@ class GameProcess{
     
     void back(){
       switch(scene){
-        case "equ":if(equ.isStack){equ.backStack();return;}
-        case "Item":if(Item.isStack){Item.backStack();return;}
-        case "arc":if(arc.isStack){arc.backStack();return;}
-        case "conf":if(conf.isStack){conf.backStack();return;}
+        case "equ":if(equ.isStack()){equ.backStack();return;}break;
+        case "Item":if(Item.isStack()){Item.backStack();return;}break;
+        case "arc":if(arc.isStack()){arc.backStack();return;}break;
+        case "conf":if(conf.isStack()){conf.backStack();return;}break;
       }
       scene=pChangeScene;
     }

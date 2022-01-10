@@ -309,9 +309,14 @@ class ItemList extends GameComponent{
   PGraphics pg;
   ItemTable table;
   KeyEvent e=(int k)->{};
+  boolean onMouse=false;
   boolean keyMove=true;
+  boolean moving=false;
+  boolean pDrag=false;
+  boolean drag=false;
   float Height=25;
   float scroll=0;
+  float keyTime=0;
   int selectedNumber=0;
   
   ItemList(){
@@ -348,34 +353,84 @@ class ItemList extends GameComponent{
       }
       num++;
     }
+    sideBar();
     pg.endDraw();
     image(pg,pos.x,pos.y);
   }
   
-  void update(){
-    if(focus){
-      mouseProcess();
-      keyProcess();
+  void sideBar(){
+    if(dist.y<Height*table.table.size()){
+      float len=Height*table.table.size();
+      float mag=pg.height/len;
+      pg.fill(255);
+      pg.rect(pg.width-10,0,10,pg.height);
+      pg.fill(drag?200:128);
+      pg.rect(pg.width-10,pg.height*(1-mag)*scroll/(len-pg.height),10,pg.height*mag);
     }
   }
   
-  boolean onMouse(){
-    return pos.x<=mouseX&mouseX<=pos.x+dist.x&pos.y<=mouseY&mouseY<=pos.y+min(Height*table.table.size(),dist.y);
+  void update(){
+    if(focus){
+      onMouse=onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y));
+      mouseProcess();
+      if(!onMouse){
+        keyProcess();
+      }else{
+        moving=false;
+      }
+    }
+    pDrag=drag;
   }
   
   void mouseProcess(){
-    
+    float len=Height*table.table.size();
+    float mag=pg.height/len;
+    if(onMouse(pos.x+pg.width-10,pos.y+pg.height*(1-mag)*scroll/(len-pg.height),10,pg.height*mag)&mousePress){
+      drag=true;
+    }
+    if(!mousePressed){
+      drag=false;
+    }
+    if(pDrag&drag){
+      scroll+=(mouseY-pmouseY)*(len-dist.y)/(dist.y*(1-mag));
+      scroll=constrain(scroll,0,len-dist.y);
+    }
+    if(onMouse(pos.x,pos.y,dist.x-10,max(len-scroll,0))&mousePress){
+      selectedNumber=floor((mouseY-pos.y+scroll)/Height);
+    }
   }
   
   void keyProcess(){
     if(keyPress){
-      e.keyEvent(key);
-      if(!onMouse()){
+      e.keyEvent(nowPressedKeyCode);
+      if(!onMouse){
         switch(nowPressedKeyCode){
-          case UP:addSelect();break;
-          case DOWN:subSelect();break;
+          case UP:subSelect();break;
+          case DOWN:addSelect();break;
         }
+        scroll();
       }
+    }
+    if(!moving&keyPressed&(nowPressedKeyCode==UP|nowPressedKeyCode==DOWN)){
+      keyTime+=vectorMagnification;
+    }
+    if(!moving&keyTime>=30){
+      moving=true;
+      keyTime=0;
+    }
+    if(moving){
+      keyTime+=vectorMagnification;
+    }
+    if(moving&keyTime>=15){
+      switch(nowPressedKeyCode){
+        case UP:subSelect();break;
+        case DOWN:addSelect();break;
+      }
+      scroll();
+    }
+    if(!keyPressed){
+      moving=false;
+      keyTime=0;
     }
   }
   
@@ -385,6 +440,15 @@ class ItemList extends GameComponent{
   
   void subSelect(){
     selectedNumber=selectedNumber>0?selectedNumber-1:table.table.size()-1;
+  }
+  
+  void scroll(){
+    if(dist.y<Height*table.table.size()){
+      if(selectedNumber==0)scroll=0;else
+      if(selectedNumber==table.table.size()-1)scroll=table.table.size()*Height-dist.y;
+      scroll+=selectedNumber*Height-scroll<0?selectedNumber*Height-scroll:
+              (selectedNumber+1)*Height-scroll>dist.y?(selectedNumber+1)*Height-scroll-dist.y:0;
+    }
   }
   
   void addListener(KeyEvent e){
@@ -514,13 +578,16 @@ class MenuButton extends TextButton{
 }
 
 class MenuItemList extends ItemList{
+  PFont font=createFont("SansSerif.plain",15);
   
   MenuItemList(){
     super();
+    init();
   }
   
   MenuItemList(ItemTable t){
     super(t);
+    init();
   }
   
   void init(){
@@ -534,6 +601,7 @@ class MenuItemList extends ItemList{
     blendMode(BLEND);
     pg.beginDraw();
     pg.background(toColor(background));
+    pg.textFont(font);
     pg.textSize(15);
     for(Item i:table.table.values()){
       if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
@@ -551,6 +619,7 @@ class MenuItemList extends ItemList{
       }
       num++;
     }
+    sideBar();
     pg.endDraw();
     image(pg,pos.x,pos.y);
   }
@@ -569,6 +638,7 @@ class ComponentSet{
   ArrayList<GameComponent>conponents=new ArrayList<GameComponent>();
   ArrayList<GameComponent>conponentStack=new ArrayList<GameComponent>();
   boolean isStack=false;
+  boolean pStack=false;
   boolean keyMove=true;
   int selectedIndex=0;
   int stackIndex=0;
@@ -615,10 +685,16 @@ class ComponentSet{
   
   void toStack(){
     isStack=true;
+    for(GameComponent c:conponents){
+      if(c instanceof ButtonItem)((ButtonItem)c).select=false;
+    }
   }
   
   void backStack(){
     isStack=false;
+    for(GameComponent c:conponentStack){
+      if(c instanceof ButtonItem)((ButtonItem)c).select=false;
+    }
   }
   
   void display(){
@@ -657,6 +733,11 @@ class ComponentSet{
       }
     }
     if(!onMouse())keyEvent();
+    pStack=isStack;
+  }
+  
+  boolean isStack(){
+    return isStack|pStack;
   }
   
   boolean onMouse(){
@@ -716,11 +797,19 @@ class ComponentSet{
   }
   
   void subSelect(){
-    for(GameComponent c:conponents){
-      c.removeFocus();
+    if(!isStack){
+      for(GameComponent c:conponents){
+        c.removeFocus();
+      }
+      selectedIndex=selectedIndex<=0?conponents.size()-1:selectedIndex-1;
+      conponents.get(selectedIndex).requestFocus();
+    }else{
+      for(GameComponent c:conponentStack){
+        c.removeFocus();
+      }
+      stackIndex=stackIndex<=0?conponentStack.size()-1:stackIndex-1;
+      conponentStack.get(stackIndex).requestFocus();
     }
-    selectedIndex=selectedIndex<=0?conponents.size()-1:selectedIndex-1;
-    conponents.get(selectedIndex).requestFocus();
   }
 }
 

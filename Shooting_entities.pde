@@ -138,6 +138,9 @@ class Myself extends Entity{
   
   Myself(){
     Items=new ItemTable();
+    Items.addStorage(new Item("回復薬(小)"),10);
+    Items.addStorage(new Item("回復薬(中)"),3);
+    Items.addStorage(new Item("回復薬(大)"),1);
     pos=new PVector(field.spownPoint.x,field.spownPoint.y);
     vel=new PVector(0,0);
     HP=new Status(100);
@@ -452,7 +455,7 @@ class Myself extends Entity{
       float dist;
       if(lenAX<0){
         dist=dist(b.pos.x,b.pos.y,pos.x,pos.y);
-      }else if(lenAX>dist(0,0,b.vel.x,b.vel.y)){
+      }else if(lenAX>dist(0,0,bulletVel.x,bulletVel.y)){
         dist=dist(b.pos.x+bulletVel.x,b.pos.y+bulletVel.y,pos.x,pos.y);
       }else{
         dist=abs(cross(normalAB,vecAP));

@@ -96,7 +96,7 @@ void setup(){
       t=new PImage(w.getWidth(),w.getHeight(),PImage.ARGB,displayDensity());
     }
   });
-  PFont font=createFont("SansSerif.plain",50);
+  PFont font=createFont("SansSerif.plain",15);
   textFont(font);
   t=new PImage(width,height,PImage.ARGB,displayDensity());
   View=loadShader(ShaderPath+"View.glsl");
@@ -180,6 +180,10 @@ void Stage(){
     main=new GameProcess();
   }
   main.process();
+}
+
+boolean onMouse(float x,float y,float dx,float dy){
+  return x<=mouseX&mouseX<=x+dx&y<=mouseY&mouseY<=y+dy;
 }
 
 PVector Project(float winX, float winY){
