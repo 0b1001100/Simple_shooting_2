@@ -153,15 +153,17 @@ class GameProcess{
     String scene="main";
     String pScene="main";
     String pChangeScene="main";
+    ComponentSet mastar;
+    HashMap<String,ComponentSet>componentMap=new HashMap<String,ComponentSet>();
     ComponentSet main;
     ComponentSet equ;
     ComponentSet Item;
     ComponentSet arc;
     ComponentSet conf;
     boolean pStack=false;
+    boolean first=true;
     
     menuManage(){
-      
     }
     
     void init(){
@@ -175,6 +177,10 @@ class GameProcess{
       initItem();
       initArc();
       initConf();
+      if(first){
+        mastar=main;
+        first=false;
+      }
     }
     
     void initMain(){
@@ -183,30 +189,35 @@ class GameProcess{
       equip.setBounds(100,120,120,25);
       equip.addListener(()->{
         pChangeScene=scene;
+        mastar=equ;
         scene="equ";
       });
       MenuButton item=new MenuButton("アイテム");
       item.setBounds(100,160,120,25);
       item.addListener(()->{
         pChangeScene=scene;
+        mastar=Item;
         scene="Item";
       });
       MenuButton archive=new MenuButton("アーカイブ");
       archive.setBounds(100,200,120,25);
       archive.addListener(()->{
         pChangeScene=scene;
+        mastar=arc;
         scene="arc";
       });
       MenuButton setting=new MenuButton("設定");
       setting.setBounds(100,240,120,25);
       setting.addListener(()->{
         pChangeScene=scene;
+        mastar=conf;
         scene="conf";
       });
       main.add(equip);
       main.add(item);
       main.add(archive);
       main.add(setting);
+      componentMap.put("main",main);
     }
     
     void initEqu(){
@@ -215,6 +226,7 @@ class GameProcess{
       eBack.setBounds(20,100,120,25);
       eBack.addListener(()->{
         scene=pChangeScene;
+        mastar=main;
       });
       MenuButton weapon=new MenuButton("武器");
       weapon.setBounds(20,130,120,25);
@@ -227,6 +239,7 @@ class GameProcess{
       equ.add(eBack);
       equ.add(weapon);
       equ.add(ext);
+      componentMap.put("equ",equ);
     }
     
     void initItem(){
@@ -235,6 +248,7 @@ class GameProcess{
       iBack.setBounds(20,100,120,25);
       iBack.addListener(()->{
         scene=pChangeScene;
+        mastar=main;
       });
       MenuItemList iList=new MenuItemList();
       iList.setBounds(170,50,350,height-200);
@@ -242,7 +256,7 @@ class GameProcess{
       ite.setBounds(20,130,120,25);
       ite.addListener(()->{
         if(!pStack){
-          Item.toStack();
+          mastar.toStack();
           iList.LinkTable(player.Items);
         }
       });
@@ -264,6 +278,7 @@ class GameProcess{
       Item.add(wea);
       Item.add(chi);
       Item.addStack(iList);
+      componentMap.put("Item",Item);
     }
     
     void initArc(){
@@ -272,8 +287,10 @@ class GameProcess{
       aBack.setBounds(20,100,120,25);
       aBack.addListener(()->{
         scene=pChangeScene;
+        mastar=main;
       });
       arc.add(aBack);
+      componentMap.put("arc",arc);
     }
     
     void initConf(){
@@ -282,6 +299,7 @@ class GameProcess{
       cBack.setBounds(120,110,120,25);
       cBack.addListener(()->{
         scene=pChangeScene;
+        mastar=main;
       });
       MenuButton quit=new MenuButton("ゲームを終了");
       quit.setBounds(120,150,120,25);
@@ -290,27 +308,16 @@ class GameProcess{
       });
       conf.add(cBack);
       conf.add(quit);
+      componentMap.put("conf",conf);
     }
     
     void display(){
-      switch(scene){
-        case "main":main.display();break;
-        case "equ":equ.display();break;
-        case "Item":Item.display();break;
-        case "arc":arc.display();break;
-        case "conf":conf.display();break;
-      }
+      mastar.display();
     }
     
     void update(){
       boolean Stack=false;
-      switch(scene){
-        case "main":main.update();Stack=main.isStack();break;
-        case "equ":equ.update();Stack=equ.isStack();break;
-        case "Item":Item.update();Stack=Item.isStack();break;
-        case "arc":arc.update();Stack=arc.isStack();break;
-        case "conf":conf.update();Stack=conf.isStack();break;
-      }
+      mastar.update();
       if(!scene.equals(pScene)){
         init();
       }
@@ -331,13 +338,12 @@ class GameProcess{
     }
     
     void back(){
-      switch(scene){
-        case "equ":if(equ.isStack()){equ.backStack();return;}break;
-        case "Item":if(Item.isStack()){Item.backStack();return;}break;
-        case "arc":if(arc.isStack()){arc.backStack();return;}break;
-        case "conf":if(conf.isStack()){conf.backStack();return;}break;
+      if(mastar.isStack()){
+        mastar.backStack();
+        return;
       }
       scene=pChangeScene;
+      mastar=componentMap.get(scene);
     }
   }
 }

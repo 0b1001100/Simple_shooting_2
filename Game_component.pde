@@ -309,6 +309,7 @@ class ItemList extends GameComponent{
   PGraphics pg;
   ItemTable table;
   KeyEvent e=(int k)->{};
+  boolean menu=false;
   boolean onMouse=false;
   boolean keyMove=true;
   boolean moving=false;
@@ -356,6 +357,7 @@ class ItemList extends GameComponent{
     sideBar();
     pg.endDraw();
     image(pg,pos.x,pos.y);
+    if(menu)menuDraw();
   }
   
   void sideBar(){
@@ -369,12 +371,31 @@ class ItemList extends GameComponent{
     }
   }
   
+  void menuDraw(){
+    Item select=new Item("");
+    int num=0;
+    fill(210);
+    for(Item i:table.table.values()){
+      if(num==selectedNumber){
+        select=i;
+        break;
+      }
+      num++;
+    }
+    rectMode(CORNER);
+    if(select.getType()==1){
+      rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
+    }else if(select.getType()==2){
+      rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
+    }
+  }
+  
   void update(){
     if(focus){
       onMouse=onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y));
-      mouseProcess();
+      if(!menu)mouseProcess();else menuMouse();
       if(!onMouse){
-        keyProcess();
+        if(!menu)keyProcess();else menuKey();
       }else{
         moving=false;
       }
@@ -396,8 +417,16 @@ class ItemList extends GameComponent{
       scroll=constrain(scroll,0,len-dist.y);
     }
     if(onMouse(pos.x,pos.y,dist.x-10,max(len-scroll,0))&mousePress){
-      selectedNumber=floor((mouseY-pos.y+scroll)/Height);
+      if(selectedNumber==floor((mouseY-pos.y+scroll)/Height)){
+        Select();
+      }else{
+        selectedNumber=floor((mouseY-pos.y+scroll)/Height);
+      }
     }
+  }
+  
+  void menuMouse(){
+    
   }
   
   void keyProcess(){
@@ -410,6 +439,7 @@ class ItemList extends GameComponent{
         }
         scroll();
       }
+      if(nowPressedKeyCode==ENTER)Select();
     }
     if(!moving&keyPressed&(nowPressedKeyCode==UP|nowPressedKeyCode==DOWN)){
       keyTime+=vectorMagnification;
@@ -434,6 +464,10 @@ class ItemList extends GameComponent{
     }
   }
   
+  void menuKey(){
+    
+  }
+  
   void addSelect(){
     selectedNumber=selectedNumber<table.table.size()-1?selectedNumber+1:0;
   }
@@ -449,6 +483,10 @@ class ItemList extends GameComponent{
       scroll+=selectedNumber*Height-scroll<0?selectedNumber*Height-scroll:
               (selectedNumber+1)*Height-scroll>dist.y?(selectedNumber+1)*Height-scroll-dist.y:0;
     }
+  }
+  
+  void Select(){
+    menu=true;
   }
   
   void addListener(KeyEvent e){
@@ -622,6 +660,7 @@ class MenuItemList extends ItemList{
     sideBar();
     pg.endDraw();
     image(pg,pos.x,pos.y);
+    if(menu)menuDraw();
   }
 }
 
@@ -691,6 +730,14 @@ class ComponentSet{
   }
   
   void backStack(){
+    for(GameComponent c:conponentStack){
+      if(c instanceof ItemList){
+        if(((ItemList)c).menu){
+          ((ItemList)c).menu=false;
+          return;
+        }
+      }
+    }
     isStack=false;
     for(GameComponent c:conponentStack){
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;

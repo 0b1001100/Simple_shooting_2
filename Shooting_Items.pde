@@ -3,6 +3,10 @@ class Item{
   protected String name="";
   String explanation="";
   int maxStack=99;
+  int type=1;
+  
+  protected final int USEABLE=1;
+  protected final int COLLECTION=2;
   
   Item(String name){
     this.name=name;
@@ -15,6 +19,10 @@ class Item{
   
   String getName(){
     return name;
+  }
+  
+  int getType(){
+    return type;
   }
 }
 
