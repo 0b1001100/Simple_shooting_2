@@ -18,7 +18,7 @@ class GameProcess{
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
-    for(int i=0;i<300;i++)
+    //for(int i=0;i<300;i++)
     Enemies.add(new Turret(new PVector(300,300)));
   }
   

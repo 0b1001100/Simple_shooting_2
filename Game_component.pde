@@ -308,6 +308,7 @@ class MultiButton extends GameComponent{
 class ItemList extends GameComponent{
   PGraphics pg;
   ItemTable table;
+  Item selectedItem=null;
   KeyEvent e=(int k)->{};
   boolean menu=false;
   boolean onMouse=false;
@@ -319,6 +320,7 @@ class ItemList extends GameComponent{
   float scroll=0;
   float keyTime=0;
   int selectedNumber=0;
+  int menuNumber=0;
   
   ItemList(){
     
@@ -372,27 +374,42 @@ class ItemList extends GameComponent{
   }
   
   void menuDraw(){
-    Item select=new Item("");
     int num=0;
-    fill(210);
     for(Item i:table.table.values()){
       if(num==selectedNumber){
-        select=i;
+        selectedItem=i;
         break;
       }
       num++;
     }
+    fill(210);
+    noStroke();
     rectMode(CORNER);
-    if(select.getType()==1){
+    if(selectedItem.getType()==1){
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
-    }else if(select.getType()==2){
+      fill(0);
+      textAlign(CENTER);
+      text("使用",pos.x+dist.x+60,pos.y+selectedNumber*Height-scroll+Height*0.2);
+      text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber+1)*Height-scroll+Height*0.2);
+      fill(0,30);
+      rect(pos.x+dist.x,pos.y+(selectedNumber+menuNumber)*Height-scroll-Height/2,120,Height);
+      fill(0);
+      line(pos.x+dist.x,pos.y+(selectedNumber+menuNumber)*Height-scroll-Height/2,
+           pos.x+dist.x,pos.y+(selectedNumber+menuNumber+1)*Height-scroll-Height/2);
+    }else if(selectedItem.getType()==2){
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
+      text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber-1)*Height-scroll+Height*0.2);
+      fill(0,30);
+      rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
+      fill(0);
+      line(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,pos.x+dist.x,pos.y+(selectedNumber+1)*Height-scroll);
     }
   }
   
   void update(){
     if(focus){
-      onMouse=onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y));
+      onMouse=!menu?onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y)):
+                    onMouse(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
       if(!menu)mouseProcess();else menuMouse();
       if(!onMouse){
         if(!menu)keyProcess();else menuKey();
@@ -426,7 +443,13 @@ class ItemList extends GameComponent{
   }
   
   void menuMouse(){
-    
+    if(selectedItem.getType()==1){
+      if(onMouse){
+        
+      }
+    }else if(selectedItem.getType()==2){
+      
+    }
   }
   
   void keyProcess(){
@@ -465,7 +488,11 @@ class ItemList extends GameComponent{
   }
   
   void menuKey(){
-    
+    if(selectedItem.getType()==1){
+      
+    }else if(selectedItem.getType()==2){
+      
+    }
   }
   
   void addSelect(){
