@@ -138,9 +138,9 @@ class Myself extends Entity{
   
   Myself(){
     Items=new ItemTable();
-    Items.addStorage(new Item("回復薬(小)"),10);
-    Items.addStorage(new Item("回復薬(中)"),3);
-    Items.addStorage(new Item("回復薬(大)"),1);
+    Items.addStorage(new Item("回復薬(小)").addListener((m)->{HP.add(25);}),10);
+    Items.addStorage(new Item("回復薬(中)").addListener((m)->{HP.add(40);}),3);
+    Items.addStorage(new Item("回復薬(大)").addListener((m)->{HP.add(65);}),1);
     pos=new PVector(field.spownPoint.x,field.spownPoint.y);
     vel=new PVector(0,0);
     HP=new Status(100);

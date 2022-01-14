@@ -385,10 +385,11 @@ class ItemList extends GameComponent{
     fill(210);
     noStroke();
     rectMode(CORNER);
+    textAlign(CENTER);
+    textSize(15);
     if(selectedItem.getType()==1){
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
       fill(0);
-      textAlign(CENTER);
       text("使用",pos.x+dist.x+60,pos.y+selectedNumber*Height-scroll+Height*0.2);
       text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber+1)*Height-scroll+Height*0.2);
       fill(0,30);
@@ -488,10 +489,24 @@ class ItemList extends GameComponent{
   }
   
   void menuKey(){
-    if(selectedItem.getType()==1){
-      
-    }else if(selectedItem.getType()==2){
-      
+    if(keyPress){
+      if(selectedItem.getType()==1){
+        switch(nowPressedKeyCode){
+          case UP:menuNumber=abs(menuNumber-1);break;
+          case DOWN:menuNumber=menuNumber==1?0:1;break;
+        }
+        if(nowPressedKeyCode==ENTER){
+          boolean b=true;
+          switch(menuNumber){
+            case 0:selectedItem.ExecuteEvent();b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
+            case 1:b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
+          }
+          if(!b)selectedNumber--;
+          resetSelect();
+        }
+      }else if(selectedItem.getType()==2){
+        
+      }
     }
   }
   
@@ -501,6 +516,10 @@ class ItemList extends GameComponent{
   
   void subSelect(){
     selectedNumber=selectedNumber>0?selectedNumber-1:table.table.size()-1;
+  }
+  
+  void resetSelect(){
+    selectedNumber=constrain(selectedNumber,0,table.table.size()-1);
   }
   
   void scroll(){
@@ -513,7 +532,7 @@ class ItemList extends GameComponent{
   }
   
   void Select(){
-    menu=true;
+    if(table.num.size()>=1)menu=true;
   }
   
   void addListener(KeyEvent e){

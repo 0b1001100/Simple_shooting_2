@@ -1,5 +1,6 @@
 class Item{
-  PImage image;
+  protected ItemUseEvent e=(m)->{};
+  protected PImage image;
   protected String name="";
   String explanation="";
   int maxStack=99;
@@ -23,6 +24,15 @@ class Item{
   
   int getType(){
     return type;
+  }
+  
+  Item addListener(ItemUseEvent e){
+    this.e=e;
+    return this;
+  }
+  
+  void ExecuteEvent(){
+    e.ItemUse(player);
   }
 }
 
@@ -100,20 +110,43 @@ class ItemTable{
     }
   }
   
-  boolean addStorage(Item i,int number){
+  int addStorage(Item i,int number){
+    int ri=0;
     if(!table.containsKey(i.getName())){
       table.put(i.getName(),i);
       num.put(i.getName(),0);
       int n=num.get(i.getName())+number;
-      if(n>i.maxStack)return false;
+      if(n>i.maxStack){
+        ri=n-i.maxStack;
+        n=i.maxStack;
+      }
       num.put(i.getName(),max(0,n));
-      return true;
+      return ri;
     }else{
       int n=num.get(i.getName())+number;
-      if(n>i.maxStack)return false;
+      if(n>i.maxStack){
+        ri=n-i.maxStack;
+        n=i.maxStack;
+      }
       num.put(i.getName(),max(0,n));
-      return true;
+      return ri;
     }
+  }
+  
+  boolean removeStorage(String name,int num){
+    if(table.containsKey(name)){
+      int n=this.num.get(name)-num;
+      boolean b=true;
+      if(n<=0){
+        table.remove(name);
+        this.num.remove(name);
+        b=false;
+      }else{
+        this.num.put(name,n);
+      }
+      return b;
+    }
+    return false;
   }
   
   int getNumber(Item i){
@@ -151,4 +184,8 @@ final class doubleValue{
     this.min=min;
     this.max=max;
   }
+}
+
+interface ItemUseEvent{
+  void ItemUse(Myself m);
 }
