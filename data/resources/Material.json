@@ -1,14 +1,14 @@
-{
-  "Material":[
-    {
-      "id":0,
-      "name":"スクラップ",
-      "explanation":"敵の外装の一部であったもの"
-    },
-    {
-      "id":1,
-      "name":"",
-      "explanation":""
-    }
-  ]
-}
+[
+  {
+    "id":0,
+    "name":"スクラップ",
+    "explanation":"敵の外装の一部であったもの",
+    "max":99
+  },
+  {
+    "id":1,
+    "name":"",
+    "explanation":"",
+    "max":99
+  }
+]

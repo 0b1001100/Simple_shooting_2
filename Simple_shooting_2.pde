@@ -34,6 +34,8 @@ ComponentSet configs=new ComponentSet();
 
 Fields field=new Fields();
 
+ItemTable MastarTable;
+
 PImage Map;
 PImage Mask;
 java.util.List<Particle>Particles=Collections.synchronizedList(new ArrayList<Particle>());
@@ -69,6 +71,7 @@ int menu=0;
 static final String UIPath=".\\data\\images\\UI\\";
 static final String ButtonPath=".\\data\\images\\Button\\";
 static final String MapPath=".\\data\\maps\\";
+static final String ResourcePath=".\\data\\resources\\";
 static final String ShaderPath=".\\data\\shaders\\";
 
 void setup(){

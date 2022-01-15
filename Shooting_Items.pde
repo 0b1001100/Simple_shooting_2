@@ -26,6 +26,10 @@ class Item{
     return type;
   }
   
+  void setExplanation(String s){
+    explanation=s;
+  }
+  
   Item addListener(ItemUseEvent e){
     this.e=e;
     return this;
@@ -36,7 +40,7 @@ class Item{
   }
 }
 
-class ItemTable{
+class ItemTable implements Cloneable{
   LinkedHashMap<String,Item>table;
   HashMap<String,Float>prob;
   HashMap<String,Integer>num;
@@ -169,6 +173,60 @@ class ItemTable{
       if(vals.get(i).min<=rand&rand<vals.get(i).max)return i;
     }
     return null;
+  }
+  
+  ItemTable clone(){
+    try{
+      return (ItemTable)super.clone();
+    }catch(CloneNotSupportedException e){
+      return new ItemTable();
+    }
+  }
+}
+
+class ItemLoader{
+  JSONArray obj;
+  ItemTable t=new ItemTable();
+  boolean Storage=false;
+  
+  ItemLoader(){
+    
+  }
+  
+  ItemLoader(String Path){
+    load(Path);
+  }
+  
+  ItemLoader(String Path,boolean Storage){
+    this.Storage=Storage;
+    load(Path);
+  }
+  
+  protected void load(String Path){
+    obj=loadJSONArray(Path);
+    parse();
+  }
+  
+  protected void parse(){
+    if(Storage){
+      for(int i=0;i<obj.size();i++){
+        JSONObject j=obj.getJSONObject(i);
+        Item I=new Item(j.getInt("max"),j.getString("name"));
+        I.setExplanation(j.getString("explanation"));
+        t.addStorage(I,j.getInt("num"));
+      }
+    }else{
+      for(int i=0;i<obj.size();i++){
+        JSONObject j=obj.getJSONObject(i);
+        Item I=new Item(j.getInt("max"),j.getString("name"));
+        I.setExplanation(j.getString("explanation"));
+        t.addItem(I);
+      }
+    }
+  }
+  
+  ItemTable getTable(){
+    return t.clone();
   }
 }
 

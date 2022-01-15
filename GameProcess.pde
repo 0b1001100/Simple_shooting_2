@@ -15,6 +15,7 @@ class GameProcess{
   
   void setup(){
     field.loadMap("Field02.lfdf");
+    MastarTable=new ItemLoader(ResourcePath+"Item.json").getTable();
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
