@@ -238,7 +238,7 @@ class LASER extends Weapon{
     setCoolTime(5);
     setHeatUP(0.45);
     setDiffuse(radians(7.5));
-    setName("フォトンパルス");
+    setName("割り箸");
   }
 }
 

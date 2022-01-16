@@ -394,7 +394,7 @@ class ItemList extends GameComponent{
       text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber+1)*Height-scroll+Height*0.2);
       fill(0,30);
       rect(pos.x+dist.x,pos.y+(selectedNumber+menuNumber)*Height-scroll-Height/2,120,Height);
-      fill(0);
+      stroke(0,150,255);
       line(pos.x+dist.x,pos.y+(selectedNumber+menuNumber)*Height-scroll-Height/2,
            pos.x+dist.x,pos.y+(selectedNumber+menuNumber+1)*Height-scroll-Height/2);
     }else if(selectedItem.getType()==2){
@@ -402,7 +402,7 @@ class ItemList extends GameComponent{
       text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber-1)*Height-scroll+Height*0.2);
       fill(0,30);
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
-      fill(0);
+      stroke(0,150,255);
       line(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,pos.x+dist.x,pos.y+(selectedNumber+1)*Height-scroll);
     }
   }
@@ -424,7 +424,7 @@ class ItemList extends GameComponent{
   void mouseProcess(){
     float len=Height*table.table.size();
     float mag=pg.height/len;
-    if(onMouse(pos.x+pg.width-10,pos.y+pg.height*(1-mag)*scroll/(len-pg.height),10,pg.height*mag)&mousePress){
+    if(dist.y<len&onMouse(pos.x+pg.width-10,pos.y+pg.height*(1-mag)*scroll/(len-pg.height),10,pg.height*mag)&mousePress){
       drag=true;
     }
     if(!mousePressed){
@@ -434,7 +434,7 @@ class ItemList extends GameComponent{
       scroll+=(mouseY-pmouseY)*(len-dist.y)/(dist.y*(1-mag));
       scroll=constrain(scroll,0,len-dist.y);
     }
-    if(onMouse(pos.x,pos.y,dist.x-10,max(len-scroll,0))&mousePress){
+    if(onMouse(pos.x,pos.y,dist.x-(dist.y<len?10:0),max(len-scroll,0))&mousePress){
       if(selectedNumber==floor((mouseY-pos.y+scroll)/Height)){
         Select();
       }else{
@@ -445,11 +445,24 @@ class ItemList extends GameComponent{
   
   void menuMouse(){
     if(selectedItem.getType()==1){
-      if(onMouse){
-        
+      if(onMouse&mousePress){
+        float y=pos.y+selectedNumber*Height-scroll-Height/2;
+        if(y<=mouseY&mouseY<=y+Height){
+          if(menuNumber==0){
+            menuSelect();
+            return;
+          }
+          menuNumber=0;
+        }else{
+          if(menuNumber==1){
+            menuSelect();
+            return;
+          }
+          menuNumber=1;
+        }
       }
     }else if(selectedItem.getType()==2){
-      
+      if(mousePress)menuSelect();
     }
   }
   
@@ -496,18 +509,22 @@ class ItemList extends GameComponent{
           case DOWN:menuNumber=menuNumber==1?0:1;break;
         }
         if(nowPressedKeyCode==ENTER){
-          boolean b=true;
-          switch(menuNumber){
-            case 0:selectedItem.ExecuteEvent();b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
-            case 1:b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
-          }
-          if(!b)selectedNumber--;
-          resetSelect();
+          menuSelect();
         }
       }else if(selectedItem.getType()==2){
         
       }
     }
+  }
+  
+  void menuSelect(){
+    boolean b=true;
+    switch(menuNumber){
+      case 0:selectedItem.ExecuteEvent();b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
+      case 1:b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
+    }
+    if(!b)selectedNumber--;
+    resetSelect();
   }
   
   void addSelect(){
@@ -697,8 +714,8 @@ class MenuItemList extends ItemList{
           pg.fill(0,30);
           pg.noStroke();
           pg.rect(0,num*Height-scroll,dist.x,Height);
-          pg.fill(0,30);
-          pg.line(1,num*Height-scroll,1,num*Height-scroll+Height);
+          pg.stroke(0,150,255);
+          pg.line(0,num*Height-scroll,0,num*Height-scroll+Height);
         }
       }
       num++;
