@@ -709,7 +709,7 @@ class MenuItemList extends ItemList{
         pg.fill(toColor(foreground));
         pg.textAlign(CENTER);
         pg.text(i.getName(),10+textWidth(i.getName())/2,num*Height-scroll+Height*0.7);
-        pg.text(player.Items.getNumber(i),pg.width-10-textWidth(str(player.Items.getNumber(i)))/2,num*Height-scroll+Height*0.7);
+        pg.text(table.getNumber(i),pg.width-10-textWidth(str(table.getNumber(i)))/2,num*Height-scroll+Height*0.7);
         if(selectedNumber==num){
           pg.fill(0,30);
           pg.noStroke();

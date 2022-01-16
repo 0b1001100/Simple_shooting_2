@@ -83,13 +83,13 @@ class GameProcess{
   }
   
   void switchMenu(){
-    if(menu.equals("Main")&!animation){
+    if((key=='c'|keyCode==CONTROL)&menu.equals("Main")&!animation){
       mainMenu.init();
       menu="Menu";
       UItime=0f;
       animation=true;
     }
-    if(menu.equals("Menu")&!animation){
+    if((key=='x'|keyCode==SHIFT)&menu.equals("Menu")&!animation){
       if(!mainMenu.isMain()){
         mainMenu.back();
         return;
@@ -131,7 +131,7 @@ class GameProcess{
   }
   
   void keyProcess(){
-    if(keyPress&(key=='c'|keyCode==CONTROL))switchMenu();
+    if(keyPress&((key=='c'|keyCode==CONTROL)|(key=='x'|keyCode==SHIFT)))switchMenu();
   }
   
   void menuShading(){
@@ -264,10 +264,18 @@ class GameProcess{
       MenuButton mat=new MenuButton("素材");
       mat.setBounds(20,160,120,25);
       mat.addListener(()->{
+        if(!pStack){
+          mastar.toStack();
+          iList.LinkTable(player.Materials);
+        }
       });
       MenuButton wea=new MenuButton("武器");
       wea.setBounds(20,190,120,25);
       wea.addListener(()->{
+        if(!pStack){
+          mastar.toStack();
+          iList.LinkTable(player.Weapons);
+        }
       });
       MenuButton chi=new MenuButton("拡張チップ");
       chi.setBounds(20,220,120,25);
