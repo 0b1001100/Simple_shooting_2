@@ -212,7 +212,6 @@ class ItemLoader{
       for(int i=0;i<obj.size();i++){
         JSONObject j=obj.getJSONObject(i);
         Item I=new Item(j.getInt("max"),j.getString("name"));
-        I.setExplanation(j.getString("explanation"));
         t.addStorage(I,j.getInt("num"));
       }
     }else{
