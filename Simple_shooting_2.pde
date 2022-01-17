@@ -25,9 +25,11 @@ Myself player;
 ExecutorService exec=Executors.newCachedThreadPool();
 Future<?> particleFuture;
 Future<?> enemyFuture;
+Future<?> bulletFuture;
 
 ParticleProcess particleTask=new ParticleProcess();
 EnemyProcess enemyTask=new EnemyProcess();
+BulletProcess bulletTask=new BulletProcess();
 
 ComponentSet starts=new ComponentSet();
 ComponentSet configs=new ComponentSet();
@@ -120,6 +122,7 @@ void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().fre
   eventProcess();
   try{
     enemyFuture.get();
+    bulletFuture.get();
     particleFuture.get();
   }catch(ConcurrentModificationException e){
     e.printStackTrace();

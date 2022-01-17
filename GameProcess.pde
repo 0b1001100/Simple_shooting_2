@@ -47,6 +47,7 @@ class GameProcess{
     try{
       particleFuture=exec.submit(particleTask);
       enemyFuture=exec.submit(enemyTask);
+      bulletFuture=exec.submit(bulletTask);
     }catch(Exception e){
     }
   }

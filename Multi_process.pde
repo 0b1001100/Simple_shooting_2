@@ -36,6 +36,19 @@ class EnemyProcess implements Callable<String>{
       }
       Enemies=nextEnemies;
     }
+    println("ene",System.currentTimeMillis()-pTime);
+    return "";
+  }
+}
+
+class BulletProcess implements Callable<String>{
+  long pTime=0;
+  
+  BulletProcess(){
+    
+  }
+  
+  synchronized String call(){pTime=System.currentTimeMillis();
     ArrayList<Bullet>nextBullets=new ArrayList<Bullet>();
     synchronized(Bullets){
       for(Bullet b:Bullets){
@@ -54,7 +67,7 @@ class EnemyProcess implements Callable<String>{
       }
       eneBullets=nextEneBullets;
     }
-    println("ene",System.currentTimeMillis()-pTime);
+    println("bul",System.currentTimeMillis()-pTime);
     return "";
   }
 }
