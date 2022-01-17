@@ -7,14 +7,26 @@ class Item{
   int type=1;
   
   protected final int USEABLE=1;
-  protected final int COLLECTION=2;
+  protected final int MATERAL=2;
+  protected final int COLLECTION=3;
   
   Item(String name){
     this.name=name;
   }
   
+  Item(String name,int type){
+    this.type=type;
+    this.name=name;
+  }
+  
   Item(int max,String name){
     maxStack=max;
+    this.name=name;
+  }
+  
+  Item(int max,String name,int type){
+    maxStack=max;
+    this.type=type;
     this.name=name;
   }
   
@@ -26,8 +38,14 @@ class Item{
     return type;
   }
   
-  void setExplanation(String s){
+  Item setType(int i){
+    type=i;
+    return this;
+  }
+  
+  Item setExplanation(String s){
     explanation=s;
+    return this;
   }
   
   Item addListener(ItemUseEvent e){

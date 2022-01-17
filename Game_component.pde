@@ -549,7 +549,13 @@ class ItemList extends GameComponent{
   }
   
   void Select(){
-    if(table.num.size()>=1)menu=true;
+    Item s=new Item("");
+    int i=0;
+    for(Item I:table.table.values()){
+      if(i==selectedNumber)s=I;
+      i++;
+    }
+    if(table.num.size()>=1&s.getType()!=s.COLLECTION)menu=true;
   }
   
   void addListener(KeyEvent e){

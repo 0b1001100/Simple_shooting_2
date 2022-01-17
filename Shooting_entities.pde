@@ -83,6 +83,7 @@ class Camera{
 }
 
 class Entity implements Egent{
+  float size=20;
   PVector prePos;
   PVector pos;
   PVector vel;
@@ -134,7 +135,6 @@ class Myself extends Entity{
   float bulletSpeed=15;
   float coolingTime=0;
   float maxCoolingTime=10;
-  float size=20;
   int selectedIndex=0;
   int weaponChangeTime=0;
   
@@ -145,9 +145,9 @@ class Myself extends Entity{
     Items.addStorage(new Item("回復薬(小)").addListener((m)->{HP.add(25);}),10);
     Items.addStorage(new Item("回復薬(中)").addListener((m)->{HP.add(40);}),3);
     Items.addStorage(new Item("回復薬(大)").addListener((m)->{HP.add(65);}),1);
-    Weapons.addStorage(new Item("クォークキャノン"),1);
-    Weapons.addStorage(new Item("タウブラスター"),1);
-    Weapons.addStorage(new Item("フォトンパルス"),1);
+    Weapons.addStorage(new Item("クォークキャノン").setType(3),1);
+    Weapons.addStorage(new Item("タウブラスター").setType(3),1);
+    Weapons.addStorage(new Item("フォトンパルス").setType(3),1);
     pos=new PVector(field.spownPoint.x,field.spownPoint.y);
     vel=new PVector(0,0);
     HP=new Status(100);
@@ -488,7 +488,6 @@ class Enemy extends Entity{
   Weapon useWeapon=null;
   Weapon ShotWeapon=null;
   ItemTable dropTable;
-  float size=20;
   double damage=0;
   boolean hit=false;
   protected double maxHP=10d;
@@ -614,13 +613,14 @@ class Bullet extends Entity{
     rotate=-m.rotate-PI/2+random(-m.diffuse/2,m.diffuse/2);
     speed=m.bulletSpeed;
     bulletColor=m.selectedWeapon.bulletColor;
-    pos=new PVector(m.pos.x,m.pos.y);
+    pos=new PVector(m.pos.x-cos(rotate)*m.size,m.pos.y-sin(rotate)*m.size);
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=m.selectedWeapon.bulletMaxAge;
     isMine=true;
   }
   
   Bullet(Entity e,Weapon w){
+    isMine=e instanceof Myself;
     usedWeapon=w;
     if(w.loadedNumber>1){
       w.loadedNumber--;
@@ -631,7 +631,7 @@ class Bullet extends Entity{
     rotate=-e.rotate-PI/2+random(-w.diffuse/2,w.diffuse/2);
     speed=w.speed;
     bulletColor=w.bulletColor;
-    pos=new PVector(w.parent.pos.x,w.parent.pos.y);
+    pos=new PVector(e.pos.x-(isMine?0:cos(rotate)*e.size),e.pos.y-(isMine?0:sin(rotate)*e.size));
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=w.bulletMaxAge;
     isMine=e.getClass().getSimpleName().equals("Myself");

@@ -12,7 +12,7 @@ class Particle{
       float rad=random(0,360);
       PVector vec=new PVector(cos(radians(rad))*scala,sin(radians(rad))*scala);
       Color c=new Color(b.bulletColor.getRed(),b.bulletColor.getGreen(),b.bulletColor.getBlue(),(int)random(16,255));
-      particles.add(new particleFragment(b.pos,vec,c,random(min,max)));
+      particles.add(new LineFragment(b.pos,vec,c,random(min,max)));
     }
   }
   
@@ -92,6 +92,27 @@ class StringFragment extends particleFragment{
     textSize(size);
     fill(toColor(pColor));
     text(text,pos.x,pos.y);
+  }
+  
+  void update(){
+    super.update();
+  }
+}
+
+class LineFragment extends particleFragment{
+  
+  LineFragment(PVector pos,PVector vel,Color c,float size){
+    super(pos,vel,c,size);
+  }
+  
+  void display(){
+    if(!inScreen)return;
+    if(alpha<=0){
+      isDead=true;
+      return;
+    }
+    stroke(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),pColor.getAlpha());
+    line(pos.x,pos.y,pos.x+vel.x*size*3,pos.y+vel.y*size*3);
   }
   
   void update(){

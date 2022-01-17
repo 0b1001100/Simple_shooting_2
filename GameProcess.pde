@@ -89,7 +89,7 @@ class GameProcess{
       menu="Menu";
       UItime=0f;
       animation=true;
-    }
+    }else
     if((key=='x'|keyCode==SHIFT)&menu.equals("Menu")&!animation){
       if(!mainMenu.isMain()){
         mainMenu.back();
@@ -99,6 +99,7 @@ class GameProcess{
       UItime=30f;
       animation=true;
     }
+    if(!animation)return;
     float normUItime=UItime/30;
     background(menuColor.getRed()*normUItime,menuColor.getGreen()*normUItime,
                menuColor.getBlue()*normUItime);
@@ -110,7 +111,7 @@ class GameProcess{
         fill(toRGB(menuColor));
         noStroke();
         rectMode(CENTER);
-        float scale=min(max(UItime-(j+i),0),1);
+        float scale=min(max(UItime*(y/9)-(j+i),0),1);
         rect(Width*j+Width/2,Height*i+Height/2,Width*scale,Height*scale);
       }
     }
@@ -322,7 +323,7 @@ class GameProcess{
     }
     
     void display(){
-      mastar.display();
+      mastar.display(); //<>//
     }
     
     void update(){
