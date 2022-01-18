@@ -53,8 +53,8 @@ void configration(){
 
 void Shader(){
   if(ColorInv){
-    loadPixels();
-    t.pixels=pixels;
+    g.loadPixels();
+    t.pixels=g.pixels;
     t.updatePixels();
     colorInv.set("tex",t);
     colorInv.set("resolution",width,height);
@@ -81,4 +81,12 @@ void printFPS(){
   MTime/=(float)Times.size();
   text(1000f/MTime,10,10);
   popMatrix();
+}
+
+PImage overLoadPixels(PImage p){  // ignore
+  if(p.pixels == null || p.pixels.length != p.pixelWidth*p.pixelHeight){
+    p.pixels = new int[p.pixelWidth*p.pixelHeight];
+  }
+  p.loaded=true;
+  return p;
 }
