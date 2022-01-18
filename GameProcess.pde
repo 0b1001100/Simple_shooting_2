@@ -14,7 +14,7 @@ class GameProcess{
   }
   
   void setup(){
-    field.loadMap("Field02.lfdf");
+    field.loadMap("largeField.lfdf");
     MastarTable=new ItemLoader(ResourcePath+"Item.json").getTable();
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
@@ -137,19 +137,15 @@ class GameProcess{
   }
   
   void menuShading(){
-    loadPixels();
-    t.pixels=pixels;
+    g.loadPixels();
+    t.pixels=g.pixels;
     t.updatePixels();
     menuShader.set("time",UItime);
     menuShader.set("xy",(float)x,(float)y);
     menuShader.set("resolution",(float)width,(float)height);
     menuShader.set("menuColor",(float)menuColor.getRed()/255,(float)menuColor.getGreen()/255,(float)menuColor.getBlue()/255,1.0);
     menuShader.set("tex",t);
-    shader(menuShader);
-    rectMode(CORNER);
-    background(0);
-    rect(0,0,width,height);
-    resetShader();
+    filter(menuShader);
   }
   
   class menuManage{

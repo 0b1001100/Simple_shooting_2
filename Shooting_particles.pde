@@ -111,6 +111,7 @@ class LineFragment extends particleFragment{
       isDead=true;
       return;
     }
+    strokeWeight(1);
     stroke(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),pColor.getAlpha());
     line(pos.x,pos.y,pos.x+vel.x*size*3,pos.y+vel.y*size*3);
   }

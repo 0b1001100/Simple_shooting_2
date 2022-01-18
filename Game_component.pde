@@ -328,10 +328,12 @@ class ItemList extends GameComponent{
   
   ItemList(ItemTable t){
     table=t;
+    changeEvent();
   }
   
   void LinkTable(ItemTable t){
     table=t;
+    changeEvent();
   }
   
   GameComponent setBounds(float x,float y,float dx,float dy){
@@ -374,16 +376,10 @@ class ItemList extends GameComponent{
   }
   
   void menuDraw(){
-    int num=0;
-    for(Item i:table.table.values()){
-      if(num==selectedNumber){
-        selectedItem=i;
-        break;
-      }
-      num++;
-    }
-    fill(210);
+    fill(10,40);
     noStroke();
+    rect(0,0,width,height);
+    fill(210);
     rectMode(CORNER);
     textAlign(CENTER);
     textSize(15);
@@ -439,6 +435,7 @@ class ItemList extends GameComponent{
         Select();
       }else{
         selectedNumber=floor((mouseY-pos.y+scroll)/Height);
+        changeEvent();
       }
     }
   }
@@ -471,8 +468,8 @@ class ItemList extends GameComponent{
       e.keyEvent(nowPressedKeyCode);
       if(!onMouse){
         switch(nowPressedKeyCode){
-          case UP:subSelect();break;
-          case DOWN:addSelect();break;
+          case UP:subSelect();changeEvent();break;
+          case DOWN:addSelect();changeEvent();break;
         }
         scroll();
       }
@@ -517,6 +514,17 @@ class ItemList extends GameComponent{
     }
   }
   
+  void changeEvent(){
+    int i=0;
+    for(Item I:table.table.values()){
+      if(i==selectedNumber){
+        selectedItem=I;
+        return;
+      }
+      i++;
+    }
+  }
+  
   void menuSelect(){
     boolean b=true;
     switch(menuNumber){
@@ -552,7 +560,10 @@ class ItemList extends GameComponent{
     Item s=new Item("");
     int i=0;
     for(Item I:table.table.values()){
-      if(i==selectedNumber)s=I;
+      if(i==selectedNumber){
+        s=I;
+        break;
+      }
       i++;
     }
     if(table.num.size()>=1&s.getType()!=s.COLLECTION)menu=true;
