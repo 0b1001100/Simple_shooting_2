@@ -1,4 +1,5 @@
 class GameComponent{
+  protected FocusEvent Fe=new FocusEvent(){void getFocus(){} void lostFocus(){}};
   protected PVector pos;
   protected PVector dist;
   protected PVector center;
@@ -53,7 +54,7 @@ class GameComponent{
   }
   
   void update(){
-    
+    pFocus=focus;
   }
   
   void executeEvent(){
@@ -66,6 +67,10 @@ class GameComponent{
   
   void removeFocus(){
     focus=false;
+  }
+  
+  void addFocusListener(FocusEvent e){
+    Fe=e;
   }
 }
 
@@ -103,7 +108,7 @@ class ButtonItem extends GameComponent{
     }
     if(focus&&!pFocus)FocusEvent=true;else FocusEvent=false;
     pCursor=setCursor;
-    pFocus=focus;
+    super.update();
   }
   
   void executeEvent(){
@@ -174,7 +179,7 @@ class SliderItem extends GameComponent{
       move=false;
     }
     if(focus&&!pFocus)FocusEvent=true;else FocusEvent=false;
-    pFocus=focus;
+    super.update();
     if(move){
       Xdist=constrain(mouseX,pos.x,pos.x+dist.x)-pos.x;
       Value=constrain(round(Xdist/(dist.x/elementNum))+1,1,elementNum);
@@ -277,7 +282,7 @@ class MultiButton extends GameComponent{
         }
       if(!pFocus)FocusEvent=true;else FocusEvent=false;
     }
-    pFocus=focus;
+    super.update();
   }
   
   void reloadIndex(){
@@ -312,7 +317,6 @@ class ItemList extends GameComponent{
   KeyEvent e=(int k)->{};
   boolean menu=false;
   boolean onMouse=false;
-  boolean keyMove=true;
   boolean moving=false;
   boolean pDrag=false;
   boolean drag=false;
@@ -323,12 +327,13 @@ class ItemList extends GameComponent{
   int menuNumber=0;
   
   ItemList(){
-    
+    keyMove=true;
   }
   
   ItemList(ItemTable t){
     table=t;
     changeEvent();
+    keyMove=true;
   }
   
   void LinkTable(ItemTable t){
@@ -404,7 +409,7 @@ class ItemList extends GameComponent{
   }
   
   void update(){
-    if(focus){
+    if(focus&table!=null){
       onMouse=!menu?onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y)):
                     onMouse(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
       if(!menu)mouseProcess();else menuMouse();
@@ -415,6 +420,7 @@ class ItemList extends GameComponent{
       }
     }
     pDrag=drag;
+    super.update();
   }
   
   void mouseProcess(){
@@ -515,13 +521,15 @@ class ItemList extends GameComponent{
   }
   
   void changeEvent(){
-    int i=0;
-    for(Item I:table.table.values()){
-      if(i==selectedNumber){
-        selectedItem=I;
-        return;
+    if(table!=null){
+      int i=0;
+      for(Item I:table.table.values()){
+        if(i==selectedNumber){
+          selectedItem=I;
+          return;
+        }
+        i++;
       }
-      i++;
     }
   }
   
@@ -571,6 +579,89 @@ class ItemList extends GameComponent{
   
   void addListener(KeyEvent e){
     this.e=e;
+  }
+}
+
+class ListTemplate extends GameComponent{
+  ArrayList<ListDisp>contents=new ArrayList<ListDisp>();
+  ArrayList<Integer>separators=new ArrayList<Integer>();
+  Color TitleColor=new Color(0x70,0x70,0x70);
+  String name;
+  float Height=25;
+  
+  ListTemplate(){
+    
+  }
+  
+  ListTemplate(float h){
+    Height=h;
+  }
+  
+  ListTemplate(String s){
+    name=s;
+  }
+  
+  void addSeparator(int index){
+    if(!separators.contains(index))separators.add(index);
+  }
+  
+  void display(){
+    float offset=0;
+    blendMode(BLEND);
+    noStroke();
+    fill(toColor(TitleColor));
+    rect(pos.x,pos.y,dist.x,Height);
+    fill(toColor(foreground));
+    textAlign(CENTER);
+    textSize(Height*0.6);
+    text(name,pos.x+4+textWidth(name)/2,pos.y+Height*0.7);
+    fill(toColor(background));
+    rect(pos.x,pos.y+Height,dist.x,contents.size()*Height+(separators.size()+1)*Height/2);
+    for(int i=0;i<contents.size();i++){
+      if(separators.contains(i)){
+        float h=pos.y+Height*(1.25+i)+offset;
+        stroke(175);
+        line(pos.x+4,h,pos.x+dist.x-4,h);
+        offset+=Height/2;
+      }
+      fill(toColor(foreground));
+      contents.get(i).display(new PVector(pos.x,pos.y+offset+Height*(i+1)),new PVector(dist.x,Height));
+    }
+  }
+  
+  void addContent(ListDisp l){
+    contents.add(l);
+  }
+}
+
+class StatusList extends ListTemplate{
+  Myself m;
+  
+  StatusList(Myself m){
+    this.m=m;
+    name="Status";
+    setBackground(new Color(220,220,220));
+    addContent((PVector pos,PVector dist)->{
+      text("player",pos.x+4+textWidth("player")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      text("Funds(U):",pos.x+4+textWidth("Funds(U):")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      text("HP:",pos.x+4+textWidth("HP:")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      text("Attack(Basic):",pos.x+4+textWidth("Attack(Basic):")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      text("Defence(Basic):",pos.x+4+textWidth("Defence(Basic):")/2,pos.y+dist.y*0.7);
+    });
+    addSeparator(1);
+    addSeparator(3);
+  }
+  
+  void display(){
+    super.display();
   }
 }
 
@@ -715,32 +806,34 @@ class MenuItemList extends ItemList{
   }
   
   void display(){
-    int num=0;
-    blendMode(BLEND);
-    pg.beginDraw();
-    pg.background(toColor(background));
-    pg.textFont(font);
-    pg.textSize(15);
-    for(Item i:table.table.values()){
-      if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
-        pg.fill(toColor(foreground));
-        pg.textAlign(CENTER);
-        pg.text(i.getName(),10+textWidth(i.getName())/2,num*Height-scroll+Height*0.7);
-        pg.text(table.getNumber(i),pg.width-10-textWidth(str(table.getNumber(i)))/2,num*Height-scroll+Height*0.7);
-        if(selectedNumber==num){
-          pg.fill(0,30);
-          pg.noStroke();
-          pg.rect(0,num*Height-scroll,dist.x,Height);
-          pg.stroke(0,150,255);
-          pg.line(0,num*Height-scroll,0,num*Height-scroll+Height);
+    if(table!=null){
+      int num=0;
+      blendMode(BLEND);
+      pg.beginDraw();
+      pg.background(toColor(background));
+      pg.textFont(font);
+      pg.textSize(15);
+      for(Item i:table.table.values()){
+        if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
+          pg.fill(toColor(foreground));
+          pg.textAlign(CENTER);
+          pg.text(i.getName(),10+textWidth(i.getName())/2,num*Height-scroll+Height*0.7);
+          pg.text(table.getNumber(i),pg.width-10-textWidth(str(table.getNumber(i)))/2,num*Height-scroll+Height*0.7);
+          if(selectedNumber==num&focus){
+            pg.fill(0,30);
+            pg.noStroke();
+            pg.rect(0,num*Height-scroll,dist.x,Height);
+            pg.stroke(0,150,255);
+            pg.line(0,num*Height-scroll,0,num*Height-scroll+Height);
+          }
         }
+        num++;
       }
-      num++;
+      sideBar();
+      pg.endDraw();
+      image(pg,pos.x,pos.y);
+      if(menu)menuDraw();
     }
-    sideBar();
-    pg.endDraw();
-    image(pg,pos.x,pos.y);
-    if(menu)menuDraw();
   }
 }
 
@@ -756,6 +849,7 @@ class Menu extends ButtonItem{
 class ComponentSet{
   ArrayList<GameComponent>conponents=new ArrayList<GameComponent>();
   ArrayList<GameComponent>conponentStack=new ArrayList<GameComponent>();
+  boolean showStack=false;
   boolean isStack=false;
   boolean pStack=false;
   boolean keyMove=true;
@@ -805,8 +899,10 @@ class ComponentSet{
   void toStack(){
     isStack=true;
     for(GameComponent c:conponents){
+      c.removeFocus();
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;
     }
+    conponentStack.get(stackIndex).requestFocus();
   }
   
   void backStack(){
@@ -820,15 +916,21 @@ class ComponentSet{
     }
     isStack=false;
     for(GameComponent c:conponentStack){
+      c.removeFocus();
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;
     }
+    conponents.get(selectedIndex).requestFocus();
+  }
+  
+  void stackFocusTo(GameComponent g){
+    stackIndex=conponentStack.indexOf(g);
   }
   
   void display(){
     for(GameComponent c:conponents){
       c.display();
     }
-    if(isStack){
+    if(isStack|showStack){
       for(GameComponent c:conponentStack){
         c.display();
       }
@@ -885,7 +987,7 @@ class ComponentSet{
   
   void keyEvent(){
     if(keyPress&
-       !(isStack?conponentStack.get(stackIndex).keyMove:conponents.get(selectedIndex).keyMove)){
+        !(isStack?conponentStack.get(stackIndex).keyMove:conponents.get(selectedIndex).keyMove)){
       if(type==0|type==1){
         switch(nowPressedKeyCode){
           case DOWN:if(type==0)addSelect();else subSelect();break;
@@ -914,12 +1016,14 @@ class ComponentSet{
       }
       selectedIndex=selectedIndex>=conponents.size()-1?0:selectedIndex+1;
       conponents.get(selectedIndex).requestFocus();
+      conponents.get(selectedIndex).Fe.getFocus();
     }else{
       for(GameComponent c:conponentStack){
         c.removeFocus();
       }
       stackIndex=stackIndex>=conponentStack.size()-1?0:stackIndex+1;
       conponentStack.get(stackIndex).requestFocus();
+      conponentStack.get(stackIndex).Fe.getFocus();
     }
   }
   
@@ -930,14 +1034,22 @@ class ComponentSet{
       }
       selectedIndex=selectedIndex<=0?conponents.size()-1:selectedIndex-1;
       conponents.get(selectedIndex).requestFocus();
+      conponents.get(selectedIndex).Fe.getFocus();
     }else{
       for(GameComponent c:conponentStack){
         c.removeFocus();
       }
       stackIndex=stackIndex<=0?conponentStack.size()-1:stackIndex-1;
       conponentStack.get(stackIndex).requestFocus();
+      conponentStack.get(stackIndex).Fe.getFocus();
     }
   }
+}
+
+interface FocusEvent{
+  void getFocus();
+  
+  void lostFocus();
 }
 
 interface SelectEvent{
@@ -950,4 +1062,8 @@ interface ChangeEvent{
 
 interface KeyEvent{
   void keyEvent(int Key);
+}
+
+interface ListDisp{
+  void display(PVector pos,PVector dist);
 }

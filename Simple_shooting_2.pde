@@ -78,7 +78,6 @@ static final String ShaderPath=".\\data\\shaders\\";
 
 void setup(){
   size(1280,720,P2D);
-  surface.setResizable(true);
   ((GLWindow)surface.getNative()).addWindowListener(new com.jogamp.newt.event.WindowListener(){
     void windowDestroyed(com.jogamp.newt.event.WindowEvent e){}
     

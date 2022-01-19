@@ -271,6 +271,9 @@ class Myself extends Entity{
   
   void move(){
     rotate(rotate);
+    if(Float.isNaN(Speed)){
+      Speed=0;
+    }
     if(keyPressed&&(nowPressedKey.equals("w")||nowPressedKey.equals("s"))){
       switch(nowPressedKey){
         case "w":addVel(accelSpeed,false);break;

@@ -243,20 +243,37 @@ class GameProcess{
     
     void initItem(){
       Item=new ComponentSet();
+      MenuItemList iList=new MenuItemList();
+      iList.setBounds(170,50,350,height-200);
+      StatusList iSta=new StatusList(player);
+      iSta.setBounds(width-400,50,350,0);
       MenuButton iBack=new MenuButton("戻る");
       iBack.setBounds(20,100,120,25);
       iBack.addListener(()->{
         scene=pChangeScene;
         mastar=main;
       });
-      MenuItemList iList=new MenuItemList();
-      iList.setBounds(170,50,350,height-200);
+      iBack.addFocusListener(new FocusEvent(){
+        void getFocus(){
+          iList.LinkTable(null);
+        }
+        
+        void lostFocus(){
+        }
+      });
       MenuButton ite=new MenuButton("アイテム");
       ite.setBounds(20,130,120,25);
       ite.addListener(()->{
         if(!pStack){
           mastar.toStack();
+        }
+      });
+      ite.addFocusListener(new FocusEvent(){
+        void getFocus(){
           iList.LinkTable(player.Items);
+        }
+        
+        void lostFocus(){
         }
       });
       MenuButton mat=new MenuButton("素材");
@@ -264,7 +281,14 @@ class GameProcess{
       mat.addListener(()->{
         if(!pStack){
           mastar.toStack();
+        }
+      });
+      mat.addFocusListener(new FocusEvent(){
+        void getFocus(){
           iList.LinkTable(player.Materials);
+        }
+        
+        void lostFocus(){
         }
       });
       MenuButton wea=new MenuButton("武器");
@@ -272,7 +296,14 @@ class GameProcess{
       wea.addListener(()->{
         if(!pStack){
           mastar.toStack();
+        }
+      });
+      wea.addFocusListener(new FocusEvent(){
+        void getFocus(){
           iList.LinkTable(player.Weapons);
+        }
+        
+        void lostFocus(){
         }
       });
       MenuButton chi=new MenuButton("拡張チップ");
@@ -284,7 +315,10 @@ class GameProcess{
       Item.add(mat);
       Item.add(wea);
       Item.add(chi);
+      Item.addStack(iSta);
       Item.addStack(iList);
+      Item.stackFocusTo(iList);
+      Item.showStack=true;
       componentMap.put("Item",Item);
     }
     
@@ -319,7 +353,7 @@ class GameProcess{
     }
     
     void display(){
-      mastar.display(); //<>//
+      mastar.display();
     }
     
     void update(){
