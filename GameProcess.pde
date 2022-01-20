@@ -90,7 +90,7 @@ class GameProcess{
       UItime=0f;
       animation=true;
     }else
-    if((key=='x'|keyCode==SHIFT)&menu.equals("Menu")&!animation){
+    if((key=='x'|keyCode==SHIFT|keyCode==LEFT)&menu.equals("Menu")&!animation){
       if(!mainMenu.isMain()){
         mainMenu.back();
         return;
@@ -133,7 +133,7 @@ class GameProcess{
   }
   
   void keyProcess(){
-    if(keyPress&((key=='c'|keyCode==CONTROL)|(key=='x'|keyCode==SHIFT)))switchMenu();
+    if(keyPress&(key=='c'|keyCode==CONTROL|key=='x'|keyCode==SHIFT|keyCode==LEFT))switchMenu();
   }
   
   void menuShading(){
@@ -216,6 +216,7 @@ class GameProcess{
       main.add(item);
       main.add(archive);
       main.add(setting);
+      main.setSubSelectButton(RIGHT);
       componentMap.put("main",main);
     }
     
@@ -238,6 +239,7 @@ class GameProcess{
       equ.add(eBack);
       equ.add(weapon);
       equ.add(ext);
+      equ.setSubSelectButton(RIGHT);
       componentMap.put("equ",equ);
     }
     
@@ -318,6 +320,7 @@ class GameProcess{
       Item.addStack(iSta);
       Item.addStack(iList);
       Item.stackFocusTo(iList);
+      Item.setSubSelectButton(RIGHT);
       Item.showStack=true;
       componentMap.put("Item",Item);
     }
@@ -331,6 +334,7 @@ class GameProcess{
         mastar=main;
       });
       arc.add(aBack);
+      arc.setSubSelectButton(RIGHT);
       componentMap.put("arc",arc);
     }
     
@@ -349,6 +353,7 @@ class GameProcess{
       });
       conf.add(cBack);
       conf.add(quit);
+      conf.setSubSelectButton(RIGHT);
       componentMap.put("conf",conf);
     }
     

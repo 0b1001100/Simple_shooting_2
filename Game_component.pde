@@ -237,7 +237,7 @@ class MultiButton extends GameComponent{
   }
   
   void add(NormalButton b){
-    
+    Buttons.add(b);
   }
   
   void display(){
@@ -413,11 +413,8 @@ class ItemList extends GameComponent{
       onMouse=!menu?onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y)):
                     onMouse(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
       if(!menu)mouseProcess();else menuMouse();
-      if(!onMouse){
-        if(!menu)keyProcess();else menuKey();
-      }else{
-        moving=false;
-      }
+      if(mousePressed)moving=false;
+      if(!menu)keyProcess();else menuKey();
     }
     pDrag=drag;
     super.update();
@@ -472,14 +469,12 @@ class ItemList extends GameComponent{
   void keyProcess(){
     if(keyPress){
       e.keyEvent(nowPressedKeyCode);
-      if(!onMouse){
-        switch(nowPressedKeyCode){
-          case UP:subSelect();changeEvent();break;
-          case DOWN:addSelect();changeEvent();break;
-        }
-        scroll();
+      switch(nowPressedKeyCode){
+        case UP:subSelect();changeEvent();break;
+        case DOWN:addSelect();changeEvent();break;
       }
-      if(nowPressedKeyCode==ENTER)Select();
+      scroll();
+      if(nowPressedKeyCode==ENTER|nowPressedKeyCode==RIGHT)Select();
     }
     if(!moving&keyPressed&(nowPressedKeyCode==UP|nowPressedKeyCode==DOWN)){
       keyTime+=vectorMagnification;
@@ -511,7 +506,7 @@ class ItemList extends GameComponent{
           case UP:menuNumber=abs(menuNumber-1);break;
           case DOWN:menuNumber=menuNumber==1?0:1;break;
         }
-        if(nowPressedKeyCode==ENTER){
+        if(nowPressedKeyCode==ENTER|nowPressedKeyCode==RIGHT){
           menuSelect();
         }
       }else if(selectedItem.getType()==2){
@@ -541,6 +536,7 @@ class ItemList extends GameComponent{
     }
     if(!b)selectedNumber--;
     resetSelect();
+    changeEvent();
   }
   
   void addSelect(){
@@ -853,7 +849,10 @@ class ComponentSet{
   boolean isStack=false;
   boolean pStack=false;
   boolean keyMove=true;
+  int subSelectButton=-0xFFFFFF;
+  int pSelectedIndex=0;
   int selectedIndex=0;
+  int pStackIndex=0;
   int stackIndex=0;
   int type=0;
   
@@ -962,11 +961,25 @@ class ComponentSet{
       }
     }
     if(!onMouse())keyEvent();
+    if(pStackIndex!=stackIndex){
+      conponentStack.get(pStackIndex).Fe.lostFocus();
+      conponentStack.get(stackIndex).Fe.getFocus();
+    }
+    if(pSelectedIndex!=selectedIndex){
+      conponents.get(pSelectedIndex).Fe.lostFocus();
+      conponents.get(selectedIndex).Fe.getFocus();
+    }
     pStack=isStack;
+    pStackIndex=stackIndex;
+    pSelectedIndex=selectedIndex;
   }
   
   boolean isStack(){
     return isStack|pStack;
+  }
+  
+  void setSubSelectButton(int b){
+    subSelectButton=b;
   }
   
   boolean onMouse(){
@@ -999,7 +1012,7 @@ class ComponentSet{
           case LEFT:break;
         }
       }
-      if(nowPressedKeyCode==ENTER){
+      if(nowPressedKeyCode==ENTER|keyCode==subSelectButton){
         if(!isStack){
           conponents.get(selectedIndex).executeEvent();
         }else{
@@ -1016,14 +1029,12 @@ class ComponentSet{
       }
       selectedIndex=selectedIndex>=conponents.size()-1?0:selectedIndex+1;
       conponents.get(selectedIndex).requestFocus();
-      conponents.get(selectedIndex).Fe.getFocus();
     }else{
       for(GameComponent c:conponentStack){
         c.removeFocus();
       }
       stackIndex=stackIndex>=conponentStack.size()-1?0:stackIndex+1;
       conponentStack.get(stackIndex).requestFocus();
-      conponentStack.get(stackIndex).Fe.getFocus();
     }
   }
   
@@ -1034,14 +1045,12 @@ class ComponentSet{
       }
       selectedIndex=selectedIndex<=0?conponents.size()-1:selectedIndex-1;
       conponents.get(selectedIndex).requestFocus();
-      conponents.get(selectedIndex).Fe.getFocus();
     }else{
       for(GameComponent c:conponentStack){
         c.removeFocus();
       }
       stackIndex=stackIndex<=0?conponentStack.size()-1:stackIndex-1;
       conponentStack.get(stackIndex).requestFocus();
-      conponentStack.get(stackIndex).Fe.getFocus();
     }
   }
 }
