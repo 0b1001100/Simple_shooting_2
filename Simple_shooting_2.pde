@@ -36,7 +36,8 @@ ComponentSet configs=new ComponentSet();
 
 Fields field=new Fields();
 
-ItemTable MastarTable;
+ItemTable MastarItemTable;
+ItemTable MastarMaterialTable;
 
 PImage Map;
 PImage Mask;

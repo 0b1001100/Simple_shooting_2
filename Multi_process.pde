@@ -1,3 +1,5 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
 class ParticleProcess implements Callable<String>{
   long pTime=0;
   
@@ -72,16 +74,35 @@ class BulletProcess implements Callable<String>{
   }
 }
 
-class pixelProcess implements Callable<String>{
+class LoadProcess implements Callable<Fields>{
+  protected Fields f;
+  protected ItemLoader i;
+  protected String Path;
+  protected boolean LoadItem=false;
+  boolean done=false;
+  AtomicInteger progress=new AtomicInteger(0);
   
-  pixelProcess(){
-    
+  LoadProcess(Fields f,String Path,boolean Item){
+    this.f=f;
+    this.Path=Path;
+    LoadItem=Item;
   }
   
-  String call(){
-    loadPixels();
-    t.pixels=pixels;
-    t.updatePixels();
-    return "";
+  synchronized Fields call(){
+    if(LoadItem){
+      LoadItem();
+      progress.set(43);
+    }
+    f.loadMap(Path);//load->file size(KB)*0.2ms parse->20ms
+    progress.set(100);
+    done=true;
+    return f;
+  }
+  
+  void LoadItem(){
+    i=new ItemLoader(ResourcePath+"Item.json");
+    MastarItemTable=i.getTable();
+    i=new ItemLoader(ResourcePath+"Material.json");
+    MastarMaterialTable=i.getTable();
   }
 }
