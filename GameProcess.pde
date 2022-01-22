@@ -249,6 +249,13 @@ class GameProcess{
       iList.setBounds(170,50,350,height-200);
       StatusList iSta=new StatusList(player);
       iSta.setBounds(width-400,50,350,0);
+      iList.addItemListener((Item i)->{
+        if(iList.table!=null){
+          if(iList.table.equals(player.Items)){
+            iSta.setAddHP(i.recovory);
+          }
+        }
+      });
       MenuButton iBack=new MenuButton("戻る");
       iBack.setBounds(20,100,120,25);
       iBack.addListener(()->{

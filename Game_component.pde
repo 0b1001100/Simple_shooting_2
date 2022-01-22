@@ -1,3 +1,5 @@
+Color menuRightColor=new Color(0,150,255);
+
 class GameComponent{
   protected FocusEvent Fe=new FocusEvent(){void getFocus(){} void lostFocus(){}};
   protected PVector pos;
@@ -315,6 +317,7 @@ class ItemList extends GameComponent{
   ItemTable table;
   Item selectedItem=null;
   KeyEvent e=(int k)->{};
+  ItemSelect s=(Item i)->{};
   boolean menu=false;
   boolean onMouse=false;
   boolean moving=false;
@@ -395,7 +398,7 @@ class ItemList extends GameComponent{
       text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber+1)*Height-scroll+Height*0.2);
       fill(0,30);
       rect(pos.x+dist.x,pos.y+(selectedNumber+menuNumber)*Height-scroll-Height/2,120,Height);
-      stroke(0,150,255);
+      stroke(toColor(menuRightColor));
       line(pos.x+dist.x,pos.y+(selectedNumber+menuNumber)*Height-scroll-Height/2,
            pos.x+dist.x,pos.y+(selectedNumber+menuNumber+1)*Height-scroll-Height/2);
     }else if(selectedItem.getType()==2){
@@ -403,7 +406,7 @@ class ItemList extends GameComponent{
       text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber-1)*Height-scroll+Height*0.2);
       fill(0,30);
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
-      stroke(0,150,255);
+      stroke(toColor(menuRightColor));
       line(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,pos.x+dist.x,pos.y+(selectedNumber+1)*Height-scroll);
     }
   }
@@ -541,10 +544,14 @@ class ItemList extends GameComponent{
   
   void addSelect(){
     selectedNumber=selectedNumber<table.table.size()-1?selectedNumber+1:0;
+    changeEvent();
+    itemSelect();
   }
   
   void subSelect(){
     selectedNumber=selectedNumber>0?selectedNumber-1:table.table.size()-1;
+    changeEvent();
+    itemSelect();
   }
   
   void resetSelect(){
@@ -573,8 +580,16 @@ class ItemList extends GameComponent{
     if(table.num.size()>=1&s.getType()!=s.COLLECTION)menu=true;
   }
   
+  void itemSelect(){
+    s.ItemSelect(selectedItem);
+  }
+  
   void addListener(KeyEvent e){
     this.e=e;
+  }
+  
+  void addItemListener(ItemSelect s){
+    this.s=s;
   }
 }
 
@@ -617,7 +632,7 @@ class ListTemplate extends GameComponent{
       if(separators.contains(i)){
         float h=pos.y+Height*(1.25+i)+offset;
         stroke(175);
-        line(pos.x+4,h,pos.x+dist.x-4,h);
+        line(pos.x+dist.x*0.025,h,pos.x+dist.x*0.975,h);
         offset+=Height/2;
       }
       fill(toColor(foreground));
@@ -632,6 +647,7 @@ class ListTemplate extends GameComponent{
 
 class StatusList extends ListTemplate{
   Myself m;
+  float addHP=0;
   
   StatusList(Myself m){
     this.m=m;
@@ -645,6 +661,18 @@ class StatusList extends ListTemplate{
     });
     addContent((PVector pos,PVector dist)->{
       text("HP:",pos.x+4+textWidth("HP:")/2,pos.y+dist.y*0.7);
+      push();
+      textAlign(RIGHT);
+      text(m.HP.get()+"/"+m.HP.getMax(),pos.x+dist.x-5,pos.y+dist.y*0.7);
+      pop();
+      noStroke();
+      fill(200);
+      rect(pos.x+9+textWidth("HP:"),pos.y+dist.y/2,100,6);
+      fill(toColor(menuRightColor));
+      rect(pos.x+9+textWidth("HP:"),pos.y+dist.y/2,m.HP.getPercentage()*100,6);
+      fill(100,128);
+      rect(pos.x+9+textWidth("HP:")+m.HP.getPercentage()*100,
+           pos.y+dist.y/2,(constrain(m.HP.getPercentage()+addHP/m.HP.getMax().floatValue(),0,1)-m.HP.getPercentage())*100,6);
     });
     addContent((PVector pos,PVector dist)->{
       text("Attack(Basic):",pos.x+4+textWidth("Attack(Basic):")/2,pos.y+dist.y*0.7);
@@ -658,6 +686,10 @@ class StatusList extends ListTemplate{
   
   void display(){
     super.display();
+  }
+  
+  void setAddHP(float d){
+    addHP=d;
   }
 }
 
@@ -738,7 +770,7 @@ class NormalButton extends TextButton{
 }
 
 class MenuButton extends TextButton{
-  Color sideLineColor=new Color(0,150,255);
+  Color sideLineColor=new Color(toColor(menuRightColor));
   
   MenuButton(){
     setBackground(new Color(220,220,220));
@@ -799,6 +831,10 @@ class MenuItemList extends ItemList{
     setBackground(new Color(210,210,210));
     setBorderColor(new Color(100,100,100));
     setForeground(new Color(30,30,30,255));
+    addFocusListener(new FocusEvent(){
+                       void getFocus(){changeEvent();itemSelect();}
+                       void lostFocus(){}
+                     });
   }
   
   void display(){
@@ -819,7 +855,7 @@ class MenuItemList extends ItemList{
             pg.fill(0,30);
             pg.noStroke();
             pg.rect(0,num*Height-scroll,dist.x,Height);
-            pg.stroke(0,150,255);
+            pg.stroke(toColor(menuRightColor));
             pg.line(0,num*Height-scroll,0,num*Height-scroll+Height);
           }
         }
@@ -902,6 +938,14 @@ class ComponentSet{
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;
     }
     conponentStack.get(stackIndex).requestFocus();
+    if(pStackIndex!=stackIndex){
+      conponentStack.get(pStackIndex).Fe.lostFocus();
+      conponentStack.get(stackIndex).Fe.getFocus();
+    }
+    if(pSelectedIndex!=selectedIndex){
+      conponents.get(pSelectedIndex).Fe.lostFocus();
+      conponents.get(selectedIndex).Fe.getFocus();
+    }
   }
   
   void backStack(){
@@ -919,6 +963,14 @@ class ComponentSet{
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;
     }
     conponents.get(selectedIndex).requestFocus();
+    if(pStackIndex!=stackIndex){
+      conponentStack.get(pStackIndex).Fe.lostFocus();
+      conponentStack.get(stackIndex).Fe.getFocus();
+    }
+    if(pSelectedIndex!=selectedIndex){
+      conponents.get(pSelectedIndex).Fe.lostFocus();
+      conponents.get(selectedIndex).Fe.getFocus();
+    }
   }
   
   void stackFocusTo(GameComponent g){
@@ -1071,6 +1123,10 @@ interface ChangeEvent{
 
 interface KeyEvent{
   void keyEvent(int Key);
+}
+
+interface ItemSelect{
+  void ItemSelect(Item i);
 }
 
 interface ListDisp{

@@ -38,7 +38,7 @@ class Fields{
   }
   
   void loadMap(String s){
-    XML data=loadXML(MapPath+s);long l=System.nanoTime();
+    XML data=loadXML(MapPath+s);
     XML[] Main=data.getChildren("Main");
     XML[] Meta=data.getChildren("MetaData");
     for(XML x:Main){
@@ -66,7 +66,7 @@ class Fields{
     if(nowField.equals("Map")){
       SelectedField=SelectedMap;
     }
-    spownPoint=MetaTiles.getTiles("Spown")[0].getPos().mult(tileSize).add(tileSize/2,tileSize/2);println(System.nanoTime()-l);exit();
+    spownPoint=MetaTiles.getTiles("Spown")[0].getPos().mult(tileSize).add(tileSize/2,tileSize/2);
   }
   
   void loadMap(XML data){

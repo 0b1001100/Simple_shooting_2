@@ -3,6 +3,7 @@ class Item{
   protected PImage image;
   protected String name="";
   String explanation="";
+  float recovory=0;
   int maxStack=99;
   int type=1;
   
@@ -40,6 +41,11 @@ class Item{
   
   Item setType(int i){
     type=i;
+    return this;
+  }
+  
+  Item setRecovory(float f){
+    recovory=f;
     return this;
   }
   

@@ -142,9 +142,9 @@ class Myself extends Entity{
     Items=new ItemTable();
     Materials=new ItemTable();
     Weapons=new ItemTable();
-    Items.addStorage(new Item("回復薬(小)").addListener((m)->{HP.add(25);}),10);
-    Items.addStorage(new Item("回復薬(中)").addListener((m)->{HP.add(40);}),3);
-    Items.addStorage(new Item("回復薬(大)").addListener((m)->{HP.add(65);}),1);
+    Items.addStorage(new Item("回復薬(小)").addListener((m)->{HP.add(25);}).setRecovory(25),10);
+    Items.addStorage(new Item("回復薬(中)").addListener((m)->{HP.add(40);}).setRecovory(40),3);
+    Items.addStorage(new Item("回復薬(大)").addListener((m)->{HP.add(65);}).setRecovory(65),1);
     Weapons.addStorage(new Item("クォークキャノン").setType(3),1);
     Weapons.addStorage(new Item("タウブラスター").setType(3),1);
     Weapons.addStorage(new Item("フォトンパルス").setType(3),1);

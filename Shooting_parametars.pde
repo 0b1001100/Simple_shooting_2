@@ -105,7 +105,7 @@ class Status{
   }
   
   float getPercentage(){
-    return !status.equals(new BigDecimal(0)) ? status.divide(maxStatus).floatValue() : 0;
+    return !status.equals(new BigDecimal(0)) ? status.divide(maxStatus).floatValue():0;
   }
   
   void reset(){
