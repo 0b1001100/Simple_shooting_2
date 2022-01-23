@@ -14,8 +14,6 @@ class GameProcess{
   }
   
   void setup(){
-    field.loadMap("largeField.lfdf");
-    MastarItemTable=new ItemLoader(ResourcePath+"Item.json").getTable();
     menuShader=loadShader(ShaderPath+"Menu.glsl");
     mainMenu=new menuManage();
     player=new Myself();
@@ -246,7 +244,8 @@ class GameProcess{
     void initItem(){
       Item=new ComponentSet();
       MenuItemList iList=new MenuItemList();
-      iList.setBounds(170,50,350,height-200);
+      iList.setBounds(170,50,325,height-200);
+      iList.setSubBounds(520,50,325,400);
       StatusList iSta=new StatusList(player);
       iSta.setBounds(width-400,50,350,0);
       iList.addItemListener((Item i)->{

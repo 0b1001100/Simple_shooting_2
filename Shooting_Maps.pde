@@ -69,6 +69,43 @@ class Fields{
     spownPoint=MetaTiles.getTiles("Spown")[0].getPos().mult(tileSize).add(tileSize/2,tileSize/2);
   }
   
+  void loadMap(String s,AtomicInteger progress){
+    int prog=100-progress.intValue();
+    XML data=loadXML(MapPath+s);
+    progress.addAndGet(prog/2);
+    XML[] Main=data.getChildren("Main");
+    XML[] Meta=data.getChildren("MetaData");
+    for(XML x:Main){
+      int[][] FieldData=new int[int(x.getChildren("FieldHeight")[0].getContent())][int(x.getChildren("FieldWidth")[0].getContent())];
+      XML[] Attribute=x.getChildren("Attributes")[0].getChildren("Attribute");
+      MainAttr.clear();
+      for(XML Att:Attribute){
+        MainAttr.add(Att.getInt("Type"),(String)Att.getContent());
+      }
+      XML[] LayeredField=x.getChildren("LayeredField")[0].getChildren("Field");
+      for(XML lf:LayeredField){
+        FieldData[lf.getInt("y")][lf.getInt("x")]=int(lf.getContent());
+      }
+      SelectedMap=FieldData;
+    }
+    progress.addAndGet(prog/4);
+    for(XML x:Meta){
+      XML[] MetaData=x.getChildren("MetaTileData");
+      MetaTiles.clearTile();
+      for(XML tile:MetaData){
+        String Values=tile.getContent();
+        MetaTiles.addTile(tile.getString("Attribute"),Values.split(":")[0],Values.split(":")[1],
+                          new PVector(tile.getInt("x"),tile.getInt("y")));
+      }
+    }
+    progress.addAndGet(prog/5);
+    if(nowField.equals("Map")){
+      SelectedField=SelectedMap;
+    }
+    progress.addAndGet(prog/21);
+    spownPoint=MetaTiles.getTiles("Spown")[0].getPos().mult(tileSize).add(tileSize/2,tileSize/2);
+  }
+  
   void loadMap(XML data){
     XML[] Main=data.getChildren("Main");
     XML[] Meta=data.getChildren("MetaData");

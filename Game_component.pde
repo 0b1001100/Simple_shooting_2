@@ -318,6 +318,9 @@ class ItemList extends GameComponent{
   Item selectedItem=null;
   KeyEvent e=(int k)->{};
   ItemSelect s=(Item i)->{};
+  PVector sPos;
+  PVector sDist;
+  boolean showSub=true;
   boolean menu=false;
   boolean onMouse=false;
   boolean moving=false;
@@ -349,12 +352,21 @@ class ItemList extends GameComponent{
     return super.setBounds(x,y,dx,dy);
   }
   
+  GameComponent setSubBounds(float x,float y,float dx,float dy){
+    sPos=new PVector(x,y);
+    sDist=new PVector(dx,dy);
+    return this;
+  }
+  
+  void setSub(boolean b){
+    showSub=b;
+  }
+  
   void display(){
     blendMode(BLEND);
     int num=0;
     pg.beginDraw();
     pg.background(toColor(background));
-    pg.background(0,0);
     pg.fill(0,255);
     for(Item i:table.table.values()){
       if(floor(scroll/Height)<=num&num<=floor((scroll+dist.y)/Height)){
@@ -369,6 +381,7 @@ class ItemList extends GameComponent{
     sideBar();
     pg.endDraw();
     image(pg,pos.x,pos.y);
+    if(showSub)subDraw();
     if(menu)menuDraw();
   }
   
@@ -381,6 +394,21 @@ class ItemList extends GameComponent{
       pg.fill(drag?200:128);
       pg.rect(pg.width-10,pg.height*(1-mag)*scroll/(len-pg.height),10,pg.height*mag);
     }
+  }
+  
+  void subDraw(){
+    blendMode(BLEND);
+    fill(#707070);
+    noStroke();
+    rect(sPos.x,sPos.y,sDist.x,25);
+    fill(toColor(background));
+    rect(sPos.x,sPos.y+25,sDist.x,sDist.y-25);
+    textSize(15);
+    textAlign(CENTER);
+    fill(0);
+    text("説明",sPos.x+5+textWidth("説明")/2,sPos.y+17.5);
+    textAlign(LEFT);
+    text(MastarItemTable.get(selectedItem.getName()).getExplanation(),sPos.x+5,sPos.y+45);
   }
   
   void menuDraw(){
@@ -645,6 +673,30 @@ class ListTemplate extends GameComponent{
   }
 }
 
+class ProgressBar extends GameComponent{
+  Number progress=0;
+  
+  ProgressBar(){
+    setForeground(new Color(250,250,250));
+    setBorderColor(new Color(0,90,200));
+    keyMove=true;
+  }
+  
+  void display(){
+    fill(toColor(foreground));
+    stroke(toColor(border));
+    strokeWeight(1);
+    line(pos.x,pos.y,pos.x,pos.y+dist.y);
+    line(pos.x+dist.x,pos.y,pos.x+dist.x,pos.y+dist.y);
+    noStroke();
+    rect(pos.x+2,pos.y,(dist.x-4)*new Float(progress.toString())/100,dist.y);
+  }
+  
+  void setProgress(Number n){
+    progress=n;
+  }
+}
+
 class StatusList extends ListTemplate{
   Myself m;
   float addHP=0;
@@ -864,6 +916,7 @@ class MenuItemList extends ItemList{
       sideBar();
       pg.endDraw();
       image(pg,pos.x,pos.y);
+      if(showSub)subDraw();
       if(menu)menuDraw();
     }
   }
@@ -938,14 +991,8 @@ class ComponentSet{
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;
     }
     conponentStack.get(stackIndex).requestFocus();
-    if(pStackIndex!=stackIndex){
-      conponentStack.get(pStackIndex).Fe.lostFocus();
-      conponentStack.get(stackIndex).Fe.getFocus();
-    }
-    if(pSelectedIndex!=selectedIndex){
-      conponents.get(pSelectedIndex).Fe.lostFocus();
-      conponents.get(selectedIndex).Fe.getFocus();
-    }
+    conponentStack.get(stackIndex).Fe.getFocus();
+    conponents.get(pSelectedIndex).Fe.lostFocus();
   }
   
   void backStack(){
@@ -963,14 +1010,8 @@ class ComponentSet{
       if(c instanceof ButtonItem)((ButtonItem)c).select=false;
     }
     conponents.get(selectedIndex).requestFocus();
-    if(pStackIndex!=stackIndex){
-      conponentStack.get(pStackIndex).Fe.lostFocus();
-      conponentStack.get(stackIndex).Fe.getFocus();
-    }
-    if(pSelectedIndex!=selectedIndex){
-      conponents.get(pSelectedIndex).Fe.lostFocus();
-      conponents.get(selectedIndex).Fe.getFocus();
-    }
+    conponentStack.get(pStackIndex).Fe.lostFocus();
+    conponents.get(selectedIndex).Fe.getFocus();
   }
   
   void stackFocusTo(GameComponent g){

@@ -59,7 +59,7 @@ class Particle{
   void update(){
     ArrayList<particleFragment>nextParticles=new ArrayList<particleFragment>();
     for(particleFragment p:particles){
-      p.setAlpha(p.alpha-2*vectorMagnification);
+      p.setAlpha(p.alpha-(p instanceof StringFragment?1000f/p.alpha:2)*vectorMagnification);
       p.update();
       if(!p.isDead)nextParticles.add(p);
     }
@@ -74,8 +74,11 @@ class Particle{
 class StringFragment extends particleFragment{
   String text="0";
   
+  final float diffuse=5.5;
+  
   StringFragment(PVector pos,PVector vel,Color c,float size,String s){
     super(pos,vel,c,size);
+    this.pos.add(random(-diffuse,diffuse),random(-diffuse,diffuse));
     setText(s);
   }
   
@@ -95,6 +98,7 @@ class StringFragment extends particleFragment{
   }
   
   void update(){
+    vel=vel.copy().div(1.1);
     super.update();
   }
 }
@@ -149,7 +153,7 @@ class particleFragment{
   }
   
   particleFragment setAlpha(float a){
-    alpha=a;
+    alpha=constrain(a,0,255);
     pColor=new Color(pColor.getRed(),pColor.getGreen(),pColor.getBlue(),round(max(0,alpha)));
     return this;
   }

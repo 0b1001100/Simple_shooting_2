@@ -10,7 +10,7 @@ void Menu(){
     starts.removeAll();
     NormalButton New=new NormalButton("New Game");
     New.setBounds(100,100,120,30);
-    New.addListener(()->{scene=2;});
+    New.addListener(()->{scene=1;});
     NormalButton Load=new NormalButton("Load Game");
     Load.setBounds(100,140,120,30);
     NormalButton Config=new NormalButton("Confuguration");

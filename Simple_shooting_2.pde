@@ -23,16 +23,19 @@ GameProcess main;
 Myself player;
 
 ExecutorService exec=Executors.newCachedThreadPool();
+Future<Fields> loadFuture;
 Future<?> particleFuture;
 Future<?> enemyFuture;
 Future<?> bulletFuture;
 
+LoadProcess loadTask;
 ParticleProcess particleTask=new ParticleProcess();
 EnemyProcess enemyTask=new EnemyProcess();
 BulletProcess bulletTask=new BulletProcess();
 
 ComponentSet starts=new ComponentSet();
 ComponentSet configs=new ComponentSet();
+ComponentSet loads=new ComponentSet();
 
 Fields field=new Fields();
 
@@ -116,8 +119,8 @@ void setup(){
 void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1024/1024+"MB",player!=null?player.Speed:0);
   switch(scene){
     case 0:Menu();break;
-    case 1:Field();break;
-    case 2:Stage();break;
+    case 1:Load();break;
+    case 2:Field();break;
   }
   eventProcess();
   try{
@@ -177,11 +180,33 @@ void updatePreValue(){
   pMenu=nowMenu;
 }
 
-void Field(){
-  
+void Load(){
+  if(changeScene){
+    loadTask=new LoadProcess(field,"largeField.lfdf",true);
+    loadFuture=exec.submit(loadTask);
+    ProgressBar loadp=new ProgressBar();
+    loadp.setBounds(width-205,height-20,200,12);
+    loadp.setProgress(loadTask.progress);
+    loads.add(loadp);
+  }
+  if(loadTask.done){
+    try{
+    field=loadFuture.get();
+    }catch(ExecutionException|InterruptedException e){
+    }
+    scene=2;
+  }else{
+    background(0);
+    fill(250);
+    stroke(250);
+    textAlign(RIGHT);
+    textSize(15);
+    text(loadTask.progress.intValue()+"%  Loading...",width-5,height-31);
+    loads.display();
+  }
 }
 
-void Stage(){
+void Field(){
   if(changeScene){
     main=new GameProcess();
   }

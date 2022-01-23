@@ -35,6 +35,10 @@ class Item{
     return name;
   }
   
+  String getExplanation(){
+    return explanation;
+  }
+  
   int getType(){
     return type;
   }
@@ -61,6 +65,7 @@ class Item{
   
   void ExecuteEvent(){
     e.ItemUse(player);
+    player.HP.add(recovory);
   }
 }
 
@@ -116,7 +121,7 @@ class ItemTable implements Cloneable{
     if(!table.containsKey(i.getName())){
       table.put(i.getName(),i);
       num.put(i.getName(),0);
-      this.prob.put(i.getName(),prob);
+      this.prob.put(i.getName(),constrain(prob,0,100));
     }else{
       this.prob.put(i.getName(),prob);
     }
@@ -177,6 +182,10 @@ class ItemTable implements Cloneable{
     return false;
   }
   
+  Item get(String s){
+    return table.get(s);
+  }
+  
   int getNumber(Item i){
     if(table.containsKey(i.getName())){
       return num.get(i.getName());
@@ -186,15 +195,9 @@ class ItemTable implements Cloneable{
   }
   
   Item getRandom(){
-    HashMap<Item,doubleValue>vals=new HashMap<Item,doubleValue>();
-    float offset=0;
     for(String s:prob.keySet()){
-      vals.put(table.get(s),new doubleValue(offset,offset+prob.get(s)));
-      offset+=prob.get(s);
-    }
-    float rand=random(0,offset);
-    for(Item i:vals.keySet()){
-      if(vals.get(i).min<=rand&rand<vals.get(i).max)return i;
+      float rand=random(0,100);
+      if(0<=rand&rand<prob.get(s))return table.get(s);
     }
     return null;
   }

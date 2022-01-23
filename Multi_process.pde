@@ -91,9 +91,10 @@ class LoadProcess implements Callable<Fields>{
   synchronized Fields call(){
     if(LoadItem){
       LoadItem();
-      progress.set(43);
+      progress.set(18);
     }
-    f.loadMap(Path);//load->file size(KB)*0.2ms parse->20ms
+    f.loadMap(Path,progress);//load->file size(KB)*0.2ms parse->20ms
+    try{Thread.sleep(100);}catch(Exception e){}
     progress.set(100);
     done=true;
     return f;
