@@ -39,8 +39,7 @@ ComponentSet loads=new ComponentSet();
 
 Fields field=new Fields();
 
-ItemTable MastarItemTable;
-ItemTable MastarMaterialTable;
+ItemTable MastarTable;
 
 PImage Map;
 PImage Mask;
@@ -187,7 +186,11 @@ void Load(){
     ProgressBar loadp=new ProgressBar();
     loadp.setBounds(width-205,height-20,200,12);
     loadp.setProgress(loadTask.progress);
+    ProgressBar loadup=new ProgressBar();
+    loadup.setBounds(width-30,30,35,35);
+    loadup.isUnknown(true);
     loads.add(loadp);
+    loads.add(loadup);
   }
   if(loadTask.done){
     try{

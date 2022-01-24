@@ -408,7 +408,8 @@ class ItemList extends GameComponent{
     fill(0);
     text("説明",sPos.x+5+textWidth("説明")/2,sPos.y+17.5);
     textAlign(LEFT);
-    text(MastarItemTable.get(selectedItem.getName()).getExplanation(),sPos.x+5,sPos.y+45);
+    text(MastarTable.table.containsKey(selectedItem.getName())&table.table.size()>0?
+         MastarTable.get(selectedItem.getName()).getExplanation():"Error : no_data\nError number : 0x2DA62C9",sPos.x+5,sPos.y+45);
   }
   
   void menuDraw(){
@@ -675,6 +676,8 @@ class ListTemplate extends GameComponent{
 
 class ProgressBar extends GameComponent{
   Number progress=0;
+  boolean unknown=false;
+  float rad=0;
   
   ProgressBar(){
     setForeground(new Color(250,250,250));
@@ -682,14 +685,35 @@ class ProgressBar extends GameComponent{
     keyMove=true;
   }
   
+  void isUnknown(boolean b){
+    unknown=b;
+  }
+  
   void display(){
-    fill(toColor(foreground));
-    stroke(toColor(border));
-    strokeWeight(1);
-    line(pos.x,pos.y,pos.x,pos.y+dist.y);
-    line(pos.x+dist.x,pos.y,pos.x+dist.x,pos.y+dist.y);
-    noStroke();
-    rect(pos.x+2,pos.y,(dist.x-4)*new Float(progress.toString())/100,dist.y);
+    blendMode(BLEND);
+    if(unknown){
+      noFill();
+      stroke(toColor(foreground));
+      ellipse(pos.x,pos.y,dist.x,dist.y);
+      strokeWeight(min(dist.x,dist.y)*0.15);
+      ellipse(pos.x,pos.y,dist.x*0.75,dist.y*0.75);
+      fill(toColor(foreground));
+      noStroke();
+      ellipse(pos.x,pos.y,dist.x/2,dist.y/2);
+      noFill();
+      stroke(toColor(border));
+      strokeWeight(2);
+      arc(pos.x,pos.y,dist.x/1.1,dist.y/1.1,rad,rad+PI/3);
+      rad+=QUARTER_PI/10*vectorMagnification;
+    }else{
+      fill(toColor(foreground));
+      stroke(toColor(border));
+      strokeWeight(1);
+      line(pos.x,pos.y,pos.x,pos.y+dist.y);
+      line(pos.x+dist.x,pos.y,pos.x+dist.x,pos.y+dist.y);
+      noStroke();
+      rect(pos.x+2,pos.y,(dist.x-4)*new Float(progress.toString())/100,dist.y);
+    }
   }
   
   void setProgress(Number n){

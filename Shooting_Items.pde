@@ -117,6 +117,15 @@ class ItemTable implements Cloneable{
     }
   }
   
+  void addItem(ItemTable t){
+    for(Item i:t.table.values()){
+      if(!table.containsKey(i.getName())){
+        table.put(i.getName(),i);
+        num.put(i.getName(),0);
+      }
+    }
+  }
+  
   void addTable(Item i,float prob){
     if(!table.containsKey(i.getName())){
       table.put(i.getName(),i);

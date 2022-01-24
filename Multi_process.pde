@@ -94,16 +94,17 @@ class LoadProcess implements Callable<Fields>{
       progress.set(18);
     }
     f.loadMap(Path,progress);//load->file size(KB)*0.2ms parse->20ms
-    try{Thread.sleep(100);}catch(Exception e){}
+    try{Thread.sleep(25);}catch(Exception e){}
     progress.set(100);
     done=true;
     return f;
   }
   
   void LoadItem(){
+    MastarTable=new ItemTable();
     i=new ItemLoader(ResourcePath+"Item.json");
-    MastarItemTable=i.getTable();
+    MastarTable.addItem(i.getTable());
     i=new ItemLoader(ResourcePath+"Material.json");
-    MastarMaterialTable=i.getTable();
+    MastarTable.addItem(i.getTable());
   }
 }
