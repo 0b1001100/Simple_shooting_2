@@ -119,12 +119,14 @@ class Myself extends Entity{
   ItemTable Weapons;
   Weapon selectedWeapon;
   Weapon ShotWeapon;
+  Shield selectedShield;
   Camera camera;
   Status HP;
   PImage HPgauge=loadImage(UIPath+"HPgauge.png");
   PImage heatgauge=loadImage(UIPath+"heatgauge.png");
   boolean autoShot=true;
   boolean hit=false;
+  boolean shield=false;
   double damage=0;
   float protate=0;
   float diffuse=0;
@@ -155,6 +157,7 @@ class Myself extends Entity{
     weapons.add(new DiffuseBullet(this));
     weapons.add(new PulseBullet(this));
     weapons.add(new LASER(this));
+    selectedShield=new Shield(this);
     HPgauge.resize(200,20);
     resetWeapon();
     camera=new Camera();
@@ -177,6 +180,9 @@ class Myself extends Entity{
     popMatrix();
     if(!camera.moveEvent){
       drawUI();
+    }
+    if(shield){
+      selectedShield.display();
     }
   }
   
@@ -311,17 +317,19 @@ class Myself extends Entity{
   }
   
   void shot(){
-    if(mousePressed&&autoShot&&!selectedWeapon.heat.overHeat
+    if(mousePressed&mouseButton==LEFT&autoShot&!selectedWeapon.heat.overHeat
        &&!selectedWeapon.empty){
       selectedWeapon.heatUP();
       if(selectedWeapon.Attribute==Weapon.LASER){
         
       }
-    }else if(mousePress&&!autoShot&&coolingTime>maxCoolingTime
+    }else if(mousePress&mouseButton==LEFT&!autoShot&&coolingTime>maxCoolingTime
              &&!selectedWeapon.heat.overHeat&&!selectedWeapon.empty){
       selectedWeapon.absHeatUP();
+    }else if(mousePress&mouseButton==RIGHT){
+      shield=true;
     }
-    if(coolingTime>maxCoolingTime&&((mousePressed&&autoShot)||(mousePress&&!autoShot))
+    if(coolingTime>maxCoolingTime&&((mousePressed&autoShot)||(mousePress&&!autoShot))&mouseButton==LEFT
       &&!selectedWeapon.heat.overHeat&&!selectedWeapon.empty){
       if(selectedWeapon.Attribute==Weapon.ENERGY|selectedWeapon.Attribute==Weapon.PHYSICS){
         selectedWeapon.shot();
@@ -331,6 +339,12 @@ class Myself extends Entity{
       }
     }else if(selectedWeapon.empty){
       selectedWeapon.reload();
+    }
+    if(!mousePressed|selectedShield.heat.getPercentage()>=1){
+      shield=false;
+    }
+    if(shield){
+      selectedShield.heatUP();
     }
     coolingTime+=vectorMagnification;
   }

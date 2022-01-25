@@ -243,7 +243,60 @@ class LASER extends Weapon{
 }
 
 class Shield{
+  heatCapacity heat=new heatCapacity(0,100,0);
+  Entity parent;
+  Color c=new Color(0,140,255);
+  String name="";
+  float coolTime=10;
+  float heatUP=0.4;
+  float coolDown=0.2;
+  float rad=radians(90);
   
+  Shield(Entity e){
+    parent=e;
+  }
+  
+  void setCoolTime(float f){
+    coolTime=f;
+  }
+  
+  void setHeatUP(float f){
+    heatUP=f;
+  }
+  
+  void setCoolDown(float f){
+    coolDown=f;
+  }
+  
+  void heatUP(){
+    heat.add(heatUP*vectorMagnification);
+  }
+  
+  void overHeat(){
+    heat.set(100);
+  }
+  
+  void coolDown(){
+    if(!heat.overHeat){
+      heat.add(-coolDown*vectorMagnification);
+    }else{
+      heat.add(-coolDown*vectorMagnification*2.5);
+    }
+  }
+  
+  void display(){
+    blendMode(BLEND);
+    noFill();
+    stroke(128);
+    strokeWeight(2);
+    pushMatrix();
+    translate(parent.pos.x,parent.pos.y);
+    rotate(-parent.rotate);
+    arc(0,0,parent.size*1.3,parent.size*1.3,-rad/2-HALF_PI,rad/2-HALF_PI);
+    stroke(toColor(c));
+    arc(0,0,parent.size*1.3,parent.size*1.3,-HALF_PI-rad/2,-HALF_PI-QUARTER_PI+rad*(1-heat.getPercentage()));
+    popMatrix();
+  }
 }
 
 interface Equipment{
