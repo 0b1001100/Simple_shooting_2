@@ -247,13 +247,15 @@ class Shield{
   Entity parent;
   Color c=new Color(0,140,255);
   String name="";
+  float size=20;
   float coolTime=10;
-  float heatUP=0.4;
+  float heatUP=0.06;
   float coolDown=0.2;
   float rad=radians(90);
   
   Shield(Entity e){
     parent=e;
+    this.size=e.size*1.3;
   }
   
   void setCoolTime(float f){
@@ -292,9 +294,9 @@ class Shield{
     pushMatrix();
     translate(parent.pos.x,parent.pos.y);
     rotate(-parent.rotate);
-    arc(0,0,parent.size*1.3,parent.size*1.3,-rad/2-HALF_PI,rad/2-HALF_PI);
+    arc(0,0,size,size,-rad/2-HALF_PI,rad/2-HALF_PI);
     stroke(toColor(c));
-    arc(0,0,parent.size*1.3,parent.size*1.3,-HALF_PI-rad/2,-HALF_PI-QUARTER_PI+rad*(1-heat.getPercentage()));
+    arc(0,0,size,size,-HALF_PI-rad/2,-HALF_PI-rad/2+rad*(1-heat.getPercentage()));
     popMatrix();
   }
 }

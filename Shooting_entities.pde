@@ -219,6 +219,7 @@ class Myself extends Entity{
       for(Weapon w:weapons){
         w.coolDown();
       }
+      selectedShield.coolDown();
     }
     Wall();
     camera.update();
@@ -471,7 +472,54 @@ class Myself extends Entity{
   void BulletCollision(){
     hit=false;
     damage=0;
+    if(shield)SHIELD:for(Bullet b:eneBullets){
+      PVector bulletVel=b.vel.copy().mult(vectorMagnification);
+      PVector vecAP=createVector(b.pos,pos);
+      PVector normalAB=normalize(bulletVel);//vecAB->b.vel
+      float lenAX=dot(normalAB,vecAP);
+      float dist;
+      if(lenAX<0){
+        dist=dist(b.pos.x,b.pos.y,pos.x,pos.y);
+      }else if(lenAX>dist(0,0,bulletVel.x,bulletVel.y)){
+        dist=dist(b.pos.x+bulletVel.x,b.pos.y+bulletVel.y,pos.x,pos.y);
+      }else{
+        dist=abs(cross(normalAB,vecAP));
+      }
+      if(dist<selectedShield.size/2){
+        boolean sHit=false;
+        boolean cHit=false;
+        float r=selectedShield.rad;
+        for(int i=0;i<ceil(selectedShield.rad/(PI/18));i++){
+          PVector p=new PVector(pos.x+cos(r/10*i-HALF_PI-r/2-rotate)*selectedShield.size/2,
+                                pos.y+sin(r/10*i-HALF_PI-r/2-rotate)*selectedShield.size/2);
+          PVector v=new PVector((cos(r/10*(i+1)-HALF_PI-r/2-rotate)-cos(r/10*i-HALF_PI-r/2-rotate))*selectedShield.size/2,
+                                (sin(r/10*(i+1)-HALF_PI-r/2-rotate)-sin(r/10*i-HALF_PI-r/2-rotate))*selectedShield.size/2);
+          if(SegmentCollision(b.pos,bulletVel,p,v)){
+            sHit=true;
+            break;
+          }else if(LineCollision(p,v,b.pos,bulletVel)){
+            cHit=true;
+          }
+        }
+        if(sHit){
+          b.isDead=true;
+          ShotWeapon=b.usedWeapon;
+          continue SHIELD;
+        }else if(cHit){
+          PVector left=new PVector(cos(-HALF_PI-r/2-rotate)*selectedShield.size/2,
+                                   sin(-HALF_PI-r/2-rotate)*selectedShield.size/2);
+          PVector right=new PVector(cos(-HALF_PI+r/2-rotate)*selectedShield.size/2,
+                                   sin(-HALF_PI+r/2-rotate)*selectedShield.size/2);
+          if(SegmentCollision(b.pos,bulletVel,pos,left)|SegmentCollision(b.pos,bulletVel,pos,right)){
+            b.isDead=true;
+            ShotWeapon=b.usedWeapon;
+            continue SHIELD;
+          }
+        }
+      }
+    }
     COLLISION:for(Bullet b:eneBullets){
+      if(b.isDead)continue COLLISION;
       PVector bulletVel=b.vel.copy().mult(vectorMagnification);
       PVector vecAP=createVector(b.pos,pos);
       PVector normalAB=normalize(bulletVel);//vecAB->b.vel

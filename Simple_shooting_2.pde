@@ -302,7 +302,7 @@ PVector normalize(PVector v){
 }
 
 PVector createVector(PVector s,PVector e){
-  return new PVector(e.x-s.x,e.y-s.y);
+  return e.copy().sub(s);
 }
 
 boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
@@ -316,6 +316,19 @@ boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
   float t1 = crs_v_v2/crs_v1_v2;
   float t2 = crs_v_v1/crs_v1_v2;
   if (t1+0.00001<0||t1-0.00001>1||t2+0.00001<0||t2-0.00001>1) {
+    return false;
+  }
+  return true;
+}
+
+boolean LineCollision(PVector s1,PVector v1,PVector s2,PVector v2){
+  PVector v=new PVector(s2.x-s1.x,s2.y-s1.y);
+  float crs_v1_v2=cross(v1,v2);
+  if(crs_v1_v2==0){
+    return false;
+  }
+  float t=cross(v,v1);
+  if (t+0.00001<0|1<t-0.00001) {
     return false;
   }
   return true;
