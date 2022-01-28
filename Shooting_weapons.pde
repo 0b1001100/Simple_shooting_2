@@ -7,7 +7,7 @@ class Weapon implements Equipment{
   String name="default";
   float power=1;
   float speed=15;
-  float diffuse=0;
+  Float diffuse=0f;
   float coolTime=10;
   float heatUP=0.4;
   float coolDown=0.2;
@@ -53,7 +53,7 @@ class Weapon implements Equipment{
     bulletColor=new Color(r,g,b);
   }
   
-  void setDiffuse(float rad){
+  void setDiffuse(Float rad){
     diffuse=rad;
   }
   
@@ -108,39 +108,11 @@ class Weapon implements Equipment{
   void heatUP(){
     heat.add(heatUP*vectorMagnification);
     heat.getPercentage();
-    if(Attribute==LASER){
-      int maxLength=0;
-      pushMatrix();
-      resetMatrix();
-      translate(width/2,height/2);
-      rotate(-parent.rotate-radians(90));
-      strokeWeight(1);
-      stroke(100);
-      for(int i=1;i<=bulletMaxAge*3;i++){
-        
-      }
-      line(0,0,bulletMaxAge*3,0);
-      popMatrix();
-    }
   }
   
   void absHeatUP(){
     heat.add(heatUP);
     heat.getPercentage();
-    if(Attribute==LASER){
-      int maxLength=0;
-      pushMatrix();
-      resetMatrix();
-      translate(width/2,height/2);
-      rotate(-parent.rotate-radians(90));
-      strokeWeight(1);
-      stroke(100);
-      for(int i=1;i<=bulletMaxAge*3;i++){
-        
-      }
-      line(0,0,bulletMaxAge*3,0);
-      popMatrix();
-    }
   }
   
   void overHeat(){
@@ -224,6 +196,34 @@ class PulseBullet extends Weapon{
     setHeatUP(0.45);
     setDiffuse(radians(7.5));
     setName("フォトンパルス");
+  }
+}
+
+class LMG extends Weapon{
+  
+  LMG(Entity e){
+    super(e);
+    setPower(2.57);
+    setAutoShot(true);
+    setColor(new Color(255,95,0));
+    setCoolTime(5);
+    setHeatUP(0.63);
+    setDiffuse(radians(8));
+    setName("小型機関銃");
+  }
+  
+  void heatUP(){
+    heat.add(heatUP*vectorMagnification);
+    setDiffuse(radians(8+35*heat.getPercentage()));
+  }
+  
+  void coolDown(){
+    if(!heat.overHeat){
+      heat.add(-coolDown*vectorMagnification);
+    }else{
+      heat.add(-coolDown*vectorMagnification*2.5);
+    }
+    setDiffuse(radians(8+35*heat.getPercentage()));
   }
 }
 

@@ -156,7 +156,7 @@ class Myself extends Entity{
     weapons.add(new EnergyBullet(this));
     weapons.add(new DiffuseBullet(this));
     weapons.add(new PulseBullet(this));
-    weapons.add(new LASER(this));
+    weapons.add(new LMG(this));
     selectedShield=new Shield(this);
     HPgauge.resize(200,20);
     resetWeapon();
@@ -173,10 +173,8 @@ class Myself extends Entity{
     stroke(c.getRed(),c.getGreen(),c.getBlue());
     ellipse(0,0,size,size);
     strokeWeight(3);
-    arc(0,0,size*1.5,size*1.5,radians(-5)-PI/2-diffuse/2,radians(5)-PI/2+diffuse/2);
-    if(selectedWeapon.Attribute==Weapon.LASER){
-      
-    }
+    arc(0,0,size*1.5,size*1.5,
+        radians(-5)-PI/2-selectedWeapon.diffuse/2,radians(5)-PI/2+selectedWeapon.diffuse/2);
     popMatrix();
     if(!camera.moveEvent){
       drawUI();
@@ -494,7 +492,7 @@ class Myself extends Entity{
                                 pos.y+sin(r/10*i-HALF_PI-r/2-rotate)*selectedShield.size/2);
           PVector v=new PVector((cos(r/10*(i+1)-HALF_PI-r/2-rotate)-cos(r/10*i-HALF_PI-r/2-rotate))*selectedShield.size/2,
                                 (sin(r/10*(i+1)-HALF_PI-r/2-rotate)-sin(r/10*i-HALF_PI-r/2-rotate))*selectedShield.size/2);
-          if(SegmentCollision(b.pos,bulletVel,p,v)){
+          if(SegmentCollision(b.pos.copy().sub(bulletVel.copy()),bulletVel.copy().mult(2),p,v)){
             sHit=true;
             break;
           }else if(LineCollision(p,v,b.pos,bulletVel)){
@@ -665,6 +663,7 @@ class Enemy extends Entity{
 class Bullet extends Entity{
   Weapon usedWeapon=null;
   PVector bVel;
+  PVector tPos;
   boolean isMine=false;
   boolean isDead=false;
   boolean bounse=false;
@@ -681,6 +680,8 @@ class Bullet extends Entity{
     pos=new PVector(m.pos.x-cos(rotate)*m.size,m.pos.y-sin(rotate)*m.size);
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=m.selectedWeapon.bulletMaxAge;
+    prePos=pos.copy();
+    tPos=pos.copy();
     isMine=true;
   }
   
@@ -700,6 +701,8 @@ class Bullet extends Entity{
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=w.bulletMaxAge;
     isMine=e.getClass().getSimpleName().equals("Myself");
+    prePos=pos.copy();
+    tPos=pos.copy();
     if(!isMine)bulletColor=new Color(255,0,0);
   }
   
@@ -717,6 +720,8 @@ class Bullet extends Entity{
     prePos=new PVector(pos.x,pos.y);
     if(age>maxAge)isDead=true;
     age+=vectorMagnification;
+    tPos=prePos.copy();
+    prePos=pos.copy();
   }
   
   void setBounse(boolean b){
