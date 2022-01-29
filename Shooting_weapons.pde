@@ -203,11 +203,12 @@ class LMG extends Weapon{
   
   LMG(Entity e){
     super(e);
-    setPower(2.57);
+    setPower(3.21);
     setAutoShot(true);
     setColor(new Color(255,95,0));
     setCoolTime(5);
-    setHeatUP(0.63);
+    setHeatUP(0.47);
+    setCoolDown(0.2);
     setDiffuse(radians(8));
     setName("小型機関銃");
   }
@@ -224,6 +225,35 @@ class LMG extends Weapon{
       heat.add(-coolDown*vectorMagnification*2.5);
     }
     setDiffuse(radians(8+35*heat.getPercentage()));
+  }
+}
+
+class ILMG extends Weapon{
+  
+  ILMG(Entity e){
+    super(e);
+    setPower(3.21);
+    setAutoShot(true);
+    setColor(new Color(255,95,0));
+    setCoolTime(5);
+    setHeatUP(0.41);
+    setCoolDown(0.17);
+    setDiffuse(radians(30));
+    setName("改良型機関銃");
+  }
+  
+  void heatUP(){
+    heat.add(heatUP*vectorMagnification);
+    setDiffuse(radians(30-25*heat.getPercentage()));
+  }
+  
+  void coolDown(){
+    if(!heat.overHeat){
+      heat.add(-coolDown*vectorMagnification);
+    }else{
+      heat.add(-coolDown*vectorMagnification*2.5);
+    }
+    setDiffuse(radians(30-25*heat.getPercentage()));
   }
 }
 

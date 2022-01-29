@@ -6,7 +6,7 @@ class Status{
   protected BigDecimal resetStatus;
   protected BigDecimal minStatus=new BigDecimal(0);
   
-  Status(float s){
+  Status(double s){
     status=new BigDecimal(s);
     maxStatus=new BigDecimal(s);
     resetStatus=new BigDecimal(s);
@@ -15,7 +15,7 @@ class Status{
     resetStatus=isMin(isMax(resetStatus));
   }
   
-  Status(float s,float max,float reset){
+  Status(double s,double max,double reset){
     status=new BigDecimal(s);
     maxStatus=new BigDecimal(max);
     resetStatus=new BigDecimal(reset);
@@ -24,62 +24,62 @@ class Status{
     resetStatus=isMin(isMax(resetStatus));
   }
   
-  void add(float s){
+  void add(double s){
     status=status.add(new BigDecimal(s));
     status=isMin(isMax(status));
   }
   
-  void addMax(float s){
+  void addMax(double s){
     maxStatus=maxStatus.add(new BigDecimal(s));
     maxStatus=isMin(maxStatus);
   }
   
-  void addReset(float s){
+  void addReset(double s){
     resetStatus=resetStatus.add(new BigDecimal(s));
     resetStatus=isMin(isMax(resetStatus));
   }
   
-  void addMin(float s){
+  void addMin(double s){
     minStatus=minStatus.add(new BigDecimal(s));
     minStatus=isMax(minStatus);
   }
   
-  void sub(float s){
+  void sub(double s){
     status=status.subtract(new BigDecimal(s));
     status=isMin(isMax(status));
   }
   
-  void subMax(float s){
+  void subMax(double s){
     maxStatus=maxStatus.subtract(new BigDecimal(s));
     maxStatus=isMin(maxStatus);
   }
   
-  void subReset(float s){
+  void subReset(double s){
     resetStatus=resetStatus.subtract(new BigDecimal(s));
     resetStatus=isMin(isMax(resetStatus));
   }
   
-  void subMin(float s){
+  void subMin(double s){
     minStatus=minStatus.subtract(new BigDecimal(s));
     minStatus=isMax(minStatus);
   }
   
-  void set(float s){
+  void set(double s){
     status=new BigDecimal(s);
     status=isMin(isMax(status));
   }
   
-  void setMax(float s){
+  void setMax(double s){
     maxStatus=new BigDecimal(s);
     maxStatus=isMin(maxStatus);
   }
   
-  void setReset(float s){
+  void setReset(double s){
     resetStatus=new BigDecimal(s);
     resetStatus=isMin(isMax(resetStatus));
   }
   
-  void setMin(float s){
+  void setMin(double s){
     minStatus=new BigDecimal(s);
     minStatus=isMax(minStatus);
   }
@@ -124,11 +124,11 @@ class Status{
 class heatCapacity extends Status{
   boolean overHeat=false;
   
-  heatCapacity(float h){
+  heatCapacity(double h){
     super(h);
   }
   
-  heatCapacity(float h,float max,float reset){
+  heatCapacity(double h,double max,double reset){
     super(h,max,reset);
   }
   
@@ -136,5 +136,73 @@ class heatCapacity extends Status{
     if(status.compareTo(maxStatus)==0)overHeat=true;
     if(status.compareTo(minStatus)==0)overHeat=false;
     return !status.equals(new BigDecimal(0)) ? status.divide(maxStatus).floatValue() : 0;
+  }
+}
+
+class StatusManage{
+  Myself m;
+  float time=0;
+  double addDefence=0;
+  double addAttak=0;
+  double addHP=0;
+  
+  final float INFINITY=-1;
+  
+  StatusManage(Myself m){
+    this.m=m;
+    time=INFINITY;
+  }
+  
+  StatusManage setTime(float t){
+    time=t;
+    return this;
+  }
+  
+  StatusManage setDefence(double d){
+    m.HP.subMax(addDefence);
+    m.HP.addMax(d);
+    addDefence=d;
+    return this;
+  }
+  
+  StatusManage setAttak(double d){
+    m.HP.subMax(addAttak);
+    m.HP.addMax(d);
+    addAttak=d;
+    return this;
+  }
+  
+  StatusManage setHP(double d){
+    m.HP.subMax(addHP);
+    m.HP.addMax(d);
+    addHP=d;
+    return this;
+  }
+  
+  StatusManage setDefencePercent(double d){
+    m.HP.subMax(addDefence);
+    m.HP.addMax(m.absHP*constrain((float)d,0,1));
+    addDefence=m.absHP*constrain((float)d,0,1);
+    return this;
+  }
+  
+  StatusManage setAttakPercent(double d){
+    m.HP.subMax(addAttak);
+    m.HP.addMax(d);
+    addAttak=d;
+    return this;
+  }
+  
+  StatusManage setHPPercent(double d){
+    m.HP.subMax(addHP);
+    m.HP.addMax(d);
+    addHP=d;
+    return this;
+  }
+  
+  void removeEffect(){
+    m.HP.subMax(addDefence);
+    m.HP.subMax(addAttak);
+    m.HP.subMax(addHP);
   }
 }

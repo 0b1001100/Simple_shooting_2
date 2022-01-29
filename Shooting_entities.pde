@@ -113,6 +113,7 @@ class Entity implements Egent{
 }
 
 class Myself extends Entity{
+  HashMap<String,StatusManage>effects=new HashMap<String,StatusManage>();
   ArrayList<Weapon>weapons=new ArrayList<Weapon>();
   ItemTable Items;
   ItemTable Materials;
@@ -128,6 +129,7 @@ class Myself extends Entity{
   boolean hit=false;
   boolean shield=false;
   double damage=0;
+  double absHP;
   float protate=0;
   float diffuse=0;
   float rotateSpeed=10;
@@ -153,10 +155,11 @@ class Myself extends Entity{
     pos=new PVector(field.spownPoint.x,field.spownPoint.y);
     vel=new PVector(0,0);
     HP=new Status(100);
+    absHP=HP.getMax().doubleValue();
     weapons.add(new EnergyBullet(this));
     weapons.add(new DiffuseBullet(this));
     weapons.add(new PulseBullet(this));
-    weapons.add(new LMG(this));
+    weapons.add(new ILMG(this));
     selectedShield=new Shield(this);
     HPgauge.resize(200,20);
     resetWeapon();
