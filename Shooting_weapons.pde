@@ -279,7 +279,7 @@ class Shield{
   String name="";
   float size=20;
   float coolTime=10;
-  float heatUP=0.06;
+  float heatUP=0.6;
   float coolDown=0.2;
   float rad=radians(90);
   

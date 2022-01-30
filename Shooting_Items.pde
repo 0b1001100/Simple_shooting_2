@@ -3,6 +3,7 @@ class Item{
   protected PImage image;
   protected String name="";
   String explanation="";
+  float recovoryPercent=0;
   float recovory=0;
   int maxStack=99;
   int type=1;
@@ -43,13 +44,24 @@ class Item{
     return type;
   }
   
+  float getRecovory(){
+    return recovory!=0?recovory:player.HP.getMax().floatValue()*recovoryPercent;
+  }
+  
   Item setType(int i){
     type=i;
     return this;
   }
   
   Item setRecovory(float f){
+    recovoryPercent=0;
     recovory=f;
+    return this;
+  }
+  
+  Item setRecovoryPercent(float f){
+    recovoryPercent=f;
+    recovory=0;
     return this;
   }
   
@@ -65,7 +77,7 @@ class Item{
   
   void ExecuteEvent(){
     e.ItemUse(player);
-    player.HP.add(recovory);
+    player.HP.add(recovory!=0?recovory:player.HP.getMax().floatValue()*recovoryPercent);
   }
 }
 

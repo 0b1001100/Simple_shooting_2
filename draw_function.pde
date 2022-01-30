@@ -53,10 +53,7 @@ void configration(){
 
 void Shader(){
   if(ColorInv){
-    g.loadPixels();
-    t.pixels=g.pixels;
-    t.updatePixels();
-    colorInv.set("tex",t);
+    colorInv.set("tex",g);
     colorInv.set("resolution",width,height);
     filter(colorInv);
   }

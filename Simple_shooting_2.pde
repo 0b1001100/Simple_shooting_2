@@ -18,6 +18,8 @@ import java.util.concurrent.*;
 import com.jogamp.newt.opengl.*;
 import com.jogamp.newt.event.*;
 
+Simple_shooting_2 CopyApplet=this;
+
 GameProcess main;
 
 Myself player;

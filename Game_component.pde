@@ -739,7 +739,7 @@ class StatusList extends ListTemplate{
       text("HP:",pos.x+4+textWidth("HP:")/2,pos.y+dist.y*0.7);
       push();
       textAlign(RIGHT);
-      text(m.HP.get()+"/"+m.HP.getMax(),pos.x+dist.x-5,pos.y+dist.y*0.7);
+      text(m.HP.get().longValue()+"/"+m.HP.getMax().longValue(),pos.x+dist.x-5,pos.y+dist.y*0.7);
       pop();
       noStroke();
       fill(200);

@@ -146,9 +146,9 @@ class Myself extends Entity{
     Items=new ItemTable();
     Materials=new ItemTable();
     Weapons=new ItemTable();
-    Items.addStorage(new Item("回復薬(小)").setRecovory(25),10);
-    Items.addStorage(new Item("回復薬(中)").setRecovory(40),3);
-    Items.addStorage(new Item("回復薬(大)").setRecovory(65),1);
+    Items.addStorage(new Item("回復薬(小)").setRecovoryPercent(0.25),10);
+    Items.addStorage(new Item("回復薬(中)").setRecovoryPercent(0.45),3);
+    Items.addStorage(new Item("回復薬(大)").setRecovoryPercent(0.75),1);
     Weapons.addStorage(new Item("クォークキャノン").setType(3),1);
     Weapons.addStorage(new Item("タウブラスター").setType(3),1);
     Weapons.addStorage(new Item("フォトンパルス").setType(3),1);
@@ -164,7 +164,7 @@ class Myself extends Entity{
     HPgauge.resize(200,20);
     resetWeapon();
     camera=new Camera();
-    camera.setTarget(this);
+    camera.setTarget(this);effects.put("test",new StatusManage(this).setHP(333).setTime(10));
   }
   
   void display(){
@@ -217,6 +217,12 @@ class Myself extends Entity{
       shot();
       BulletCollision();
       keyEvent();
+      HashMap<String,StatusManage>nextEffects=new HashMap<String,StatusManage>();
+      for(String s:effects.keySet()){
+        effects.get(s).update();
+        if(!effects.get(s).isEnd)nextEffects.put(s,effects.get(s));
+      }
+      effects=nextEffects;
       for(Weapon w:weapons){
         w.coolDown();
       }

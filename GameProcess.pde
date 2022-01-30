@@ -135,14 +135,11 @@ class GameProcess{
   }
   
   void menuShading(){
-    g.loadPixels();
-    t.pixels=g.pixels;
-    t.updatePixels();
     menuShader.set("time",UItime);
     menuShader.set("xy",(float)x,(float)y);
     menuShader.set("resolution",(float)width,(float)height);
     menuShader.set("menuColor",(float)menuColor.getRed()/255,(float)menuColor.getGreen()/255,(float)menuColor.getBlue()/255,1.0);
-    menuShader.set("tex",t);
+    menuShader.set("tex",g);
     filter(menuShader);
   }
   
@@ -251,7 +248,7 @@ class GameProcess{
       iList.addItemListener((Item i)->{
         if(iList.table!=null){
           if(iList.table.equals(player.Items)){
-            iSta.setAddHP(i.recovory);
+            iSta.setAddHP(i.getRecovory());
           }
         }
       });

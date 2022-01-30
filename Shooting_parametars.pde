@@ -52,6 +52,7 @@ class Status{
   void subMax(double s){
     maxStatus=maxStatus.subtract(new BigDecimal(s));
     maxStatus=isMin(maxStatus);
+    status=isMax(status);
   }
   
   void subReset(double s){
@@ -105,7 +106,7 @@ class Status{
   }
   
   float getPercentage(){
-    return !status.equals(new BigDecimal(0)) ? status.divide(maxStatus).floatValue():0;
+    return !status.equals(new BigDecimal(0)) ? status.divide(maxStatus,6,RoundingMode.FLOOR).floatValue():0;
   }
   
   void reset(){
@@ -140,13 +141,15 @@ class heatCapacity extends Status{
 }
 
 class StatusManage{
-  Myself m;
-  float time=0;
+  protected Myself m;
+  protected float maxTime=0;
+  protected float time=0;
   double addDefence=0;
   double addAttak=0;
   double addHP=0;
+  boolean isEnd=false;
   
-  final float INFINITY=-1;
+  final float INFINITY=-0xFFFF;
   
   StatusManage(Myself m){
     this.m=m;
@@ -154,6 +157,7 @@ class StatusManage{
   }
   
   StatusManage setTime(float t){
+    maxTime=t;
     time=t;
     return this;
   }
@@ -198,6 +202,24 @@ class StatusManage{
     m.HP.addMax(d);
     addHP=d;
     return this;
+  }
+  
+  float getMaxTime(){
+    return maxTime;
+  }
+  
+  float getTime(){
+    return time;
+  }
+  
+  void update(){
+    if(time>0){
+      time-=vectorMagnification/60;
+    }
+    if(time!=-0xFFFF&time<=0){
+      removeEffect();
+      isEnd=true;
+    }
   }
   
   void removeEffect(){

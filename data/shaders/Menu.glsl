@@ -11,7 +11,7 @@ vec4 toScreen(float standard,vec4 col){
 void main(void){
   vec2 pos=vec2(gl_FragCoord);
   vec2 normPos=pos/resolution.xy;
-  vec4 color=vec4(texture2D(tex,vec2(normPos.x,1.0-normPos.y)));
+  vec4 color=vec4(texture2D(tex,normPos));
   vec2 dist=vec2(floor(pos/(resolution/xy)));
   float scale=min(max(time*(xy.y/9)-(dist.x+(xy.y-dist.y)),0.0),1.0);
   gl_FragColor=vec4(toScreen(scale,color));
