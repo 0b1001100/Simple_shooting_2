@@ -57,6 +57,14 @@ void Shader(){
     colorInv.set("resolution",width,height);
     filter(colorInv);
   }
+  if(player!=null){
+    if(player.hit&player.HP.getPercentage()<=0.15){
+        player.damageNoise.set("rand",random(-3,3));
+        player.damageNoise.set("tex",g);
+        player.damageNoise.set("resolution",width,height);
+        filter(player.damageNoise);
+    }
+  }
 }
 
 void printFPS(){

@@ -125,6 +125,7 @@ class Myself extends Entity{
   Status HP;
   PImage HPgauge=loadImage(UIPath+"HPgauge.png");
   PImage heatgauge=loadImage(UIPath+"heatgauge.png");
+  PShader damageNoise=loadShader(ShaderPath+"Noise.glsl");
   boolean autoShot=true;
   boolean hit=false;
   boolean shield=false;
@@ -164,7 +165,8 @@ class Myself extends Entity{
     HPgauge.resize(200,20);
     resetWeapon();
     camera=new Camera();
-    camera.setTarget(this);effects.put("test",new StatusManage(this).setHP(333).setTime(10));
+    camera.setTarget(this);
+    //effects.put("test",new StatusManage(this).setHP(32768));
   }
   
   void display(){
@@ -546,7 +548,9 @@ class Myself extends Entity{
         continue COLLISION;
       }
     }
-    if(hit)Particles.add(new Particle(this,str((int)damage)));
+    if(hit){
+      Particles.add(new Particle(this,str((int)damage)));
+    }
   }
   
   protected void Hit(){

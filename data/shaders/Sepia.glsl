@@ -7,7 +7,7 @@ uniform vec2 resolution;
 
 void main() {
   vec2 pos=vec2(gl_FragCoord)/resolution;
-  vec4 color = texture2D(tex, vec2(pos.x,1.0-pos.y));
+  vec4 color = texture2D(tex,pos);
   float v = color.x * R_LUMINANCE + color.y * G_LUMINANCE + color.z * B_LUMINANCE;
   color.x = v * 0.9;
   color.y = v * 0.7;

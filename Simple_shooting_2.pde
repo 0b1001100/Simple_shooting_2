@@ -9,6 +9,8 @@ import processing.awt.PSurfaceAWT.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.nio.FloatBuffer;
+
 import javax.swing.*;
 import javax.swing.event.*;
 

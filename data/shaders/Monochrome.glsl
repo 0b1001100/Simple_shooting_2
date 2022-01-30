@@ -8,7 +8,7 @@ const vec3 monochromeScale = vec3(R_LUMINANCE, G_LUMINANCE, B_LUMINANCE);
 
 void main() {
   vec2 pos=vec2(gl_FragCoord)/resolution;
-  vec4 color = texture2D(tex, vec2(pos.x,1.0-pos.y));
+  vec4 color = texture2D(tex,pos);
   float grayColor = dot(color.rgb, monochromeScale);
   color = vec4(vec3(grayColor), 1.0);
   gl_FragColor = vec4(color);
