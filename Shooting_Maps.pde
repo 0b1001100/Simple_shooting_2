@@ -234,35 +234,31 @@ class Fields{
   
   void displayMap(){
     Camera c=player.camera;
-    PGraphics Maskg=createGraphics(width,height);
-    Maskg.beginDraw();
-    Maskg.fill(255);
+    PImage map=new PImage();
+    map.init(17,10,PImage.ARGB);
+    for(int i=0;i<map.pixels.length;i++)map.pixels[i]=255;
     rectMode(CORNER);
     blendMode(BLEND);
     for(int i=min(SelectedField.length,max(0,floor((-c.pos.y)/tileSize)));i<min(SelectedField.length,ceil((-c.pos.y+height)/tileSize));i++){
       for(int j=min(SelectedField[i].length,max(0,floor((-c.pos.x)/tileSize)));j<min(SelectedField[i].length,ceil((-c.pos.x+width)/tileSize));j++){
         noStroke();
         try{
-          if((nowField.equals("Map")|nowField.equals("Stage"))&MainAttr.get(SelectedField[i][j]).equals("Wall")&MainAttr!=null){
-            noFill();
-            Maskg.noFill();
-          }else{
-            fill(0,20,80);
-            Maskg.fill(0);
+          if(nowField.equals("Map")&MainAttr!=null){
+            switch(MainAttr.get(SelectedField[i][j])){
+              case "Wall":noFill();break;
+              case "Road":fill(0,20,80);/*map.pixels[floor((i+max(0,c.pos.y)/tileSize)*17+j+max(0,c.pos.x)/tileSize)]=0;*/break;
+            }
           }
         }catch(IndexOutOfBoundsException e){
           fill(0,20,80);
-          Maskg.fill(0);
         }
         rect(tileSize*j+c.pos.x,tileSize*i+c.pos.y,tileSize+1,tileSize+1);
-        Maskg.rect(tileSize*j,tileSize*i,tileSize+1,tileSize+1);
       }
     }
+    map.updatePixels();
+    View.set("Tiles",map);
+    View.set("offset",(c.pos.x)%tileSize,(c.pos.y)%tileSize);
     displayObject();
-    Maskg.endDraw();
-    PVector zero=unProject(0,0);
-    //Mask=Maskg.get((int)zero.x,(int)zero.y,width,height);
-    //Map=g.get((int)zero.x,(int)zero.y,width,height);
     blendMode(ADD);
   }
   

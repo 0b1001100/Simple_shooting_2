@@ -381,7 +381,7 @@ class ItemList extends GameComponent{
     sideBar();
     pg.endDraw();
     image(pg,pos.x,pos.y);
-    if(showSub)subDraw();
+    if(showSub&selectedItem!=null)subDraw();
     if(menu)menuDraw();
   }
   
@@ -407,7 +407,7 @@ class ItemList extends GameComponent{
     textAlign(CENTER);
     fill(0);
     text("説明",sPos.x+5+textWidth("説明")/2,sPos.y+17.5);
-    textAlign(LEFT);
+    textAlign(LEFT);println(table);
     text(MastarTable.table.containsKey(selectedItem.getName())&table.table.size()>0?
          MastarTable.get(selectedItem.getName()).getExplanation():"Error : no_data\nError number : 0x2DA62C9",sPos.x+5,sPos.y+45);
   }
@@ -417,6 +417,7 @@ class ItemList extends GameComponent{
     noStroke();
     rect(0,0,width,height);
     fill(210);
+    blendMode(BLEND);
     rectMode(CORNER);
     textAlign(CENTER);
     textSize(15);
@@ -432,7 +433,16 @@ class ItemList extends GameComponent{
            pos.x+dist.x,pos.y+(selectedNumber+menuNumber+1)*Height-scroll-Height/2);
     }else if(selectedItem.getType()==2){
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
-      text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber-1)*Height-scroll+Height*0.2);
+      fill(0);
+      text("破棄",pos.x+dist.x+60,pos.y+(selectedNumber+0.5)*Height-scroll+Height*0.2);
+      fill(0,30);
+      rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
+      stroke(toColor(menuRightColor));
+      line(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,pos.x+dist.x,pos.y+(selectedNumber+1)*Height-scroll);
+    }else if(selectedItem.getType()==3){
+      rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
+      fill(0);
+      text("使用",pos.x+dist.x+60,pos.y+(selectedNumber+0.5)*Height-scroll+Height*0.2);
       fill(0,30);
       rect(pos.x+dist.x,pos.y+selectedNumber*Height-scroll,120,Height);
       stroke(toColor(menuRightColor));
@@ -495,6 +505,8 @@ class ItemList extends GameComponent{
       }
     }else if(selectedItem.getType()==2){
       if(mousePress)menuSelect();
+    }else if(selectedItem.getType()==3){
+      if(mousePress)menuSelect();
     }
   }
   
@@ -543,6 +555,8 @@ class ItemList extends GameComponent{
         }
       }else if(selectedItem.getType()==2){
         
+      }else if(selectedItem.getType()==3){
+        
       }
     }
   }
@@ -564,7 +578,8 @@ class ItemList extends GameComponent{
     boolean b=true;
     switch(menuNumber){
       case 0:selectedItem.ExecuteEvent();b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
-      case 1:b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
+      case 1:if(selectedItem.getType()==2){b=table.removeStorage(selectedItem.getName(),1);}else
+                                          {selectedItem.ExecuteEvent();}menu=false;break;
     }
     if(!b)selectedNumber--;
     resetSelect();
@@ -719,6 +734,10 @@ class ProgressBar extends GameComponent{
   void setProgress(Number n){
     progress=n;
   }
+}
+
+class Archive{
+  
 }
 
 class StatusList extends ListTemplate{
@@ -940,7 +959,7 @@ class MenuItemList extends ItemList{
       sideBar();
       pg.endDraw();
       image(pg,pos.x,pos.y);
-      if(showSub)subDraw();
+      if(showSub&selectedItem!=null)subDraw();
       if(menu)menuDraw();
     }
   }

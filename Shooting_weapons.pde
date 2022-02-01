@@ -277,6 +277,7 @@ class Shield{
   Entity parent;
   Color c=new Color(0,140,255);
   String name="";
+  float magnification=1;
   float size=20;
   float coolTime=10;
   float heatUP=0.6;
@@ -300,8 +301,16 @@ class Shield{
     coolDown=f;
   }
   
+  void setMagnification(float f){
+    magnification=f;
+  }
+  
   void heatUP(){
     heat.add(heatUP*vectorMagnification);
+  }
+  
+  void damage(double d){
+    heat.add(d*magnification);
   }
   
   void overHeat(){

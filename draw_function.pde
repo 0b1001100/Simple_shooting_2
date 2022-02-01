@@ -58,6 +58,12 @@ void Shader(){
     filter(colorInv);
   }
   if(player!=null){
+    /*if(scene==2){
+      View.set("Map",g);
+      View.set("StartPos",player.pos);
+      View.set("resolution",width,height);
+      filter(View);
+    }*/
     if(player.hit&player.HP.getPercentage()<=0.15){
         player.damageNoise.set("rand",random(-3,3));
         player.damageNoise.set("tex",g);

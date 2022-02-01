@@ -10,7 +10,8 @@ class Item{
   
   protected final int USEABLE=1;
   protected final int MATERAL=2;
-  protected final int COLLECTION=3;
+  protected final int EQUIP=3;
+  protected final int COLLECTION=4;
   
   Item(String name){
     this.name=name;

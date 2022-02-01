@@ -314,6 +314,17 @@ class GameProcess{
       MenuButton chi=new MenuButton("拡張チップ");
       chi.setBounds(20,220,120,25);
       chi.addListener(()->{
+        if(!pStack){
+          mastar.toStack();
+        }
+      });
+      chi.addFocusListener(new FocusEvent(){
+        void getFocus(){
+          iList.LinkTable(player.Chips);
+        }
+        
+        void lostFocus(){
+        }
       });
       Item.add(iBack);
       Item.add(ite);

@@ -118,6 +118,7 @@ class Myself extends Entity{
   ItemTable Items;
   ItemTable Materials;
   ItemTable Weapons;
+  ItemTable Chips;
   Weapon selectedWeapon;
   Weapon ShotWeapon;
   Shield selectedShield;
@@ -147,6 +148,7 @@ class Myself extends Entity{
     Items=new ItemTable();
     Materials=new ItemTable();
     Weapons=new ItemTable();
+    Chips=new ItemTable();
     Items.addStorage(new Item("回復薬(小)").setRecovoryPercent(0.25),10);
     Items.addStorage(new Item("回復薬(中)").setRecovoryPercent(0.45),3);
     Items.addStorage(new Item("回復薬(大)").setRecovoryPercent(0.75),1);
@@ -522,6 +524,7 @@ class Myself extends Entity{
           if(SegmentCollision(b.pos,bulletVel,pos,left)|SegmentCollision(b.pos,bulletVel,pos,right)){
             b.isDead=true;
             ShotWeapon=b.usedWeapon;
+            selectedShield.damage(ShotWeapon.power);
             continue SHIELD;
           }
         }

@@ -1,34 +1,29 @@
-uniform vec2 size;
+uniform vec2 resolution;
 uniform vec2 StartPos;
-uniform sampler2D Mask;
+uniform vec2 offset;
 uniform sampler2D Map;
+uniform sampler2D Tiles;
+
+float cross(vec2 a, vec2 b) {
+  return a.x * b.y - a.y * b.x;
+}
+
+bool LineCollision(vec2 s1,vec2 v1,vec2 s2,vec2 v2){
+  vec2 v=s2-s1;
+  float crs_v1_v2=cross(v1,v2);
+  if(crs_v1_v2==0.0){
+    return false;
+  }
+  float t=cross(v,v1);
+  if (t+0.00001<0.0||1.0<t-0.00001) {
+    return false;
+  }
+  return true;
+}
 
 void main(void){
-    vec2 EndPos=vec2(gl_FragCoord);
-    vec2 RoundPos=round(StartPos);
-    vec2 pos=vec2(RoundPos);
-    float nx=0.0;
-    float ny=0.0;
-    float X=1.0/(EndPos.x/RoundPos.x);
-    float Y=1.0/(RoundPos.y/EndPos.y);
-    float Xsign=sign(X);
-    float Ysign=sign(Y);
-    for(int i=0;i<1500;i++){
-        if(pos.x*Xsign<EndPos.x*Xsign&&nx*Xsign<=ny*Ysign){
-            pos.x+=Xsign;
-            nx+=X;
-        }
-        if(pos.y*Ysign<EndPos.y*Ysign&&ny*Ysign<nx*Xsign){
-            pos.y+=Ysign;
-            ny+=Y;
-        }
-        if(texture2D(Map,pos/size)==vec4(0.0)){
-            gl_FragColor=vec4(0.1255, 0.1255, 0.1255, 0.568);
-            break;
-        }
-        if(pos.x*Xsign>EndPos.x*Xsign&&pos.y*Ysign>EndPos.y*Ysign){
-            gl_FragColor=vec4(0,0,0,0);
-            break;
-        }
-    }
+  vec2 pos=vec2(gl_FragCoord)/resolution;
+  vec2 TilePos=(vec2(gl_FragCoord)-offset)/resolution;
+  vec4 color=vec4(texture2D(Tiles,abs(vec2(0.0,1.0)-TilePos)))*vec4(0.15, 0.15, 0.15, 0.0);
+  gl_FragColor=vec4(texture2D(Map,pos))-color;
 }
