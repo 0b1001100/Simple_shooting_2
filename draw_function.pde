@@ -1,5 +1,3 @@
-PImage t;
-
 void Menu(){
   background(0);
   if(nowMenu.equals("Config")){
@@ -84,4 +82,8 @@ void printFPS(){
   MTime/=(float)Times.size();
   text(1000f/MTime,10,10);
   popMatrix();
+}
+
+void Compute(){
+  
 }

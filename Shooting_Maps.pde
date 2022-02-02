@@ -283,14 +283,14 @@ class Fields{
   }
   
   int getTile(PVector pos){
-    pos=new PVector(floor(pos.x/tileSize),floor(pos.y/tileSize));
+    pos=new PVector(round(pos.x)/tileSize,round(pos.y)/tileSize);
     return SelectedMap[min(max(0,(int)pos.y),SelectedMap.length-1)]
                       [min(max(0,(int)pos.x),SelectedMap[0].length-1)];
   }
   
   int getTile(float x,float y){
-    x=floor(x/tileSize);
-    y=floor(y/tileSize);
+    x=round(x)/tileSize;
+    y=round(y)/tileSize;
     return SelectedMap[min(max(0,(int)y),SelectedMap.length-1)]
                       [min(max(0,(int)x),SelectedMap[0].length-1)];
   }

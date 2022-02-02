@@ -736,8 +736,20 @@ class ProgressBar extends GameComponent{
   }
 }
 
-class Archive{
+class TextBox extends GameComponent{
+  String Title="";
   
+  TextBox(){
+    
+  }
+  
+  TextBox(String s){
+    Title=s;
+  }
+  
+  void setTitle(String s){
+    Title=s;
+  }
 }
 
 class StatusList extends ListTemplate{

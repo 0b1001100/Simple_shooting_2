@@ -104,12 +104,10 @@ void setup(){
       pscreen.sub(w.getWidth(),w.getHeight()).div(2);
       scroll.sub(pscreen);
       pscreen=new PVector(w.getWidth(),w.getHeight());
-      t=new PImage(w.getWidth(),w.getHeight(),PImage.ARGB,displayDensity());
     }
   });
   PFont font=createFont("SansSerif.plain",15);
   textFont(font);
-  t=new PImage(width,height,PImage.ARGB,displayDensity());
   View=loadShader(ShaderPath+"View.glsl");
   colorInv=loadShader(ShaderPath+"ColorInv.glsl");
   blendMode(ADD);
@@ -144,7 +142,7 @@ void draw(){println((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().fre
 }
 
 void stop(){
-  exec.shutdown();
+  exec.shutdownNow();
 }
 
 void eventProcess(){
@@ -319,14 +317,14 @@ boolean SegmentCollision(PVector s1,PVector v1,PVector s2,PVector v2){
   float crs_v_v2=cross(v,v2);
   float t1 = crs_v_v2/crs_v1_v2;
   float t2 = crs_v_v1/crs_v1_v2;
-  if (t1+0.00001<0||t1-0.00001>1||t2+0.00001<0||t2-0.00001>1) {
+  if (t1+0.000000000001<0||t1-0.000000000001>1||t2+0.000000000001<0||t2-0.000000000001>1) {
     return false;
   }
   return true;
 }
 
-boolean LineCollision(PVector s1,PVector v1,PVector s2,PVector v2){
-  PVector v=new PVector(s2.x-s1.x,s2.y-s1.y);
+boolean LineCollision(PVector s1,PVector v1,PVector l2,PVector v2){
+  PVector v=new PVector(l2.x-s1.x,l2.y-s1.y);
   float crs_v1_v2=cross(v1,v2);
   if(crs_v1_v2==0){
     return false;
@@ -348,10 +346,23 @@ PVector SegmentCrossPoint(PVector s1,PVector v1,PVector s2,PVector v2){
   float crs_v_v2=cross(v,v2);
   float t1 = crs_v_v2/crs_v1_v2;
   float t2 = crs_v_v1/crs_v1_v2;
-  if (t1+0.00001<0||t1-0.00001>1||t2+0.00001<0||t2-0.00001>1) {
+  if (t1+0.000000000001<0||t1-0.000000000001>1||t2+0.000000000001<0||t2-0.000000000001>1) {
     return null;
   }
   return s1.add(v1.copy().mult(t1));
+}
+
+PVector LineCrossPoint(PVector s1,PVector v1,PVector l2,PVector v2){
+  PVector v=new PVector(l2.x-s1.x,l2.y-s1.y);
+  float crs_v1_v2=cross(v1,v2);
+  if(crs_v1_v2==0){
+    return null;
+  }
+  float t=cross(v,v1);
+  if (t+0.000000000001<0||t-0.000000000001>1) {
+    return null;
+  }
+  return s1.add(v1.copy().mult(t));
 }
 
 color toColor(Color c){

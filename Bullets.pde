@@ -19,6 +19,7 @@ class HomingBullet extends Bullet{
   
   @Override
   void update(){
+    super.update();
     float rad=atan2(target.pos.x-pos.x,target.pos.y-pos.y)-PI*0.5;
     float nRad=0<rotate?rad+TWO_PI:rad-TWO_PI;
     rad=abs(rotate-rad)<abs(rotate-nRad)?rad:nRad;
@@ -26,7 +27,6 @@ class HomingBullet extends Bullet{
     rotate+=rad;
     rotate%=TWO_PI;
     vel=new PVector(cos(-rotate)*speed,sin(-rotate)*speed);
-    super.update();
   }
 }
 
