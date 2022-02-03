@@ -21,7 +21,7 @@ class Turret extends Enemy{
   void update(){
     updateVertex();
     BulletCollision();
-    if(random(100)>85){
+    if(random(100)>185){
       eneBullets.add(new HomingBullet(this,this.useWeapon,player));
     }
     Collision();

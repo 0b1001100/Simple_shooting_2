@@ -26,7 +26,7 @@ class HomingBullet extends Bullet{
     rad=sign(rad-rotate)*constrain(abs(rad-rotate),0,PI*mag*vectorMagnification);
     rotate+=rad;
     rotate%=TWO_PI;
-    vel=new PVector(cos(-rotate)*speed,sin(-rotate)*speed);
+    lineVel.get(0).set(new PVector(cos(-rotate)*speed,sin(-rotate)*speed));
   }
 }
 

@@ -281,8 +281,16 @@ int sign(float f){
   return f==0?0:f>0?1:-1;
 }
 
+float dist(PVector a,PVector b){
+  return dist(a.x,a.y,b.x,b.y);
+}
+
 boolean qDist(PVector s,PVector e,float d){
-  return ((s.x-e.x)*(s.x-e.x)+(s.y-e.y)*(s.y-e.y))<d*d;
+  return ((s.x-e.x)*(s.x-e.x)+(s.y-e.y)*(s.y-e.y))<=d*d+0.001;
+}
+
+boolean qDist(PVector s1,PVector e1,PVector s2,PVector e2){
+  return ((s1.x-e1.x)*(s1.x-e1.x)+(s1.y-e1.y)*(s1.y-e1.y))<=((s2.x-e2.x)*(s2.x-e2.x)+(s2.y-e2.y)*(s2.y-e2.y));
 }
 
 float cross(PVector v1,PVector v2){

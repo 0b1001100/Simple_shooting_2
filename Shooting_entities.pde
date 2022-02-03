@@ -669,6 +669,8 @@ class Enemy extends Entity{
 }
 
 class Bullet extends Entity{
+  ArrayList<PVector>linePos;
+  ArrayList<PVector>lineVel;
   Weapon usedWeapon=null;
   PVector bVel;
   PVector tPos;
@@ -688,6 +690,11 @@ class Bullet extends Entity{
     pos=new PVector(m.pos.x-cos(rotate)*m.size,m.pos.y-sin(rotate)*m.size);
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=m.selectedWeapon.bulletMaxAge;
+    linePos=new ArrayList<PVector>();
+    linePos.add(pos.copy().add(vel));
+    linePos.add(pos.copy());
+    lineVel=new ArrayList<PVector>();
+    lineVel.add(vel.copy());
     prePos=pos.copy();
     tPos=pos.copy();
     isMine=true;
@@ -708,6 +715,11 @@ class Bullet extends Entity{
     pos=new PVector(e.pos.x-(isMine?0:cos(rotate)*e.size),e.pos.y-(isMine?0:sin(rotate)*e.size));
     vel=new PVector(cos(rotate)*speed,sin(rotate)*speed);
     maxAge=w.bulletMaxAge;
+    linePos=new ArrayList<PVector>();
+    linePos.add(pos.copy().add(vel));
+    linePos.add(pos.copy());
+    lineVel=new ArrayList<PVector>();
+    lineVel.add(vel.copy());
     isMine=e.getClass().getSimpleName().equals("Myself");
     prePos=pos.copy();
     tPos=pos.copy();
@@ -717,12 +729,30 @@ class Bullet extends Entity{
   void display(){
     strokeWeight(1);
     stroke(bulletColor.getRed(),bulletColor.getGreen(),bulletColor.getBlue());
-    line(pos.x,pos.y,pos.x+vel.x,pos.y+vel.y);
+    for(int i=0;i<linePos.size()-1;i++){
+      line(linePos.get(i).x,linePos.get(i).y,linePos.get(i+1).x,linePos.get(i+1).y);
+    }
   }
   
   void update(){
+    pos=linePos.get(0);
+    vel=lineVel.get(0);
     Wall(1);
-    pos.add(vel.copy().mult(vectorMagnification));
+    for(int i=lineVel.size()-1;i>=0;i--){
+      if(i==lineVel.size()-1){
+        PVector p=linePos.get(i+1);
+        float v=0;
+        if(!qDist(p,p.copy().add(lineVel.get(i)),p,linePos.get(i))&linePos.size()>2){
+          v=dist(p.copy().add(lineVel.get(i).copy().mult(vectorMagnification)),linePos.get(i));
+          lineVel.get(max(0,i-1)).normalize().mult(v);
+          linePos.remove(i+1);
+        }else{
+          linePos.get(i+1).add(lineVel.get(i).copy().mult(vectorMagnification));
+          break;
+        }
+      }
+    }
+    linePos.get(0).add(lineVel.get(0).copy().mult(vectorMagnification));
     prePos=new PVector(pos.x,pos.y);
     if(age>maxAge)isDead=true;
     age+=vectorMagnification;
@@ -735,9 +765,10 @@ class Bullet extends Entity{
   }
   
   void Wall(int n){
-    PVector tilePos=new PVector(floor(pos.x/TileSize),floor(pos.y/TileSize));
-    PVector offset=new PVector(TileSize*(tilePos.x-1),TileSize*(tilePos.y-1));
-    int[][] Map=field.getAround(tilePos);
+    PVector sTilePos=new PVector(floor(pos.x/TileSize),floor(pos.y/TileSize));
+    PVector eTilePos=new PVector(floor((pos.x+vel.x*vectorMagnification)/TileSize),floor((pos.y+vel.y*vectorMagnification)/TileSize));
+    PVector offset=new PVector(TileSize*(min(sTilePos.x,eTilePos.x)-1),TileSize*(min(sTilePos.y,eTilePos.y)-1));
+    int[][] Map=field.getRect(sTilePos,eTilePos);
     for(int i=0;i<Map.length;i++){
       for(int j=0;j<Map[i].length;j++){
         PVector rectPos=new PVector(offset.x+TileSize*j,offset.y+TileSize*i);
@@ -749,50 +780,6 @@ class Bullet extends Entity{
   }
   
   void Collision(PVector rect,PVector pos,int n){
-    //通過したタイルを取得→衝突判定
-    //COLLISION:{
-    //  int loop=0;
-    //  boolean ray=false;
-    //  PVector start=new PVector(pos.x/TileSize,pos.y/TileSize);
-    //  PVector end=new PVector(start.x+vel.x/TileSize,start.y+vel.y/TileSize);
-    //  float Xdist=vel.x/80;
-    //  float Ydist=vel.y/80;
-    //  float nowX=0;
-    //  float nowY=0;
-    //  if(field.toAttribute(field.getTileFromIndex(start)).equals("Wall")){
-    //    isDead=true;
-    //    Particles.add(new Particle(this,3));
-    //    break COLLISION;
-    //  }else{
-    //    if(abs(Xdist)>abs(Ydist)){
-    //      start.x=sign(vel.x)>0?floor(start.x):ceil(start.x);
-    //      nowX=(sign(vel.x)>0?1.0-float(nf(start.x,1,7)):1.0+float(nf(start.x,1,7)))/Xdist;
-    //    }else{
-    //      start.y=sign(vel.y)>0?floor(start.y):ceil(start.y);
-    //    }
-    //  }
-    //  while(!ray){
-    //    if(abs(Xdist)>abs(Ydist)){
-    //      if(abs(nowX)<abs(nowY)){
-    //        nowX+=1/Xdist;
-    //        start.x+=sign(Xdist);
-    //        nowX=round(nowX);
-    //      }else{
-    //        nowY+=1/Ydist;
-    //        start.y+=sign(Ydist);
-    //        nowY=round(nowY);
-    //      }
-    //      if(field.toAttribute(field.getTileFromIndex(round(start.x),round(start.y))).equals("Wall")){
-    //        isDead=true;
-    //        Particles.add(new Particle(this,3));
-    //        break COLLISION;
-    //      }
-    //    }else{
-          
-    //    }
-    //    loop++;
-    //  }
-    //}
     COLLISION:{
       if(field.toAttribute(field.getTile(pos)).equals("Wall")){
         if(bounse){
@@ -817,7 +804,7 @@ class Bullet extends Entity{
           case 3:s=LeftUP;v=new PVector(RightUP.x-LeftUP.x,RightUP.y-LeftUP.y);break;//UP
         }
         if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),s,v)){
-          pos=SegmentCrossPoint(pos,vel.copy().mult(vectorMagnification),s,v);
+          linePos.add(1,SegmentCrossPoint(pos,vel.copy().mult(vectorMagnification),s,v));
           if(bounse){
             switch(i){
               case 0:if(field.toAttribute(field.getTile(rect.x-TileSize,rect.y)).equals("Wall"))continue;break;
@@ -843,11 +830,18 @@ class Bullet extends Entity{
   }
   
   private void invX(){
-    vel=new PVector(-vel.x,vel.y);
+    linePos.get(0).x=-linePos.get(0).x;
+    pos=linePos.get(0);
+    lineVel.add(0,new PVector(-vel.x,vel.y));
+    float r=PI-abs(rotate);
+    rotate=r*sign(rotate);
   }
   
   private void invY(){
-    vel=new PVector(vel.x,-vel.y);
+    linePos.get(0).y=-linePos.get(0).y;
+    pos=linePos.get(0);
+    lineVel.add(0,new PVector(vel.x,-vel.y));
+    rotate=-rotate;
   }
 }
 
