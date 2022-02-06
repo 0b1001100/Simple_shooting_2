@@ -283,12 +283,12 @@ class Fields{
   }
   
   int[][] getRect(PVector s,PVector e){
-    int[][]Rect=new int[floor(abs(s.y-e.y))+1][floor(abs(s.x-e.x))+1];
-    for(int i=0;i<floor(abs(s.y-e.y))+1;i++){
-      for(int j=0;j<floor(abs(s.x-e.x))+1;j++){
+    int[][]Rect=new int[floor(abs(s.y-e.y))+1][floor(abs(s.x-e.x))+1];println(s,e,Rect.length,Rect[0].length);
+    for(int i=0;i<Rect.length;i++){
+      for(int j=0;j<Rect[i].length;j++){
         if(nowField.equals("Map")){
-          Rect[i][j]=SelectedMap[min(max(0,(int)min(s.y,e.y)+(i-1)),SelectedMap.length-1)]
-                                    [min(max(0,(int)min(s.x,e.x)+(j-1)),SelectedMap[0].length-1)];
+          Rect[i][j]=SelectedMap[min(max(0,(int)min(s.y,e.y)+i),SelectedMap.length-1)]
+                                    [min(max(0,(int)min(s.x,e.x)+j),SelectedMap[0].length-1)];
         }else if(nowField.equals("Stage")){
           Rect[i][j]=SelectedStage[min(max(0,(int)min(s.y,e.y)+(i-1)),SelectedStage.length-1)]
                                     [min(max(0,(int)min(s.x,e.x)+(j-1)),SelectedStage[0].length-1)];
@@ -299,9 +299,9 @@ class Fields{
   }
   
   int getTile(PVector pos){
-    pos=new PVector(round(pos.x)/tileSize,round(pos.y)/tileSize);
-    return SelectedMap[min(max(0,(int)pos.y),SelectedMap.length-1)]
-                      [min(max(0,(int)pos.x),SelectedMap[0].length-1)];
+    PVector p=new PVector(pos.x/tileSize,pos.y/tileSize);
+    return SelectedMap[min(max(0,(int)p.y),SelectedMap.length-1)]
+                      [min(max(0,(int)p.x),SelectedMap[0].length-1)];
   }
   
   int getTile(float x,float y){

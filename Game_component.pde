@@ -407,7 +407,7 @@ class ItemList extends GameComponent{
     textAlign(CENTER);
     fill(0);
     text("説明",sPos.x+5+textWidth("説明")/2,sPos.y+17.5);
-    textAlign(LEFT);println(table);
+    textAlign(LEFT);
     text(MastarTable.table.containsKey(selectedItem.getName())&table.table.size()>0?
          MastarTable.get(selectedItem.getName()).getExplanation():"Error : no_data\nError number : 0x2DA62C9",sPos.x+5,sPos.y+45);
   }
@@ -782,6 +782,62 @@ class StatusList extends ListTemplate{
            pos.y+dist.y/2,(constrain(m.HP.getPercentage()+addHP/m.HP.getMax().floatValue(),0,1)-m.HP.getPercentage())*100,6);
     });
     addContent((PVector pos,PVector dist)->{
+      push();
+      textAlign(RIGHT);
+      text(m.Attak.maxDoubleValue().toString(),pos.x+dist.x-5,pos.y+dist.y*0.7);
+      pop();
+      text("Attack(Basic):",pos.x+4+textWidth("Attack(Basic):")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      push();
+      textAlign(RIGHT);
+      text(m.Defence.maxDoubleValue().toString(),pos.x+dist.x-5,pos.y+dist.y*0.7);
+      pop();
+      text("Defence(Basic):",pos.x+4+textWidth("Defence(Basic):")/2,pos.y+dist.y*0.7);
+    });
+    addSeparator(1);
+    addSeparator(3);
+  }
+  
+  void display(){
+    super.display();
+  }
+  
+  void setAddHP(float d){
+    addHP=d;
+  }
+}
+
+class WeaponList extends ListTemplate{
+  Myself m;
+  float addHP=0;
+  
+  WeaponList(Myself m){
+    this.m=m;
+    name="Status";
+    setBackground(new Color(220,220,220));
+    addContent((PVector pos,PVector dist)->{
+      text("player",pos.x+4+textWidth("player")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      text("Funds(U):",pos.x+4+textWidth("Funds(U):")/2,pos.y+dist.y*0.7);
+    });
+    addContent((PVector pos,PVector dist)->{
+      text("HP:",pos.x+4+textWidth("HP:")/2,pos.y+dist.y*0.7);
+      push();
+      textAlign(RIGHT);
+      text(m.HP.get().longValue()+"/"+m.HP.getMax().longValue(),pos.x+dist.x-5,pos.y+dist.y*0.7);
+      pop();
+      noStroke();
+      fill(200);
+      rect(pos.x+9+textWidth("HP:"),pos.y+dist.y/2,100,6);
+      fill(toColor(menuRightColor));
+      rect(pos.x+9+textWidth("HP:"),pos.y+dist.y/2,m.HP.getPercentage()*100,6);
+      fill(100,128);
+      rect(pos.x+9+textWidth("HP:")+m.HP.getPercentage()*100,
+           pos.y+dist.y/2,(constrain(m.HP.getPercentage()+addHP/m.HP.getMax().floatValue(),0,1)-m.HP.getPercentage())*100,6);
+    });
+    addContent((PVector pos,PVector dist)->{
       text("Attack(Basic):",pos.x+4+textWidth("Attack(Basic):")/2,pos.y+dist.y*0.7);
     });
     addContent((PVector pos,PVector dist)->{
@@ -987,9 +1043,13 @@ class Menu extends ButtonItem{
 }
 
 class ComponentSet{
+  ComponentSet parent;
+  ComponentSet child;
   ArrayList<GameComponent>conponents=new ArrayList<GameComponent>();
   ArrayList<GameComponent>conponentStack=new ArrayList<GameComponent>();
   boolean showStack=false;
+  boolean showParent=false;
+  boolean showChild=false;
   boolean isStack=false;
   boolean pStack=false;
   boolean keyMove=true;
@@ -1029,6 +1089,16 @@ class ComponentSet{
   
   void removeStack(GameComponent val){
     conponentStack.remove(val);
+  }
+  
+  void setParent(ComponentSet c){
+    parent=c;
+    c.child=this;
+  }
+  
+  void setChild(ComponentSet c){
+    child=c;
+    c.parent=this;
   }
   
   void removeStackAll(){
@@ -1073,6 +1143,52 @@ class ComponentSet{
     stackIndex=conponentStack.indexOf(g);
   }
   
+  void toParent(){
+    if(parent!=null){
+      removeFocus();
+      parent.requestFocus();
+    }
+  }
+  
+  void toChild(){
+    if(child!=null){
+      removeFocus();
+      child.requestFocus();
+    }
+  }
+  
+  void showParent(boolean b){
+    showParent=b;
+  }
+  
+  void showChild(boolean b){
+    showChild=b;
+  }
+  
+  void removeFocus(){
+    for(GameComponent c:conponents){
+      c.removeFocus();
+    }
+    for(GameComponent c:conponentStack){
+      c.removeFocus();
+    }
+    if(!isStack){
+      conponents.get(selectedIndex).Fe.lostFocus();
+    }else{
+      conponentStack.get(stackIndex).Fe.lostFocus();
+    }
+  }
+  
+  void requestFocus(){
+    if(!isStack){
+      conponents.get(selectedIndex).requestFocus();
+      conponents.get(selectedIndex).Fe.getFocus();
+    }else{
+      conponentStack.get(stackIndex).requestFocus();
+      conponentStack.get(stackIndex).Fe.getFocus();
+    }
+  }
+  
   void display(){
     for(GameComponent c:conponents){
       c.display();
@@ -1081,6 +1197,12 @@ class ComponentSet{
       for(GameComponent c:conponentStack){
         c.display();
       }
+    }
+    if(showParent&parent!=null){
+      parent.display();
+    }
+    if(showChild&child!=null){
+      child.display();
     }
   }
   
@@ -1199,6 +1321,52 @@ class ComponentSet{
       }
       stackIndex=stackIndex<=0?conponentStack.size()-1:stackIndex-1;
       conponentStack.get(stackIndex).requestFocus();
+    }
+  }
+}
+
+class Layout{
+  PVector pos;
+  PVector dist;
+  PVector nextPos;
+  int size=0;
+  
+  Layout(){
+    pos=new PVector(0,0);
+    dist=new PVector(0,0);
+    nextPos=new PVector(0,0);
+  }
+  
+  Layout(float x,float y,float dx,float dy){
+    pos=new PVector(x,y);
+    dist=new PVector(dx,dy);
+    nextPos=new PVector(x,y);
+  }
+  
+  void setPos(PVector p){
+    pos=p;
+    nextPos=pos.copy();
+  }
+  
+  void setXdist(float x){
+    dist.x=x;
+  }
+  
+  void setYdist(float y){
+    dist.y=y;
+  }
+  
+  void alignment(GameComponent c){
+    c.setBounds(nextPos.x,nextPos.y,c.dist.x,c.dist.y);
+    ++size;
+    nextPos=pos.copy().add(dist.mult(size));
+  }
+  
+  void alignment(GameComponent[] c){
+    for(int i=0;i<c.length;i++){
+      c[i].setBounds(nextPos.x,nextPos.y,c[i].dist.x,c[i].dist.y);
+      ++size;
+      nextPos=pos.copy().add(dist.mult(size));
     }
   }
 }

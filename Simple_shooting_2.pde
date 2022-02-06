@@ -286,7 +286,7 @@ float dist(PVector a,PVector b){
 }
 
 boolean qDist(PVector s,PVector e,float d){
-  return ((s.x-e.x)*(s.x-e.x)+(s.y-e.y)*(s.y-e.y))<=d*d+0.001;
+  return ((s.x-e.x)*(s.x-e.x)+(s.y-e.y)*(s.y-e.y))<=d*d;
 }
 
 boolean qDist(PVector s1,PVector e1,PVector s2,PVector e2){

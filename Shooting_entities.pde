@@ -124,6 +124,8 @@ class Myself extends Entity{
   Shield selectedShield;
   Camera camera;
   Status HP;
+  Status Attak;
+  Status Defence;
   PImage HPgauge=loadImage(UIPath+"HPgauge.png");
   PImage heatgauge=loadImage(UIPath+"heatgauge.png");
   PShader damageNoise=loadShader(ShaderPath+"Noise.glsl");
@@ -132,6 +134,8 @@ class Myself extends Entity{
   boolean shield=false;
   double damage=0;
   double absHP;
+  double absAttak;
+  double absDefence;
   float protate=0;
   float diffuse=0;
   float rotateSpeed=10;
@@ -158,7 +162,11 @@ class Myself extends Entity{
     pos=new PVector(field.spownPoint.x,field.spownPoint.y);
     vel=new PVector(0,0);
     HP=new Status(100);
+    Attak=new Status(1);
+    Defence=new Status(0);
     absHP=HP.getMax().doubleValue();
+    absAttak=Attak.getMax().doubleValue();
+    absDefence=Defence.getMax().doubleValue();
     weapons.add(new EnergyBullet(this));
     weapons.add(new DiffuseBullet(this));
     weapons.add(new PulseBullet(this));
@@ -188,7 +196,7 @@ class Myself extends Entity{
     }
     if(shield){
       selectedShield.display();
-    }
+    }fill(255);text(pos+"",-camera.pos.x+300,-camera.pos.y+100);
   }
   
   void drawUI(){
@@ -746,6 +754,7 @@ class Bullet extends Entity{
           v=dist(p.copy().add(lineVel.get(i).copy().mult(vectorMagnification)),linePos.get(i));
           lineVel.get(max(0,i-1)).normalize().mult(v);
           linePos.remove(i+1);
+          break;
         }else{
           linePos.get(i+1).add(lineVel.get(i).copy().mult(vectorMagnification));
           break;
@@ -765,47 +774,50 @@ class Bullet extends Entity{
   }
   
   void Wall(int n){
-    PVector sTilePos=new PVector(floor(pos.x/TileSize),floor(pos.y/TileSize));
-    PVector eTilePos=new PVector(floor((pos.x+vel.x*vectorMagnification)/TileSize),floor((pos.y+vel.y*vectorMagnification)/TileSize));
+    PVector sTilePos=new PVector(floor(linePos.get(0).x/TileSize),floor(linePos.get(0).y/TileSize));
+    PVector eTilePos=new PVector(floor(linePos.get(linePos.size()-1).x/TileSize),floor(linePos.get(linePos.size()-1).y/TileSize));
     PVector offset=new PVector(TileSize*(min(sTilePos.x,eTilePos.x)-1),TileSize*(min(sTilePos.y,eTilePos.y)-1));
     int[][] Map=field.getRect(sTilePos,eTilePos);
     for(int i=0;i<Map.length;i++){
       for(int j=0;j<Map[i].length;j++){
         PVector rectPos=new PVector(offset.x+TileSize*j,offset.y+TileSize*i);
         if(field.getAttributes().get(Map[i][j]).equals("Wall")){
-          Collision(rectPos,pos,n);
+          for(int I=0;I<linePos.size();I++)
+          Collision(rectPos,I,n);
         }
       }
     }
   }
   
-  void Collision(PVector rect,PVector pos,int n){
+  void Collision(PVector rect,int index,int n){
     COLLISION:{
-      if(field.toAttribute(field.getTile(pos)).equals("Wall")){
+      if(field.toAttribute(field.getTile(linePos.get(index))).equals("Wall")){
         if(bounse){
           
-        }else{
+        }else{//右&下の当たり判定が問題
           isDead=true;
           Particles.add(new Particle(this,5));
         }
         break COLLISION;
       }
+      LeftDown=new PVector(rect.x,rect.y+TileSize);
+      LeftUP=new PVector(rect.x,rect.y);
+      RightDown=new PVector(rect.x+TileSize,rect.y+TileSize);
+      RightUP=new PVector(rect.x+TileSize,rect.y);println(LeftDown,LeftUP,RightDown,RightUP);
       for(int i=0;i<4;i++){
         PVector s=new PVector();
         PVector v=new PVector();
-        LeftDown=new PVector(rect.x,rect.y+TileSize);
-        LeftUP=new PVector(rect.x,rect.y);
-        RightDown=new PVector(rect.x+TileSize,rect.y+TileSize);
-        RightUP=new PVector(rect.x+TileSize,rect.y);
         switch(i){
           case 0:s=LeftDown;v=new PVector(LeftUP.x-LeftDown.x,LeftUP.y-LeftDown.y);break;//Left
           case 1:s=RightDown;v=new PVector(LeftDown.x-RightDown.x,LeftDown.y-RightDown.y);break;//Down
           case 2:s=RightUP;v=new PVector(RightDown.x-RightUP.x,RightDown.y-RightUP.y);break;//RIGHT
           case 3:s=LeftUP;v=new PVector(RightUP.x-LeftUP.x,RightUP.y-LeftUP.y);break;//UP
         }
-        if(SegmentCollision(pos,vel.copy().mult(vectorMagnification),s,v)){
-          linePos.add(1,SegmentCrossPoint(pos,vel.copy().mult(vectorMagnification),s,v));
+        if(SegmentCollision(linePos.get(index),
+                            lineVel.get(constrain(index-1,0,lineVel.size()-1)).copy().mult(vectorMagnification),s,v)){
           if(bounse){
+            linePos.add(1,SegmentCrossPoint(linePos.get(index),
+                        lineVel.get(constrain(index,0,lineVel.size()-1)).copy().mult(vectorMagnification),s,v));
             switch(i){
               case 0:if(field.toAttribute(field.getTile(rect.x-TileSize,rect.y)).equals("Wall"))continue;break;
               case 1:if(field.toAttribute(field.getTile(rect.x,rect.y+TileSize)).equals("Wall"))continue;break;

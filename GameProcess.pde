@@ -217,16 +217,39 @@ class GameProcess{
     
     void initEqu(){
       equ=new ComponentSet();
+      equ.showChild(true);
+      MenuItemList wList=new MenuItemList();
       MenuButton eBack=new MenuButton("戻る");
       eBack.setBounds(20,100,120,25);
       eBack.addListener(()->{
         scene=pChangeScene;
         mastar=main;
       });
+      eBack.addFocusListener(new FocusEvent(){
+        void getFocus(){
+          wList.LinkTable(null);
+        }
+        
+        void lostFocus(){
+        }
+      });
+      ComponentSet wListSet=new ComponentSet();
+      wListSet.showParent(true);
       MenuButton weapon=new MenuButton("武器");
       weapon.setBounds(20,130,120,25);
       weapon.addListener(()->{
       });
+      weapon.addFocusListener(new FocusEvent(){
+        void getFocus(){
+          wList.LinkTable(player.Weapons);
+        }
+        
+        void lostFocus(){
+        }
+      });
+      ComponentSet cListSet=new ComponentSet();
+      cListSet.showParent(true);
+      MenuItemList cList=new MenuItemList();
       MenuButton ext=new MenuButton("拡張");
       ext.setBounds(20,160,120,25);
       ext.addListener(()->{

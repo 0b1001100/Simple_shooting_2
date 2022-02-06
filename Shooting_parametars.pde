@@ -101,6 +101,14 @@ class Status{
     return new BigDecimal(minStatus.toString());
   }
   
+  Long maxLongValue(){
+    return maxStatus.longValue();
+  }
+  
+  Double maxDoubleValue(){
+    return maxStatus.doubleValue();
+  }
+  
   String toString(){
     return status.toString();
   }
@@ -163,15 +171,15 @@ class StatusManage{
   }
   
   StatusManage setDefence(double d){
-    m.HP.subMax(addDefence);
-    m.HP.addMax(d);
+    m.Defence.subMax(addDefence);
+    m.Defence.addMax(d);
     addDefence=d;
     return this;
   }
   
   StatusManage setAttak(double d){
-    m.HP.subMax(addAttak);
-    m.HP.addMax(d);
+    m.Attak.subMax(addAttak);
+    m.Attak.addMax(d);
     addAttak=d;
     return this;
   }
@@ -184,15 +192,15 @@ class StatusManage{
   }
   
   StatusManage setDefencePercent(double d){
-    m.HP.subMax(addDefence);
-    m.HP.addMax(m.absHP*constrain((float)d,0,1));
+    m.Defence.subMax(addDefence);
+    m.Defence.addMax(m.absHP*constrain((float)d,0,1));
     addDefence=m.absHP*constrain((float)d,0,1);
     return this;
   }
   
   StatusManage setAttakPercent(double d){
-    m.HP.subMax(addAttak);
-    m.HP.addMax(d);
+    m.Attak.subMax(addAttak);
+    m.Attak.addMax(d);
     addAttak=d;
     return this;
   }

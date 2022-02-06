@@ -71,6 +71,23 @@ class Item{
     return this;
   }
   
+  Item setExplanation(String s,float len){
+    String e="";
+    float l=0;
+    for(char c:s.toCharArray()){
+      l+=g.textFont.width(c)*15;
+      if((l>len|c=='\n')&c!=','&c!='.'&c!='、'&c!='。'){
+        l=0;
+        e+=c=='\n'?"":"\n";
+        e+=c;
+      }else{
+        e+=c;
+      }
+    }
+    explanation=e;
+    return this;
+  }
+  
   Item addListener(ItemUseEvent e){
     this.e=e;
     return this;
@@ -267,7 +284,7 @@ class ItemLoader{
       for(int i=0;i<obj.size();i++){
         JSONObject j=obj.getJSONObject(i);
         Item I=new Item(j.getInt("max"),j.getString("name"));
-        I.setExplanation(j.getString("explanation"));
+        I.setExplanation(j.getString("explanation"),310);
         t.addItem(I);
       }
     }
@@ -294,4 +311,10 @@ final class doubleValue{
 
 interface ItemUseEvent{
   void ItemUse(Myself m);
+}
+
+final class LoadMetrics extends FontMetrics{
+  public LoadMetrics(Font f){
+    super(f);
+  }
 }
