@@ -1371,6 +1371,115 @@ class Layout{
   }
 }
 
+class ComponentSetLayer{
+  HashMap<String,ArrayList<ComponentSet>>Layers;
+  HashMap<String,Line<String,String>>Lines;
+  boolean showChild=false;
+  String pLayer=null;
+  String nowLayer=null;
+  int selectNumber=0;
+  int showType=0;
+  
+  static final int ALL=0;
+  static final int SELECT=1;
+  static final int MIN=2;
+  static final int MAX=3;
+  
+  ComponentSetLayer(){
+    
+  }
+  
+  void addLayer(String name) throws Exception{
+    if(Layers.containsKey(name)){
+      throw new Exception("The layer"+" \""+name+"\" +"+"is already added");
+    }else{
+      Layers.put(name,new ArrayList<ComponentSet>());
+      if(Layers.size()==1){
+        nowLayer=name;
+        pLayer=new String(name);
+      }
+    }
+  }
+  
+  void addContent(String name,ComponentSet c){
+    Layers.get(name).add(c);
+  }
+  
+  void toChild(String name){
+    if(Lines.get(nowLayer).getChild().contains(name)){
+      pLayer=new String(nowLayer);
+      nowLayer=name;
+    }else{
+      return;
+    }
+  }
+  
+  void display(){
+    if(nowLayer==null){
+      return;
+    }else{
+      int count=0;
+      for(ComponentSet c:Layers.get(nowLayer)){
+        switch(showType){
+          case 0:c.display();break;
+          case 1:if(count==selectNumber)c.display();break;
+          case 2:if(count<=selectNumber)c.display();break;
+          case 3:if(count>=selectNumber)c.display();break;
+        }
+        ++count;
+      }
+      for(String s:Lines.get(nowLayer).getChild()){
+        for(ComponentSet c:Layers.get(s)){
+          c.display();
+        }
+      }
+    }
+  }
+  
+  void update(){
+    Layers.get(nowLayer).get(selectNumber).update();
+  }
+  
+  void setIndex(int i){
+    selectNumber=constrain(i,0,Layers.get(nowLayer).size()-1);
+  }
+  
+  void toLayer(String name){
+    if(Lines.get(nowLayer).getChild().contains(name)){
+      nowLayer=name;
+    }else{
+      return;
+    }
+  }
+  
+  protected final class Line<P,C>{
+    private P parent;
+    private ArrayList<C> child;
+    
+    Line(P parent,C child){
+      this.parent=parent;
+      this.child=new ArrayList<C>();
+      this.child.add(child);
+    }
+    
+    void addChild(C child){
+      this.child.add(child);
+    }
+    
+    P getParent(){
+      return parent;
+    }
+    
+    ArrayList<C> getChild(){
+      return child;
+    }
+    
+    C getChild(int index){
+      return child.get(index);
+    }
+  }
+}
+
 interface FocusEvent{
   void getFocus();
   

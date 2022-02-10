@@ -227,7 +227,7 @@ class GameProcess{
       });
       eBack.addFocusListener(new FocusEvent(){
         void getFocus(){
-          wList.LinkTable(null);
+          equ.setChild(null);
         }
         
         void lostFocus(){
@@ -238,6 +238,7 @@ class GameProcess{
       MenuButton weapon=new MenuButton("武器");
       weapon.setBounds(20,130,120,25);
       weapon.addListener(()->{
+        mastar=wListSet;
       });
       weapon.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -250,9 +251,19 @@ class GameProcess{
       ComponentSet cListSet=new ComponentSet();
       cListSet.showParent(true);
       MenuItemList cList=new MenuItemList();
+      cList.LinkTable(player.Chips);
       MenuButton ext=new MenuButton("拡張");
       ext.setBounds(20,160,120,25);
       ext.addListener(()->{
+        mastar=cListSet;
+      });
+      ext.addFocusListener(new FocusEvent(){
+        void getFocus(){
+          equ.setChild(cListSet);
+        }
+        
+        void lostFocus(){
+        }
       });
       equ.add(eBack);
       equ.add(weapon);
