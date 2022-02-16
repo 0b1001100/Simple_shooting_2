@@ -2,6 +2,7 @@ Color menuRightColor=new Color(0,150,255);
 
 class GameComponent{
   protected FocusEvent Fe=new FocusEvent(){void getFocus(){} void lostFocus(){}};
+  protected int Depth=0;
   protected PVector pos;
   protected PVector dist;
   protected PVector center;
@@ -74,6 +75,12 @@ class GameComponent{
   void addFocusListener(FocusEvent e){
     Fe=e;
   }
+  
+  int getDepth(){
+    return Depth;
+  }
+  
+  void back(){}
 }
 
 class ButtonItem extends GameComponent{
@@ -344,6 +351,7 @@ class ItemList extends GameComponent{
   
   void LinkTable(ItemTable t){
     table=t;
+    selectedNumber=0;
     changeEvent();
   }
   
@@ -621,7 +629,10 @@ class ItemList extends GameComponent{
       }
       i++;
     }
-    if(table.num.size()>=1&s.getType()!=s.COLLECTION)menu=true;
+    if(table.num.size()>=1&s.getType()!=s.COLLECTION){
+      menu=true;
+      Depth=1;
+    }
   }
   
   void itemSelect(){
@@ -634,6 +645,11 @@ class ItemList extends GameComponent{
   
   void addItemListener(ItemSelect s){
     this.s=s;
+  }
+  
+  void back(){
+    menu=false;
+    Depth=0;
   }
 }
 
@@ -1043,21 +1059,12 @@ class Menu extends ButtonItem{
 }
 
 class ComponentSet{
-  ComponentSet parent;
-  ComponentSet child;
   ArrayList<GameComponent>conponents=new ArrayList<GameComponent>();
-  ArrayList<GameComponent>conponentStack=new ArrayList<GameComponent>();
-  boolean showStack=false;
-  boolean showParent=false;
-  boolean showChild=false;
-  boolean isStack=false;
-  boolean pStack=false;
   boolean keyMove=true;
+  boolean Focus=true;
   int subSelectButton=-0xFFFFFF;
   int pSelectedIndex=0;
   int selectedIndex=0;
-  int pStackIndex=0;
-  int stackIndex=0;
   int type=0;
   
   static final int Down=0;
@@ -1071,7 +1078,19 @@ class ComponentSet{
   
   void add(GameComponent val){
     conponents.add(val);
-    if(conponents.size()==1)val.requestFocus();
+    if(conponents.size()==1){
+      if(Focus){
+        val.requestFocus();
+      }else{
+        val.removeFocus();
+      }
+    }
+  }
+  
+  void addAll(GameComponent[] val){
+    for(GameComponent c:val){
+      add(c);
+    }
   }
   
   void remove(GameComponent val){
@@ -1082,110 +1101,21 @@ class ComponentSet{
     conponents.clear();
   }
   
-  void addStack(GameComponent val){
-    conponentStack.add(val);
-    if(conponentStack.size()==1)val.requestFocus();
-  }
-  
-  void removeStack(GameComponent val){
-    conponentStack.remove(val);
-  }
-  
-  void setParent(ComponentSet c){
-    parent=c;
-    c.child=this;
-  }
-  
-  void setChild(ComponentSet c){
-    child=c;
-    c.parent=this;
-  }
-  
-  void removeStackAll(){
-    conponentStack.clear();
-  }
-  
-  GameComponent getStack(int i){
-    return conponentStack.get(i);
-  }
-  
-  void toStack(){
-    isStack=true;
-    for(GameComponent c:conponents){
-      c.removeFocus();
-      if(c instanceof ButtonItem)((ButtonItem)c).select=false;
-    }
-    conponentStack.get(stackIndex).requestFocus();
-    conponentStack.get(stackIndex).Fe.getFocus();
-    conponents.get(pSelectedIndex).Fe.lostFocus();
-  }
-  
-  void backStack(){
-    for(GameComponent c:conponentStack){
-      if(c instanceof ItemList){
-        if(((ItemList)c).menu){
-          ((ItemList)c).menu=false;
-          return;
-        }
-      }
-    }
-    isStack=false;
-    for(GameComponent c:conponentStack){
-      c.removeFocus();
-      if(c instanceof ButtonItem)((ButtonItem)c).select=false;
-    }
-    conponents.get(selectedIndex).requestFocus();
-    conponentStack.get(pStackIndex).Fe.lostFocus();
-    conponents.get(selectedIndex).Fe.getFocus();
-  }
-  
-  void stackFocusTo(GameComponent g){
-    stackIndex=conponentStack.indexOf(g);
-  }
-  
-  void toParent(){
-    if(parent!=null){
-      removeFocus();
-      parent.requestFocus();
-    }
-  }
-  
-  void toChild(){
-    if(child!=null){
-      removeFocus();
-      child.requestFocus();
-    }
-  }
-  
-  void showParent(boolean b){
-    showParent=b;
-  }
-  
-  void showChild(boolean b){
-    showChild=b;
-  }
-  
   void removeFocus(){
-    for(GameComponent c:conponents){
-      c.removeFocus();
-    }
-    for(GameComponent c:conponentStack){
-      c.removeFocus();
-    }
-    if(!isStack){
+    Focus=false;
+    if(conponents.size()>0){
+      for(GameComponent c:conponents){
+        c.removeFocus();
+      }
       conponents.get(selectedIndex).Fe.lostFocus();
-    }else{
-      conponentStack.get(stackIndex).Fe.lostFocus();
     }
   }
   
   void requestFocus(){
-    if(!isStack){
+    Focus=true;
+    if(conponents.size()>0){
       conponents.get(selectedIndex).requestFocus();
       conponents.get(selectedIndex).Fe.getFocus();
-    }else{
-      conponentStack.get(stackIndex).requestFocus();
-      conponentStack.get(stackIndex).Fe.getFocus();
     }
   }
   
@@ -1193,59 +1123,25 @@ class ComponentSet{
     for(GameComponent c:conponents){
       c.display();
     }
-    if(isStack|showStack){
-      for(GameComponent c:conponentStack){
-        c.display();
-      }
-    }
-    if(showParent&parent!=null){
-      parent.display();
-    }
-    if(showChild&child!=null){
-      child.display();
-    }
   }
   
   void update(){
-    if(!isStack){
-      for(GameComponent c:conponents){
-        c.update();
-        if(c.FocusEvent){
-          for(GameComponent C:conponents){
-            C.removeFocus();
-          }
-          c.requestFocus();
+    for(GameComponent c:conponents){
+      c.update();
+      if(c.FocusEvent){
+        for(GameComponent C:conponents){
+          C.removeFocus();
         }
-        if(c.focus)selectedIndex=conponents.indexOf(c);
+        c.requestFocus();
       }
-    }else{
-      for(GameComponent c:conponentStack){
-        c.update();
-        if(c.FocusEvent){
-          for(GameComponent C:conponentStack){
-            C.removeFocus();
-          }
-          c.requestFocus();
-        }
-        if(c.focus)stackIndex=conponentStack.indexOf(c);
-      }
+      if(c.focus)selectedIndex=conponents.indexOf(c);
     }
     if(!onMouse())keyEvent();
-    if(pStackIndex!=stackIndex){
-      conponentStack.get(pStackIndex).Fe.lostFocus();
-      conponentStack.get(stackIndex).Fe.getFocus();
-    }
     if(pSelectedIndex!=selectedIndex){
       conponents.get(pSelectedIndex).Fe.lostFocus();
       conponents.get(selectedIndex).Fe.getFocus();
     }
-    pStack=isStack;
-    pStackIndex=stackIndex;
     pSelectedIndex=selectedIndex;
-  }
-  
-  boolean isStack(){
-    return isStack|pStack;
   }
   
   void setSubSelectButton(int b){
@@ -1254,23 +1150,15 @@ class ComponentSet{
   
   boolean onMouse(){
     boolean b=false;
-    if(!isStack){
-      for(GameComponent c:conponents){
-        b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
-        if(b)return b;
-      }
-    }else{
-      for(GameComponent c:conponentStack){
-        b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
-        if(b)return b;
-      }
+    for(GameComponent c:conponents){
+      b=c.pos.x<=mouseX&mouseX<=c.pos.x+c.dist.x&c.pos.y<=mouseY&mouseY<=c.pos.y+c.dist.y;
+      if(b)return b;
     }
     return b;
   }
   
   void keyEvent(){
-    if(keyPress&
-        !(isStack?conponentStack.get(stackIndex).keyMove:conponents.get(selectedIndex).keyMove)){
+    if(keyPress&!conponents.get(selectedIndex).keyMove){
       if(type==0|type==1){
         switch(nowPressedKeyCode){
           case DOWN:if(type==0)addSelect();else subSelect();break;
@@ -1283,45 +1171,29 @@ class ComponentSet{
         }
       }
       if(nowPressedKeyCode==ENTER|keyCode==subSelectButton){
-        if(!isStack){
-          conponents.get(selectedIndex).executeEvent();
-        }else{
-          conponentStack.get(stackIndex).executeEvent();
-        }
+        conponents.get(selectedIndex).executeEvent();
       }
     }
   }
   
   void addSelect(){
-    if(!isStack){
-      for(GameComponent c:conponents){
-        c.removeFocus();
-      }
-      selectedIndex=selectedIndex>=conponents.size()-1?0:selectedIndex+1;
-      conponents.get(selectedIndex).requestFocus();
-    }else{
-      for(GameComponent c:conponentStack){
-        c.removeFocus();
-      }
-      stackIndex=stackIndex>=conponentStack.size()-1?0:stackIndex+1;
-      conponentStack.get(stackIndex).requestFocus();
+    for(GameComponent c:conponents){
+      c.removeFocus();
     }
+    selectedIndex=selectedIndex>=conponents.size()-1?0:selectedIndex+1;
+    conponents.get(selectedIndex).requestFocus();
   }
   
   void subSelect(){
-    if(!isStack){
-      for(GameComponent c:conponents){
-        c.removeFocus();
-      }
-      selectedIndex=selectedIndex<=0?conponents.size()-1:selectedIndex-1;
-      conponents.get(selectedIndex).requestFocus();
-    }else{
-      for(GameComponent c:conponentStack){
-        c.removeFocus();
-      }
-      stackIndex=stackIndex<=0?conponentStack.size()-1:stackIndex-1;
-      conponentStack.get(stackIndex).requestFocus();
+    for(GameComponent c:conponents){
+      c.removeFocus();
     }
+    selectedIndex=selectedIndex<=0?conponents.size()-1:selectedIndex-1;
+    conponents.get(selectedIndex).requestFocus();
+  }
+  
+  GameComponent getSelected(){
+    return conponents.get(selectedIndex);
   }
 }
 
@@ -1372,11 +1244,11 @@ class Layout{
 }
 
 class ComponentSetLayer{
-  HashMap<String,ArrayList<ComponentSet>>Layers;
+  HashMap<String,Layer>Layers;
   HashMap<String,Line<String,String>>Lines;
-  boolean showChild=false;
-  String pLayer=null;
+  HashMap<String,String>Parents;
   String nowLayer=null;
+  String nowParent=null;
   int selectNumber=0;
   int showType=0;
   
@@ -1386,32 +1258,98 @@ class ComponentSetLayer{
   static final int MAX=3;
   
   ComponentSetLayer(){
-    
+    Layers=new HashMap<String,Layer>();
+    Lines=new HashMap<String,Line<String,String>>();
+    Parents=new HashMap<String,String>();
   }
   
-  void addLayer(String name) throws Exception{
+  void addLayer(String name,ComponentSet... c){
     if(Layers.containsKey(name)){
-      throw new Exception("The layer"+" \""+name+"\" +"+"is already added");
+      throw new Error("The layer"+" \""+name+"\" +"+"is already added");
     }else{
-      Layers.put(name,new ArrayList<ComponentSet>());
+      Layers.put(name,new Layer(0,c));
+      Lines.put(name,new Line<String,String>(name));
+      Parents.put(name,null);
       if(Layers.size()==1){
         nowLayer=name;
-        pLayer=new String(name);
+        nowParent=name;
+        if(c.length>1){
+          for(int i=1;i<c.length;i++){
+            c[i].removeFocus();
+          }
+        }
+      }else{
+        for(ComponentSet C:c){
+          C.removeFocus();
+        }
       }
     }
   }
   
-  void addContent(String name,ComponentSet c){
-    Layers.get(name).add(c);
+  void addContent(String name,ComponentSet... c){
+    Layers.get(name).addComponent(c);
+  }
+  
+  void addChild(String parent,String name,ComponentSet... c){
+    if(Lines.containsKey(parent)&!Layers.containsKey(name)){
+      Layers.put(name,new Layer(Layers.get(parent).getDepth()+1,c));
+      Lines.get(parent).addChild(name);
+      Lines.put(name,new Line<String,String>(name));
+      Parents.put(name,parent);
+      addContent(name,c);
+      for(ComponentSet C:c){
+        C.removeFocus();
+      }
+    }
+  }
+  
+  void addSubChild(String parent,String name,ComponentSet... c){
+    if(Lines.containsKey(parent)&!Layers.containsKey(name)){
+      Layers.put(name,new Layer(Layers.get(parent).getDepth()+1,true,c));
+      Lines.get(parent).addChild(name);
+      Lines.put(name,new Line<String,String>(name));
+      Parents.put(name,parent);
+      addContent(name,c);
+      for(ComponentSet C:c){
+        C.removeFocus();
+      }
+    }
   }
   
   void toChild(String name){
     if(Lines.get(nowLayer).getChild().contains(name)){
-      pLayer=new String(nowLayer);
+      Layers.get(nowLayer).getSelectedComponent().removeFocus();
       nowLayer=name;
+      nowParent=Layers.get(name).isSub()?nowParent:nowLayer;
+      Layers.get(nowLayer).getSelectedComponent().requestFocus();
     }else{
       return;
     }
+  }
+  
+  void toParent(){
+    if(nowLayer.equals(nowParent)){
+      if(Layers.get(nowLayer).getSelectedComponent().getSelected().getDepth()>0){
+        Layers.get(nowLayer).getSelectedComponent().getSelected().back();
+        return;
+      }
+      Layers.get(nowLayer).getSelectedComponent().removeFocus();
+      nowLayer=Parents.get(nowLayer);
+      nowParent=new String(nowLayer);
+      Layers.get(nowLayer).getSelectedComponent().requestFocus();
+    }else{
+      if(Layers.get(nowLayer).getSelectedComponent().getSelected().getDepth()>0){
+        Layers.get(nowLayer).getSelectedComponent().getSelected().back();
+        return;
+      }
+      Layers.get(nowLayer).getSelectedComponent().removeFocus();
+      nowLayer=Parents.get(nowLayer);
+      Layers.get(nowLayer).getSelectedComponent().requestFocus();
+    }
+  }
+  
+  int getDepth(){
+    return Layers.get(nowLayer).getDepth();
   }
   
   void display(){
@@ -1419,7 +1357,7 @@ class ComponentSetLayer{
       return;
     }else{
       int count=0;
-      for(ComponentSet c:Layers.get(nowLayer)){
+      for(ComponentSet c:Layers.get(nowParent).getComponents()){
         switch(showType){
           case 0:c.display();break;
           case 1:if(count==selectNumber)c.display();break;
@@ -1428,20 +1366,16 @@ class ComponentSetLayer{
         }
         ++count;
       }
-      for(String s:Lines.get(nowLayer).getChild()){
-        for(ComponentSet c:Layers.get(s)){
-          c.display();
-        }
-      }
+      displaySub(nowParent);
     }
   }
   
   void update(){
-    Layers.get(nowLayer).get(selectNumber).update();
+    Layers.get(nowLayer).update();
   }
   
   void setIndex(int i){
-    selectNumber=constrain(i,0,Layers.get(nowLayer).size()-1);
+    Layers.get(nowLayer).setIndex(i);
   }
   
   void toLayer(String name){
@@ -1452,18 +1386,35 @@ class ComponentSetLayer{
     }
   }
   
+  String getLayerName(){
+    return new String(nowLayer);
+  }
+  
+  private void displaySub(String n){
+    if(Lines.containsKey(n)){
+      for(String s:Lines.get(n).getChild()){
+        if(Layers.get(s).isSub()){
+          for(ComponentSet c:Layers.get(s).getComponents()){
+            c.display();
+          }
+          displaySub(s);
+        }
+      }
+    }
+  }
+  
   protected final class Line<P,C>{
     private P parent;
     private ArrayList<C> child;
     
-    Line(P parent,C child){
+    Line(P parent,C... child){
       this.parent=parent;
       this.child=new ArrayList<C>();
-      this.child.add(child);
+      this.child.addAll(Arrays.asList(child));
     }
     
-    void addChild(C child){
-      this.child.add(child);
+    void addChild(C... child){
+      this.child.addAll(Arrays.asList(child));
     }
     
     P getParent(){
@@ -1478,6 +1429,68 @@ class ComponentSetLayer{
       return child.get(index);
     }
   }
+  
+  protected final class Layer{
+    private ArrayList<ComponentSet>Components;
+    private boolean sub=false;
+    private int depth=0;
+    private int index=0;
+    
+    Layer(int d,ComponentSet... c){
+      depth=d;
+      Components=new ArrayList<ComponentSet>(Arrays.asList(c));
+    }
+    
+    Layer(int d,boolean s,ComponentSet... c){
+      sub=s;
+      depth=d;
+      Components=new ArrayList<ComponentSet>(Arrays.asList(c));
+    }
+    
+    void display(){
+      for(ComponentSet c:Components){
+        c.display();
+      }
+    }
+    
+    void update(){
+      Components.get(index).update();
+    }
+    
+    void addComponent(ComponentSet... c){
+      Components.addAll(Arrays.asList(c));
+    }
+    
+    void setIndex(int i){
+      index=constrain(i,0,Components.size()-1);
+    }
+    
+    ArrayList<ComponentSet> getComponents(){
+      return Components;
+    }
+    
+    ComponentSet getSelectedComponent(){
+      return Components.get(index);
+    }
+    
+    boolean isSub(){
+      return sub;
+    }
+    
+    int getDepth(){
+      return depth;
+    }
+    
+    int size(){
+      return Components.size();
+    }
+  }
+}
+
+ComponentSet toSet(GameComponent... c){
+  ComponentSet r=new ComponentSet();
+  r.addAll(c);
+  return r;
 }
 
 interface FocusEvent{

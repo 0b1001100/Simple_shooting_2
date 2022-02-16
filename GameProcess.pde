@@ -89,7 +89,7 @@ class GameProcess{
       animation=true;
     }else
     if((key=='x'|keyCode==SHIFT|keyCode==LEFT)&menu.equals("Menu")&!animation){
-      if(!mainMenu.isMain()){
+      if(mainMenu.layer.getDepth()>0){
         mainMenu.back();
         return;
       }
@@ -144,9 +144,7 @@ class GameProcess{
   }
   
   class menuManage{
-    String scene="main";
-    String pScene="main";
-    String pChangeScene="main";
+    ComponentSetLayer layer;
     ComponentSet mastar;
     HashMap<String,ComponentSet>componentMap=new HashMap<String,ComponentSet>();
     ComponentSet main;
@@ -161,6 +159,7 @@ class GameProcess{
     }
     
     void init(){
+      layer=new ComponentSetLayer();
       main=null;
       equ=null;
       Item=null;
@@ -179,33 +178,26 @@ class GameProcess{
     
     void initMain(){
       main=new ComponentSet();
+      layer.addLayer("Main",main);
       MenuButton equip=new MenuButton("装備");
       equip.setBounds(100,120,120,25);
       equip.addListener(()->{
-        pChangeScene=scene;
-        mastar=equ;
-        scene="equ";
+        layer.toChild("equ");
       });
       MenuButton item=new MenuButton("アイテム");
       item.setBounds(100,160,120,25);
       item.addListener(()->{
-        pChangeScene=scene;
-        mastar=Item;
-        scene="Item";
+        layer.toChild("Item");
       });
       MenuButton archive=new MenuButton("アーカイブ");
       archive.setBounds(100,200,120,25);
       archive.addListener(()->{
-        pChangeScene=scene;
-        mastar=arc;
-        scene="arc";
+        layer.toChild("arc");
       });
       MenuButton setting=new MenuButton("設定");
       setting.setBounds(100,240,120,25);
       setting.addListener(()->{
-        pChangeScene=scene;
-        mastar=conf;
-        scene="conf";
+        layer.toChild("conf");
       });
       main.add(equip);
       main.add(item);
@@ -217,28 +209,24 @@ class GameProcess{
     
     void initEqu(){
       equ=new ComponentSet();
-      equ.showChild(true);
+      layer.addChild("Main","equ",equ);
       MenuItemList wList=new MenuItemList();
       MenuButton eBack=new MenuButton("戻る");
       eBack.setBounds(20,100,120,25);
       eBack.addListener(()->{
-        scene=pChangeScene;
-        mastar=main;
+        layer.toParent();
       });
       eBack.addFocusListener(new FocusEvent(){
         void getFocus(){
-          equ.setChild(null);
+          wList.LinkTable(null);
         }
         
         void lostFocus(){
         }
       });
-      ComponentSet wListSet=new ComponentSet();
-      wListSet.showParent(true);
       MenuButton weapon=new MenuButton("武器");
       weapon.setBounds(20,130,120,25);
       weapon.addListener(()->{
-        mastar=wListSet;
       });
       weapon.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -249,7 +237,6 @@ class GameProcess{
         }
       });
       ComponentSet cListSet=new ComponentSet();
-      cListSet.showParent(true);
       MenuItemList cList=new MenuItemList();
       cList.LinkTable(player.Chips);
       MenuButton ext=new MenuButton("拡張");
@@ -259,7 +246,6 @@ class GameProcess{
       });
       ext.addFocusListener(new FocusEvent(){
         void getFocus(){
-          equ.setChild(cListSet);
         }
         
         void lostFocus(){
@@ -274,6 +260,7 @@ class GameProcess{
     
     void initItem(){
       Item=new ComponentSet();
+      layer.addChild("Main","Item",Item);
       MenuItemList iList=new MenuItemList();
       iList.setBounds(170,50,325,height-200);
       iList.setSubBounds(520,50,325,400);
@@ -289,8 +276,7 @@ class GameProcess{
       MenuButton iBack=new MenuButton("戻る");
       iBack.setBounds(20,100,120,25);
       iBack.addListener(()->{
-        scene=pChangeScene;
-        mastar=main;
+        layer.toParent();
       });
       iBack.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -303,9 +289,7 @@ class GameProcess{
       MenuButton ite=new MenuButton("アイテム");
       ite.setBounds(20,130,120,25);
       ite.addListener(()->{
-        if(!pStack){
-          mastar.toStack();
-        }
+        layer.toChild("iList");
       });
       ite.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -318,9 +302,7 @@ class GameProcess{
       MenuButton mat=new MenuButton("素材");
       mat.setBounds(20,160,120,25);
       mat.addListener(()->{
-        if(!pStack){
-          mastar.toStack();
-        }
+        layer.toChild("iList");
       });
       mat.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -333,9 +315,7 @@ class GameProcess{
       MenuButton wea=new MenuButton("武器");
       wea.setBounds(20,190,120,25);
       wea.addListener(()->{
-        if(!pStack){
-          mastar.toStack();
-        }
+        layer.toChild("iList");
       });
       wea.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -348,9 +328,7 @@ class GameProcess{
       MenuButton chi=new MenuButton("拡張チップ");
       chi.setBounds(20,220,120,25);
       chi.addListener(()->{
-        if(!pStack){
-          mastar.toStack();
-        }
+        layer.toChild("iList");
       });
       chi.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -365,20 +343,18 @@ class GameProcess{
       Item.add(mat);
       Item.add(wea);
       Item.add(chi);
-      Item.addStack(iSta);
-      Item.addStack(iList);
-      Item.stackFocusTo(iList);
+      layer.addSubChild("Item","iList",toSet(iList));
+      layer.addContent("Item",toSet(iSta));
       Item.setSubSelectButton(RIGHT);
-      Item.showStack=true;
       componentMap.put("Item",Item);
     }
     
     void initArc(){
       arc=new ComponentSet();
+      layer.addChild("Main","arc",arc);
       MenuButton aBack=new MenuButton("戻る");
       aBack.setBounds(20,100,120,25);
       aBack.addListener(()->{
-        scene=pChangeScene;
         mastar=main;
       });
       arc.add(aBack);
@@ -391,7 +367,6 @@ class GameProcess{
       MenuButton cBack=new MenuButton("戻る");
       cBack.setBounds(120,110,120,25);
       cBack.addListener(()->{
-        scene=pChangeScene;
         mastar=main;
       });
       MenuButton quit=new MenuButton("ゲームを終了");
@@ -406,16 +381,12 @@ class GameProcess{
     }
     
     void display(){
-      mastar.display();
+      layer.display();
     }
     
     void update(){
       boolean Stack=false;
-      mastar.update();
-      if(!scene.equals(pScene)){
-        init();
-      }
-      pScene=scene;
+      layer.update();
       pStack=Stack;
     }
     
@@ -428,16 +399,11 @@ class GameProcess{
     }
     
     boolean isMain(){
-      return scene.equals("main");
+      return layer.getLayerName().equals("Main");
     }
     
     void back(){
-      if(mastar.isStack()){
-        mastar.backStack();
-        return;
-      }
-      scene=pChangeScene;
-      mastar=componentMap.get(scene);
+      layer.toParent();
     }
   }
 }
