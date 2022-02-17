@@ -145,7 +145,6 @@ class GameProcess{
   
   class menuManage{
     ComponentSetLayer layer;
-    ComponentSet mastar;
     HashMap<String,ComponentSet>componentMap=new HashMap<String,ComponentSet>();
     ComponentSet main;
     ComponentSet equ;
@@ -171,7 +170,6 @@ class GameProcess{
       initArc();
       initConf();
       if(first){
-        mastar=main;
         first=false;
       }
     }
@@ -242,7 +240,6 @@ class GameProcess{
       MenuButton ext=new MenuButton("拡張");
       ext.setBounds(20,160,120,25);
       ext.addListener(()->{
-        mastar=cListSet;
       });
       ext.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -355,7 +352,7 @@ class GameProcess{
       MenuButton aBack=new MenuButton("戻る");
       aBack.setBounds(20,100,120,25);
       aBack.addListener(()->{
-        mastar=main;
+        layer.toParent();
       });
       arc.add(aBack);
       arc.setSubSelectButton(RIGHT);
@@ -364,10 +361,11 @@ class GameProcess{
     
     void initConf(){
       conf=new ComponentSet();
+      layer.addChild("Main","conf",conf);
       MenuButton cBack=new MenuButton("戻る");
       cBack.setBounds(120,110,120,25);
       cBack.addListener(()->{
-        mastar=main;
+        layer.toParent();
       });
       MenuButton quit=new MenuButton("ゲームを終了");
       quit.setBounds(120,150,120,25);

@@ -88,7 +88,6 @@ class ButtonItem extends GameComponent{
   protected boolean pCursor=false;
   protected boolean setCursor=false;
   protected boolean setCursorEvent=false;
-  protected boolean select=false;
   protected String text="";
   
   ButtonItem(){
@@ -106,13 +105,12 @@ class ButtonItem extends GameComponent{
   void mouseProcess(){
     if(mouseX>pos.x&&mouseX<pos.x+dist.x&&mouseY>pos.y&&mouseY<pos.y+dist.y){
       setCursor=true;
-      select=mousePress;
       setCursorEvent=pCursor!=setCursor;
       requestFocus();
     }else{
       setCursor=false;
     }
-    if(select){
+    if(mousePress){
       executeEvent();
     }
     if(focus&&!pFocus)FocusEvent=true;else FocusEvent=false;
@@ -898,6 +896,7 @@ class TextButton extends ButtonItem{
   
   void update(){
     mouseProcess();
+    super.update();
   }
   
   TextButton setText(String s){
