@@ -196,7 +196,7 @@ class Myself extends Entity{
     }
     if(shield){
       selectedShield.display();
-    }fill(255);text(pos+"",-camera.pos.x+300,-camera.pos.y+100);
+    }
   }
   
   void drawUI(){
@@ -336,27 +336,23 @@ class Myself extends Entity{
     }
   }
   
-  void shot(){
+  void shot(){println("sdjvnoasubosugbosldunvg",coolingTime,maxCoolingTime);
     if(mousePressed&mouseButton==LEFT&autoShot&!selectedWeapon.heat.overHeat
        &&!selectedWeapon.empty){
       selectedWeapon.heatUP();
       if(selectedWeapon.Attribute==Weapon.LASER){
         
       }
-    }else if(mousePress&mouseButton==LEFT&!autoShot&&coolingTime>maxCoolingTime
+    }else if(mousePress&&mouseButton==LEFT&&!autoShot&&coolingTime>maxCoolingTime
              &&!selectedWeapon.heat.overHeat&&!selectedWeapon.empty){
       selectedWeapon.absHeatUP();
     }else if(mousePress&mouseButton==RIGHT){
       shield=true;
     }
-    if(coolingTime>maxCoolingTime&&((mousePressed&autoShot)||(mousePress&&!autoShot))&mouseButton==LEFT
+    if(coolingTime>maxCoolingTime&&((mousePressed&&autoShot)||(mousePress&&!autoShot))&&mouseButton==LEFT
       &&!selectedWeapon.heat.overHeat&&!selectedWeapon.empty){
-      if(selectedWeapon.Attribute==Weapon.ENERGY|selectedWeapon.Attribute==Weapon.PHYSICS){
-        selectedWeapon.shot();
-        coolingTime=0;
-      }else if(selectedWeapon.Attribute==Weapon.LASER){
-        
-      }
+      selectedWeapon.shot();
+      coolingTime=0;
     }else if(selectedWeapon.empty){
       selectedWeapon.reload();
     }
@@ -803,7 +799,7 @@ class Bullet extends Entity{
       LeftDown=new PVector(rect.x,rect.y+TileSize);
       LeftUP=new PVector(rect.x,rect.y);
       RightDown=new PVector(rect.x+TileSize,rect.y+TileSize);
-      RightUP=new PVector(rect.x+TileSize,rect.y);println(LeftDown,LeftUP,RightDown,RightUP);
+      RightUP=new PVector(rect.x+TileSize,rect.y);
       for(int i=0;i<4;i++){
         PVector s=new PVector();
         PVector v=new PVector();

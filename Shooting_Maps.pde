@@ -283,7 +283,7 @@ class Fields{
   }
   
   int[][] getRect(PVector s,PVector e){
-    int[][]Rect=new int[floor(abs(s.y-e.y))+1][floor(abs(s.x-e.x))+1];println(s,e,Rect.length,Rect[0].length);
+    int[][]Rect=new int[floor(abs(s.y-e.y))+1][floor(abs(s.x-e.x))+1];
     for(int i=0;i<Rect.length;i++){
       for(int j=0;j<Rect[i].length;j++){
         if(nowField.equals("Map")){

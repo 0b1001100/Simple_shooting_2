@@ -103,14 +103,15 @@ class ButtonItem extends GameComponent{
   }
   
   void mouseProcess(){
-    if(mouseX>pos.x&&mouseX<pos.x+dist.x&&mouseY>pos.y&&mouseY<pos.y+dist.y){
+    boolean onMouse=mouseX>pos.x&&mouseX<pos.x+dist.x&&mouseY>pos.y&&mouseY<pos.y+dist.y;
+    if(onMouse){
       setCursor=true;
       setCursorEvent=pCursor!=setCursor;
       requestFocus();
     }else{
       setCursor=false;
     }
-    if(mousePress){
+    if(mousePress&onMouse){
       executeEvent();
     }
     if(focus&&!pFocus)FocusEvent=true;else FocusEvent=false;
@@ -457,7 +458,7 @@ class ItemList extends GameComponent{
   }
   
   void update(){
-    if(focus&table!=null){
+    if(focus&&table!=null){
       onMouse=!menu?onMouse(pos.x,pos.y,dist.x,min(Height*table.table.size(),dist.y)):
                     onMouse(pos.x+dist.x,pos.y+selectedNumber*Height-scroll-Height/2,120,Height*2);
       if(!menu)mouseProcess();else menuMouse();
@@ -493,9 +494,9 @@ class ItemList extends GameComponent{
   
   void menuMouse(){
     if(selectedItem.getType()==1){
-      if(onMouse&mousePress){
+      if(onMouse&&mousePress){
         float y=pos.y+selectedNumber*Height-scroll-Height/2;
-        if(y<=mouseY&mouseY<=y+Height){
+        if(y<=mouseY&&mouseY<=y+Height){
           if(menuNumber==0){
             menuSelect();
             return;
@@ -584,7 +585,7 @@ class ItemList extends GameComponent{
     boolean b=true;
     switch(menuNumber){
       case 0:selectedItem.ExecuteEvent();b=table.removeStorage(selectedItem.getName(),1);menu=false;break;
-      case 1:if(selectedItem.getType()==2){b=table.removeStorage(selectedItem.getName(),1);}else
+      case 1:if(selectedItem.getType()<=2){b=table.removeStorage(selectedItem.getName(),1);}else
                                           {selectedItem.ExecuteEvent();}menu=false;break;
     }
     if(!b)selectedNumber--;
