@@ -225,6 +225,7 @@ class GameProcess{
       MenuButton weapon=new MenuButton("武器");
       weapon.setBounds(20,130,120,25);
       weapon.addListener(()->{
+        layer.toChild("WeaponIndex");
       });
       weapon.addFocusListener(new FocusEvent(){
         void getFocus(){
@@ -234,7 +235,12 @@ class GameProcess{
         void lostFocus(){
         }
       });
-      ComponentSet cListSet=new ComponentSet();
+      MenuButton W1=new MenuButton("装備1");
+      W1.setBounds(170,150,140,25);
+      MenuButton W2=new MenuButton("装備2");
+      W2.setBounds(170,190,140,25);
+      MenuButton W3=new MenuButton("装備3");
+      W3.setBounds(170,230,140,25);
       MenuItemList cList=new MenuItemList();
       cList.LinkTable(player.Chips);
       MenuButton ext=new MenuButton("拡張");
@@ -252,6 +258,7 @@ class GameProcess{
       equ.add(weapon);
       equ.add(ext);
       equ.setSubSelectButton(RIGHT);
+      layer.addSubChild("equ","WeaponIndex",toSet(W1,W2,W3));
       componentMap.put("equ",equ);
     }
     

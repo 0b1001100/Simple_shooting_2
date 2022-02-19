@@ -150,8 +150,10 @@ class Weapon implements Equipment{
   void shot(){
     switch(Attribute){
     case ENERGY:
-    case PHYSICS:for(int i=0;i<this.bulletNumber;i++){
-                   Bullets.add(new Bullet(parent,this));
+    case PHYSICS:synchronized(Bullets){
+                   for(int i=0;i<this.bulletNumber;i++){
+                     Bullets.add(new Bullet(parent,this));
+                   }
                  }
                  break;
     case LASER:break;
